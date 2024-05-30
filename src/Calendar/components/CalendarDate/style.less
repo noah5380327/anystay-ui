@@ -1,0 +1,45 @@
+@import 'src/variable.less';
+
+.calendar-date-container {
+  display: flex;
+  padding: 0 5px;
+  .calendar-date-operation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img {
+      width: 9px;
+      height: 16px;
+    }
+  }
+  .calendar-date-operation-right-container {
+    img {
+      transform: scaleX(-1);
+    }
+  }
+  .calendar-date-value-container {
+    display: flex;
+    flex: 1;
+    .calendar-date-value-item-container {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 10px;
+      .calendar-date-value-item-number {
+        font-size: @as-font-size-2;
+        color: @as-text-color-1;
+        font-weight: @as-font-weight-1;
+      }
+      .calendar-date-value-item-week {
+        font-size: @as-font-size-3;
+        color: @as-text-color-1;
+        font-weight: @as-font-weight-1;
+      }
+    }
+    .calendar-date-value-item-border-container {
+      border-right: 1px solid @as-border-color-1;
+    }
+  }
+}
