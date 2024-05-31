@@ -2,26 +2,12 @@
 import CalendarLeftPng from 'anystay-ui/Calendar/assets/left.png';
 import { CalendarDateProp } from 'anystay-ui/Calendar/components/CalendarDate/interface';
 import 'anystay-ui/Calendar/components/CalendarDate/style.less';
-import moment from 'moment/moment';
+import {
+  getDateNumber,
+  getDateWeekDay,
+  getFirstMonthDatesAdditionalStyle,
+} from 'anystay-ui/Calendar/components/CalendarDate/util';
 import React, { useEffect, useRef, type FC } from 'react';
-
-function getDateNumber(value: string): number {
-  return moment(value).date();
-}
-
-function getDateWeekDay(value: string): string {
-  return moment(value).format('ddd');
-}
-
-function getFirstMonthDatesAdditionalStyle(
-  props: CalendarDateProp,
-  index: number,
-): string {
-  return props.secondMonthDates.length > 0 &&
-    index === props.firstMonthDates.length - 1
-    ? `calendar-date-value-item-border-container`
-    : '';
-}
 
 const CalendarDate: FC<CalendarDateProp> = (props) => {
   const elementRef = useRef(null);

@@ -3,44 +3,13 @@ import {
   CalendarTableSelection,
 } from 'anystay-ui/Calendar/components/CalendarTable/interface';
 import 'anystay-ui/Calendar/components/CalendarTable/style.less';
-import React, { Dispatch, SetStateAction, useState, type FC } from 'react';
-
-function onMouseDown(
-  rowIndex: number,
-  columnIndex: number,
-  setSelectionVisible: Dispatch<SetStateAction<boolean>>,
-  setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
-) {
-  setSelectionVisible(true);
-  setSelection({
-    rowStartIndex: rowIndex,
-    rowEndIndex: -1,
-    columnStartIndex: columnIndex,
-    columnEndIndex: -1,
-  });
-  const hideSelection = () => {
-    setSelectionVisible(false);
-    document.removeEventListener('mouseup', hideSelection);
-  };
-  document.addEventListener('mouseup', hideSelection);
-}
-
-function onMouseOver(
-  rowIndex: number,
-  columnIndex: number,
-  selectionVisible: boolean,
-  selection: CalendarTableSelection,
-  setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
-) {
-  if (selectionVisible) {
-    setSelection({
-      rowStartIndex: selection.rowStartIndex,
-      rowEndIndex: rowIndex,
-      columnStartIndex: selection.columnStartIndex,
-      columnEndIndex: columnIndex,
-    });
-  }
-}
+import {
+  getColumnBackgroundSelectedStyle,
+  getColumnBorderSelectedStyle,
+  onMouseDown,
+  onMouseOver,
+} from 'anystay-ui/Calendar/components/CalendarTable/util';
+import React, { useState, type FC } from 'react';
 
 const CalendarTable: FC<CalendarTableProp> = (props) => {
   const rows: number[] = new Array(props.rowNumber).fill(0);
@@ -54,28 +23,6 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
     columnEndIndex: -1,
   });
 
-  function getColumnSelectedStyle(
-    rowIndex: number,
-    columnIndex: number,
-    selection: CalendarTableSelection,
-  ): string {
-    const { rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex } =
-      selection;
-
-    if (
-      rowEndIndex !== -1 &&
-      columnEndIndex !== -1 &&
-      columnIndex >= columnStartIndex &&
-      columnIndex <= columnEndIndex &&
-      rowIndex >= rowStartIndex &&
-      rowIndex <= rowEndIndex
-    ) {
-      return 'calendar-table-row-column-selected-container';
-    }
-
-    return '';
-  }
-
   return (
     <div className={`calendar-table-container`}>
       {rows.map((rowItem, rowIndex) => (
@@ -84,7 +31,16 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
             <div
               key={columnIndex}
               className={`calendar-table-row-column-container
-               ${getColumnSelectedStyle(rowIndex, columnIndex, selection)}`}
+               ${getColumnBackgroundSelectedStyle(
+                 rowIndex,
+                 columnIndex,
+                 selection,
+               )}
+               ${getColumnBorderSelectedStyle(
+                 rowIndex,
+                 columnIndex,
+                 selection,
+               )}`}
               style={{ width: props.elementWidth, height: props.elementWidth }}
               onMouseDown={() =>
                 onMouseDown(

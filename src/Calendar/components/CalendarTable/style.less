@@ -20,8 +20,20 @@
         text-overflow: ellipsis;
       }
     }
-    .calendar-table-row-column-selected-container {
+    .calendar-table-row-column-selected-background-container {
       background: rgba(0, 94, 255, 0.062745098);
+    }
+    .calendar-table-row-column-selected-border-top-container {
+      border-top: 1px solid #005eff !important;
+    }
+    .calendar-table-row-column-selected-border-bottom-container {
+      border-bottom: 1px solid #005eff !important;
+    }
+    .calendar-table-row-column-selected-border-left-container {
+      border-left: 1px solid #005eff !important;
+    }
+    .calendar-table-row-column-selected-border-right-container {
+      border-right: 1px solid #005eff !important;
     }
     .calendar-table-row-column-container:before {
       content: '';
@@ -35,6 +47,9 @@
       transform: scale(0.5);
       border-top-width: 0;
       border-right-width: 0;
+    }
+    .calendar-table-row-column-selected-border-bottom-container::before {
+      border-width: 2px;
     }
   }
 }

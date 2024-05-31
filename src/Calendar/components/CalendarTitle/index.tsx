@@ -1,15 +1,10 @@
 import { CalendarTitleProp } from 'anystay-ui/Calendar/components/CalendarTitle/interface';
 import 'anystay-ui/Calendar/components/CalendarTitle/style.less';
-import moment from 'moment';
+import {
+  getDateName,
+  getFirstMonthDatesAdditionalStyle,
+} from 'anystay-ui/Calendar/components/CalendarTitle/util';
 import React, { type FC } from 'react';
-
-function getDateName(value: string): string {
-  return `${moment(value).format('MMMM')} ${moment(value).format('YYYY')}`;
-}
-
-function getFirstMonthDatesAdditionalStyle(props: CalendarTitleProp): string {
-  return props.secondMonthDates.length > 0 ? 'calendar-title-text-border' : '';
-}
 
 const CalendarTitle: FC<CalendarTitleProp> = (props) => {
   const firstMonthWidth = props.elementWidth * props.firstMonthDates.length;
