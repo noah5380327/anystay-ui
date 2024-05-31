@@ -76,9 +76,9 @@ export function getColumnBorderSelectedStyle(
 
 export function getColumnDisabledStyle(
   columnIndex: number,
-  disabledColumnNumber: number,
+  subtractDayNumber: number,
 ): string {
-  if (columnIndex < disabledColumnNumber) {
+  if (columnIndex < subtractDayNumber) {
     return 'calendar-table-row-column-disabled-container';
   }
 
@@ -90,9 +90,9 @@ export function onMouseDown(
   columnIndex: number,
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
-  disabledColumnNumber: number,
+  subtractDayNumber: number,
 ) {
-  if (columnIndex > disabledColumnNumber - 1) {
+  if (columnIndex > subtractDayNumber - 1) {
     setSelectionVisible(true);
     setSelection({
       rowStartIndex: rowIndex,
@@ -114,9 +114,9 @@ export function onMouseOver(
   selectionVisible: boolean,
   selection: CalendarTableSelection,
   setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
-  disabledColumnNumber: number,
+  subtractDayNumber: number,
 ) {
-  if (columnIndex > disabledColumnNumber - 1) {
+  if (columnIndex > subtractDayNumber - 1) {
     if (selectionVisible) {
       setSelection({
         rowStartIndex: selection.rowStartIndex,

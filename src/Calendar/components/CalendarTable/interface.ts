@@ -2,7 +2,7 @@ export interface CalendarTableProp {
   rowNumber: number;
   elementWidth: number;
   dayNumber: number;
-  disabledColumnNumber?: number;
+  subtractDayNumber: number;
 }
 
 export interface CalendarTableSelection {

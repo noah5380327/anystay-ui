@@ -2,8 +2,11 @@ import { CalendarDates } from 'anystay-ui/Calendar/interface';
 import 'anystay-ui/Calendar/style.less';
 import moment from 'moment/moment';
 
-export function generateDates(dayNumber: number): CalendarDates {
-  const startDay = moment().subtract(2, 'days');
+export function generateDates(
+  dayNumber: number,
+  subtractDayNumber: number,
+): CalendarDates {
+  const startDay = moment().subtract(subtractDayNumber, 'days');
 
   const dates = [];
   const monthDates1: string[] = [];

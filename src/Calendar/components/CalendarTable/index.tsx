@@ -1,4 +1,3 @@
-import { DEFAULT_DISABLED_COLUMN_NUMBER } from 'anystay-ui/Calendar/components/CalendarTable/constant';
 import {
   CalendarTableProp,
   CalendarTableSelection,
@@ -14,9 +13,6 @@ import {
 import React, { useState, type FC } from 'react';
 
 const CalendarTable: FC<CalendarTableProp> = (props) => {
-  const disabledColumnNumber =
-    props.disabledColumnNumber || DEFAULT_DISABLED_COLUMN_NUMBER;
-
   const rows: number[] = new Array(props.rowNumber).fill(0);
   const columns: number[] = new Array(props.dayNumber).fill(0);
 
@@ -42,7 +38,7 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                  selection,
                )}
                ${getColumnBorderSelectedStyle(rowIndex, columnIndex, selection)}
-               ${getColumnDisabledStyle(columnIndex, disabledColumnNumber)}`}
+               ${getColumnDisabledStyle(columnIndex, props.subtractDayNumber)}`}
               style={{ width: props.elementWidth, height: props.elementWidth }}
               onMouseDown={() =>
                 onMouseDown(
@@ -50,7 +46,7 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                   columnIndex,
                   setSelectionVisible,
                   setSelection,
-                  disabledColumnNumber,
+                  props.subtractDayNumber,
                 )
               }
               onMouseOver={() =>
@@ -60,7 +56,7 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                   selectionVisible,
                   selection,
                   setSelection,
-                  disabledColumnNumber,
+                  props.subtractDayNumber,
                 )
               }
             >
