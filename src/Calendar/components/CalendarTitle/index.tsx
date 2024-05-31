@@ -2,7 +2,7 @@ import { CalendarTitleProp } from 'anystay-ui/Calendar/components/CalendarTitle/
 import 'anystay-ui/Calendar/components/CalendarTitle/style.less';
 import {
   getDateName,
-  getFirstMonthDatesAdditionalStyle,
+  getFirstMonthDatesBorderStyle,
 } from 'anystay-ui/Calendar/components/CalendarTitle/util';
 import React, { type FC } from 'react';
 
@@ -16,7 +16,7 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
         {props.firstMonthDates.length > 0 && (
           <span
             className={`calendar-title-text
-             ${getFirstMonthDatesAdditionalStyle(props)}`}
+             ${getFirstMonthDatesBorderStyle(props)}`}
             style={{ width: firstMonthWidth }}
           >
             {getDateName(props.firstMonthDates[0])}

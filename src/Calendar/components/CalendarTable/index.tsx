@@ -1,3 +1,4 @@
+import { DEFAULT_DISABLED_COLUMN_NUMBER } from 'anystay-ui/Calendar/components/CalendarTable/constant';
 import {
   CalendarTableProp,
   CalendarTableSelection,
@@ -6,14 +7,18 @@ import 'anystay-ui/Calendar/components/CalendarTable/style.less';
 import {
   getColumnBackgroundSelectedStyle,
   getColumnBorderSelectedStyle,
+  getColumnDisabledStyle,
   onMouseDown,
   onMouseOver,
 } from 'anystay-ui/Calendar/components/CalendarTable/util';
 import React, { useState, type FC } from 'react';
 
 const CalendarTable: FC<CalendarTableProp> = (props) => {
+  const disabledColumnNumber =
+    props.disabledColumnNumber || DEFAULT_DISABLED_COLUMN_NUMBER;
+
   const rows: number[] = new Array(props.rowNumber).fill(0);
-  const columns: number[] = new Array(14).fill(0);
+  const columns: number[] = new Array(props.dayNumber).fill(0);
 
   const [selectionVisible, setSelectionVisible] = useState<boolean>(false);
   const [selection, setSelection] = useState<CalendarTableSelection>({
@@ -36,11 +41,8 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                  columnIndex,
                  selection,
                )}
-               ${getColumnBorderSelectedStyle(
-                 rowIndex,
-                 columnIndex,
-                 selection,
-               )}`}
+               ${getColumnBorderSelectedStyle(rowIndex, columnIndex, selection)}
+               ${getColumnDisabledStyle(columnIndex, disabledColumnNumber)}`}
               style={{ width: props.elementWidth, height: props.elementWidth }}
               onMouseDown={() =>
                 onMouseDown(
@@ -48,6 +50,7 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                   columnIndex,
                   setSelectionVisible,
                   setSelection,
+                  disabledColumnNumber,
                 )
               }
               onMouseOver={() =>
@@ -57,6 +60,7 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                   selectionVisible,
                   selection,
                   setSelection,
+                  disabledColumnNumber,
                 )
               }
             >

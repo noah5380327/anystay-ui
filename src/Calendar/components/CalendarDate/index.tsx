@@ -5,7 +5,8 @@ import 'anystay-ui/Calendar/components/CalendarDate/style.less';
 import {
   getDateNumber,
   getDateWeekDay,
-  getFirstMonthDatesAdditionalStyle,
+  getFirstCurrentDateStyle,
+  getFirstMonthDatesBorderStyle,
 } from 'anystay-ui/Calendar/components/CalendarDate/util';
 import React, { useEffect, useRef, type FC } from 'react';
 
@@ -17,7 +18,7 @@ const CalendarDate: FC<CalendarDateProp> = (props) => {
     if (element) {
       // @ts-ignore
       const totalWidth = element.clientWidth;
-      const elementWidth = totalWidth / 14;
+      const elementWidth = totalWidth / props.dayNumber;
       props.setElementWidth(elementWidth);
     }
   }, [props.firstMonthDates, props.secondMonthDates]);
@@ -32,24 +33,31 @@ const CalendarDate: FC<CalendarDateProp> = (props) => {
           <div
             key={index}
             className={`calendar-date-value-item-container
-            ${getFirstMonthDatesAdditionalStyle(props, index)}`}
+            ${getFirstMonthDatesBorderStyle(props, index)}`}
           >
-            <span className={`calendar-date-value-item-number`}>
-              {getDateNumber(item)}
-            </span>
-            <span className={`calendar-date-value-item-week`}>
-              {getDateWeekDay(item)}
-            </span>
+            <div
+              className={`calendar-date-value-item-wrapper
+               ${getFirstCurrentDateStyle(props, index)}`}
+            >
+              <span className={`calendar-date-value-item-number`}>
+                {getDateNumber(item)}
+              </span>
+              <span className={`calendar-date-value-item-week`}>
+                {getDateWeekDay(item)}
+              </span>
+            </div>
           </div>
         ))}
         {props.secondMonthDates.map((item, index) => (
           <div key={index} className={`calendar-date-value-item-container`}>
-            <span className={`calendar-date-value-item-number`}>
-              {getDateNumber(item)}
-            </span>
-            <span className={`calendar-date-value-item-week`}>
-              {getDateWeekDay(item)}
-            </span>
+            <div className={`calendar-date-value-item-wrapper`}>
+              <span className={`calendar-date-value-item-number`}>
+                {getDateNumber(item)}
+              </span>
+              <span className={`calendar-date-value-item-week`}>
+                {getDateWeekDay(item)}
+              </span>
+            </div>
           </div>
         ))}
       </div>

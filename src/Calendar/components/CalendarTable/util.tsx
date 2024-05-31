@@ -74,24 +74,38 @@ export function getColumnBorderSelectedStyle(
   return value;
 }
 
+export function getColumnDisabledStyle(
+  columnIndex: number,
+  disabledColumnNumber: number,
+): string {
+  if (columnIndex < disabledColumnNumber) {
+    return 'calendar-table-row-column-disabled-container';
+  }
+
+  return '';
+}
+
 export function onMouseDown(
   rowIndex: number,
   columnIndex: number,
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
+  disabledColumnNumber: number,
 ) {
-  setSelectionVisible(true);
-  setSelection({
-    rowStartIndex: rowIndex,
-    rowEndIndex: -1,
-    columnStartIndex: columnIndex,
-    columnEndIndex: -1,
-  });
-  const hideSelection = () => {
-    setSelectionVisible(false);
-    document.removeEventListener('mouseup', hideSelection);
-  };
-  document.addEventListener('mouseup', hideSelection);
+  if (columnIndex > disabledColumnNumber - 1) {
+    setSelectionVisible(true);
+    setSelection({
+      rowStartIndex: rowIndex,
+      rowEndIndex: -1,
+      columnStartIndex: columnIndex,
+      columnEndIndex: -1,
+    });
+    const hideSelection = () => {
+      setSelectionVisible(false);
+      document.removeEventListener('mouseup', hideSelection);
+    };
+    document.addEventListener('mouseup', hideSelection);
+  }
 }
 
 export function onMouseOver(
@@ -100,13 +114,16 @@ export function onMouseOver(
   selectionVisible: boolean,
   selection: CalendarTableSelection,
   setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
+  disabledColumnNumber: number,
 ) {
-  if (selectionVisible) {
-    setSelection({
-      rowStartIndex: selection.rowStartIndex,
-      rowEndIndex: rowIndex,
-      columnStartIndex: selection.columnStartIndex,
-      columnEndIndex: columnIndex,
-    });
+  if (columnIndex > disabledColumnNumber - 1) {
+    if (selectionVisible) {
+      setSelection({
+        rowStartIndex: selection.rowStartIndex,
+        rowEndIndex: rowIndex,
+        columnStartIndex: selection.columnStartIndex,
+        columnEndIndex: columnIndex,
+      });
+    }
   }
 }

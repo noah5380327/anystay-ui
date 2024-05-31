@@ -6,13 +6,15 @@ import 'anystay-ui/Calendar/style.less';
 import { generateDates } from 'anystay-ui/Calendar/util';
 import React, { useEffect, useState, type FC } from 'react';
 
-const Calendar: FC<CalendarProp> = () => {
+const Calendar: FC<CalendarProp> = (props) => {
+  const dayNumber = props.dayNumber || 14;
+
   const [firstMonthDates, setFirstMonthDates] = useState<string[]>([]);
   const [secondMonthDates, setSecondMonthDates] = useState<string[]>([]);
   const [elementWidth, setElementWidth] = useState<number>(0);
 
   useEffect(() => {
-    const dates = generateDates();
+    const dates = generateDates(dayNumber);
     setFirstMonthDates(dates.firstMonthDates);
     setSecondMonthDates(dates.secondMonthDates);
   }, []);
@@ -31,10 +33,15 @@ const Calendar: FC<CalendarProp> = () => {
         firstMonthDates={firstMonthDates}
         secondMonthDates={secondMonthDates}
         setElementWidth={setElementWidth}
+        dayNumber={dayNumber}
       />
 
       {/* table */}
-      <CalendarTable rowNumber={3} elementWidth={elementWidth} />
+      <CalendarTable
+        rowNumber={props.rowNumber}
+        elementWidth={elementWidth}
+        dayNumber={dayNumber}
+      />
     </div>
   );
 };

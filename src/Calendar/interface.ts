@@ -1,5 +1,6 @@
 export interface CalendarProp {
-  title: string;
+  rowNumber: number;
+  dayNumber?: number;
 }
 
 export interface CalendarDates {

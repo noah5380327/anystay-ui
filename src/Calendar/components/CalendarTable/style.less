@@ -11,10 +11,10 @@
     border-right: 1px solid @as-border-color-1;
     .calendar-table-row-column-container {
       display: flex;
-      padding: 10px;
       box-sizing: border-box;
       position: relative;
       .calendar-table-row-column-content-container {
+        padding: 10px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -35,7 +35,11 @@
     .calendar-table-row-column-selected-border-right-container {
       border-right: 1px solid @as-border-color-2 !important;
     }
-    .calendar-table-row-column-container:before {
+    .calendar-table-row-column-disabled-container {
+      background: @as-background-color-1;
+      cursor: not-allowed;
+    }
+    .calendar-table-row-column-container::before {
       content: '';
       position: absolute;
       top: 0;

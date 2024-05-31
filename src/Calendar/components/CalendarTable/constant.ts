@@ -1,0 +1,1 @@
+export const DEFAULT_DISABLED_COLUMN_NUMBER = 2;
