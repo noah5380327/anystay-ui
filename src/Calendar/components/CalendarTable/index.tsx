@@ -4,10 +4,13 @@ import {
 } from 'anystay-ui/Calendar/components/CalendarTable/interface';
 import 'anystay-ui/Calendar/components/CalendarTable/style.less';
 import {
+  generateTableCells,
+  getColumBlockStyle,
   getColumnBackgroundSelectedStyle,
   getColumnBorderSelectedStyle,
   getColumnDisabledStyle,
   getCurrentColumnBorderSelectedStyle,
+  getTableCell,
   onClick,
   onMouseDown,
   onMouseOver,
@@ -26,6 +29,12 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
     columnEndIndex: -1,
     columnCurrentIndex: -1,
   });
+
+  const tableCells = generateTableCells(
+    props.allMonthDates,
+    props.rows,
+    props.fillRows || [],
+  );
 
   return (
     <div className={`calendar-table-container`}>
@@ -46,8 +55,14 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                  selection,
                )}
                ${getColumnBorderSelectedStyle(rowIndex, columnIndex, selection)}
-               ${getColumnDisabledStyle(columnIndex, props.subtractDayNumber)}`}
-              style={{ width: props.elementWidth, height: props.elementWidth }}
+               ${getColumnDisabledStyle(columnIndex, props.subtractDayNumber)}
+               ${getColumBlockStyle(tableCells, rowIndex, columnIndex)}`}
+              style={{
+                minWidth: props.columnWidth,
+                maxWidth: props.columnWidth,
+                minHeight: props.columnWidth,
+                maxHeight: props.columnWidth,
+              }}
               onClick={() =>
                 onClick(
                   rowIndex,
@@ -74,12 +89,13 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                   selection,
                   setSelection,
                   props.subtractDayNumber,
-                  rowItem,
                 )
               }
             >
               <div className={`calendar-table-row-column-content-container`}>
-                {rowItem.price}
+                <div className={`calendar-table-row-column-content-wrapper`}>
+                  {getTableCell(tableCells, rowIndex, columnIndex)?.value}
+                </div>
               </div>
             </div>
           ))}

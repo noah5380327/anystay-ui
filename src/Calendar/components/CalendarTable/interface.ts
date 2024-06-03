@@ -1,16 +1,18 @@
 import {
-  CalendarFillProp,
+  CalendarColumnStatusProp,
+  CalendarFillRowProp,
   CalendarRowProp,
   CalendarSelectProp,
 } from 'anystay-ui/Calendar/interface';
 
 export interface CalendarTableProp {
+  allMonthDates: string[];
   rows: CalendarRowProp[];
-  elementWidth: number;
+  columnWidth: number;
   dayNumber: number;
   subtractDayNumber: number;
   onSelect?: (prop: CalendarSelectProp) => void;
-  fillRows?: CalendarFillProp[];
+  fillRows?: CalendarFillRowProp[];
 }
 
 export interface CalendarTableSelection {
@@ -20,4 +22,20 @@ export interface CalendarTableSelection {
   columnStartIndex: number;
   columnEndIndex: number;
   columnCurrentIndex: number;
+}
+
+export interface CalendarTableCell {
+  rowIndex: number;
+  columnIndex: number;
+  rowId: string;
+  date: string;
+  value: string;
+  status: CalendarColumnStatusProp;
+}
+
+export interface CalendarFillRowCell {
+  rowId: string;
+  date: string;
+  status: CalendarColumnStatusProp;
+  value: string;
 }

@@ -1,1 +1,1 @@
-export { default as Calendar, CalendarSelectStatusProp } from './Calendar';
+export { default as Calendar, CalendarColumnStatusProp } from './Calendar';

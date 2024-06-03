@@ -1,6 +1,15 @@
-import { CalendarTableSelection } from 'anystay-ui/Calendar/components/CalendarTable/interface';
+import {
+  CalendarFillRowCell,
+  CalendarTableCell,
+  CalendarTableSelection,
+} from 'anystay-ui/Calendar/components/CalendarTable/interface';
 import 'anystay-ui/Calendar/components/CalendarTable/style.less';
-import { CalendarRowProp } from 'anystay-ui/Calendar/interface';
+import {
+  CalendarColumnStatusProp,
+  CalendarFillRowProp,
+  CalendarRowProp,
+} from 'anystay-ui/Calendar/interface';
+import moment from 'moment';
 import { Dispatch, SetStateAction } from 'react';
 
 export function getColumnBackgroundSelectedStyle(
@@ -103,6 +112,19 @@ export function getColumnDisabledStyle(
   return '';
 }
 
+export function getColumBlockStyle(
+  tableCells: CalendarTableCell[],
+  rowIndex: number,
+  columnIndex: number,
+): string {
+  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+  if (tableCell?.status === CalendarColumnStatusProp.Block) {
+    return 'calendar-table-row-column-block-container';
+  }
+
+  return '';
+}
+
 export function onClick(
   rowIndex: number,
   columnIndex: number,
@@ -154,7 +176,6 @@ export function onMouseOver(
   selection: CalendarTableSelection,
   setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
   subtractDayNumber: number,
-  rowItem: CalendarRowProp,
 ) {
   if (columnIndex > subtractDayNumber - 1) {
     if (selectionVisible) {
@@ -174,4 +195,98 @@ export function onMouseOver(
       });
     }
   }
+}
+
+export function generateDatesFromStartAndEnd(
+  startDate: string,
+  endDate: string,
+): string[] {
+  const start = moment(startDate);
+  const end = moment(endDate);
+  const dateArray: string[] = [];
+
+  while (start <= end) {
+    dateArray.push(start.format('YYYY-MM-DD'));
+    start.add(1, 'days');
+  }
+
+  return dateArray;
+}
+
+export function generateFillTableCells(
+  fillRows: CalendarFillRowProp[],
+): CalendarFillRowCell[] {
+  const fillRowCells: CalendarFillRowCell[] = [];
+  for (let i = 0; i < fillRows.length; i++) {
+    const fillRow = fillRows[i];
+    for (let j = 0; j < fillRow.columns.length; j++) {
+      const fillRowColumn = fillRow.columns[j];
+      const dates = generateDatesFromStartAndEnd(
+        fillRowColumn.startDate,
+        fillRowColumn.endDate,
+      );
+      for (let k = 0; k < dates.length; k++) {
+        fillRowCells.push({
+          rowId: fillRow.rowId,
+          date: dates[k],
+          status: fillRowColumn.status,
+          value: fillRowColumn.value,
+        });
+      }
+    }
+  }
+  return fillRowCells;
+}
+
+export function getFillRowCell(
+  fillRowCells: CalendarFillRowCell[],
+  rowId: string,
+  date: string,
+): CalendarFillRowCell {
+  return fillRowCells.filter((i) => i.rowId === rowId && i.date === date)?.[0];
+}
+
+export function generateTableCells(
+  allMonthDates: string[],
+  rows: CalendarRowProp[],
+  fillRows: CalendarFillRowProp[],
+): CalendarTableCell[] {
+  const tableCells: CalendarTableCell[] = [];
+  const fillRowCells = generateFillTableCells(fillRows);
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const rowId = row.rowId;
+    for (let j = 0; j < allMonthDates.length; j++) {
+      const column = allMonthDates[j];
+      let value = row.value;
+      let status = CalendarColumnStatusProp.Normal;
+      const fillRowCell = getFillRowCell(fillRowCells, rowId, column);
+      if (fillRowCell) {
+        value = fillRowCell.value;
+        status = fillRowCell.status;
+      }
+
+      tableCells.push({
+        rowIndex: i,
+        columnIndex: j,
+        rowId,
+        date: column,
+        value,
+        status,
+      });
+    }
+  }
+
+  return tableCells;
+}
+
+export function getTableCell(
+  tableCells: CalendarTableCell[],
+  rowIndex: number,
+  columnIndex: number,
+): CalendarTableCell {
+  return tableCells.filter(
+    (i) => i.rowIndex === rowIndex && i.columnIndex === columnIndex,
+  )?.[0];
 }

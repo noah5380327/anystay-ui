@@ -9,32 +9,21 @@ import {
   getFirstMonthDatesBorderStyle,
   getSecondCurrentDateStyle,
 } from 'anystay-ui/Calendar/components/CalendarDate/util';
-import React, { useEffect, useRef, type FC } from 'react';
+import React, { type FC } from 'react';
 
 const CalendarDate: FC<CalendarDateProp> = (props) => {
-  const elementRef = useRef(null);
-
-  useEffect(() => {
-    const element = elementRef.current;
-    if (element) {
-      // @ts-ignore
-      const totalWidth = element.clientWidth;
-      const elementWidth = totalWidth / props.dayNumber;
-      props.setElementWidth(elementWidth);
-    }
-  }, [props.firstMonthDates, props.secondMonthDates]);
-
   return (
     <div className={`calendar-date-container`}>
       <div className={`calendar-date-operation-container`}>
         <img alt={`left`} src={CalendarLeftPng} />
       </div>
-      <div ref={elementRef} className={`calendar-date-value-container`}>
+      <div className={`calendar-date-value-container`}>
         {props.firstMonthDates.map((item, index) => (
           <div
             key={index}
             className={`calendar-date-value-item-container
             ${getFirstMonthDatesBorderStyle(props, index)}`}
+            style={{ minWidth: props.columnWidth, maxWidth: props.columnWidth }}
           >
             <div
               className={`calendar-date-value-item-wrapper

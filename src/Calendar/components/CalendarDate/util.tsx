@@ -1,6 +1,6 @@
 import { CalendarDateProp } from 'anystay-ui/Calendar/components/CalendarDate/interface';
 import 'anystay-ui/Calendar/components/CalendarDate/style.less';
-import moment from 'moment/moment';
+import moment from 'moment';
 
 export function getDateNumber(value: string): number {
   return moment(value).date();

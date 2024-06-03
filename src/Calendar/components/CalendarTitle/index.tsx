@@ -7,8 +7,8 @@ import {
 import React, { type FC } from 'react';
 
 const CalendarTitle: FC<CalendarTitleProp> = (props) => {
-  const firstMonthWidth = props.elementWidth * props.firstMonthDates.length;
-  const secondMonthWidth = props.elementWidth * props.secondMonthDates.length;
+  const firstMonthWidth = props.columnWidth * props.firstMonthDates.length;
+  const secondMonthWidth = props.columnWidth * props.secondMonthDates.length;
 
   return (
     <div className={`calendar-title-container`}>

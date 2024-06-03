@@ -3,41 +3,42 @@ export interface CalendarProp {
   dayNumber?: number;
   subtractDayNumber?: number;
   onSelect?: (prop: CalendarSelectProp) => void;
-  fillRows?: CalendarFillProp[];
+  fillRows?: CalendarFillRowProp[];
+  columnWidth?: number;
 }
 
 export interface CalendarRowProp {
-  price: number;
-  itemId: string;
+  value: string;
+  rowId: string;
 }
 
 export interface CalendarSelectProp {
   startDate: string;
   endDate: string;
-  status: CalendarSelectStatusProp;
-  price: number;
-  itemIds: string[];
+  status: CalendarColumnStatusProp;
+  value: string;
+  rowIds: string[];
 }
 
-export enum CalendarSelectStatusProp {
-  Available = 'available',
-  Block = 'block',
-  UnAvailable = 'unAvailable',
+export enum CalendarColumnStatusProp {
+  Normal = 'Normal',
+  Block = 'Block',
 }
 
-export interface CalendarFillProp {
-  itemId: string;
-  items: CalendarFillItemProp[];
+export interface CalendarFillRowProp {
+  rowId: string;
+  columns: CalendarFillColumnProp[];
 }
 
-export interface CalendarFillItemProp {
+export interface CalendarFillColumnProp {
   startDate: string;
   endDate: string;
-  status: CalendarSelectStatusProp;
-  price: number;
+  status: CalendarColumnStatusProp;
+  value: string;
 }
 
 export interface CalendarDates {
   firstMonthDates: string[];
   secondMonthDates: string[];
+  allMonthDates: string[];
 }

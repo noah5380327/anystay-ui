@@ -2,6 +2,7 @@ import CalendarDate from 'anystay-ui/Calendar/components/CalendarDate';
 import CalendarTable from 'anystay-ui/Calendar/components/CalendarTable';
 import CalendarTitle from 'anystay-ui/Calendar/components/CalendarTitle';
 import {
+  DEFAULT_COLUMN_WIDTH,
   DEFAULT_DAY_NUMBER,
   DEFAULT_SUBTRACT_DAY_NUMBER,
 } from 'anystay-ui/Calendar/constant';
@@ -14,15 +15,17 @@ const Calendar: FC<CalendarProp> = (props) => {
   const dayNumber = props.dayNumber || DEFAULT_DAY_NUMBER;
   const subtractDayNumber =
     props.subtractDayNumber || DEFAULT_SUBTRACT_DAY_NUMBER;
+  const columnWidth = props.columnWidth || DEFAULT_COLUMN_WIDTH;
 
   const [firstMonthDates, setFirstMonthDates] = useState<string[]>([]);
   const [secondMonthDates, setSecondMonthDates] = useState<string[]>([]);
-  const [elementWidth, setElementWidth] = useState<number>(0);
+  const [allMonthDates, setAllMonthDates] = useState<string[]>([]);
 
   useEffect(() => {
     const dates = generateDates(dayNumber, subtractDayNumber);
     setFirstMonthDates(dates.firstMonthDates);
     setSecondMonthDates(dates.secondMonthDates);
+    setAllMonthDates(dates.allMonthDates);
   }, []);
 
   return (
@@ -31,21 +34,22 @@ const Calendar: FC<CalendarProp> = (props) => {
       <CalendarTitle
         firstMonthDates={firstMonthDates}
         secondMonthDates={secondMonthDates}
-        elementWidth={elementWidth}
+        columnWidth={columnWidth}
       />
 
       {/* date */}
       <CalendarDate
         firstMonthDates={firstMonthDates}
         secondMonthDates={secondMonthDates}
-        setElementWidth={setElementWidth}
         dayNumber={dayNumber}
+        columnWidth={columnWidth}
       />
 
       {/* table */}
       <CalendarTable
+        allMonthDates={allMonthDates}
         rows={props.rows}
-        elementWidth={elementWidth}
+        columnWidth={columnWidth}
         dayNumber={dayNumber}
         subtractDayNumber={subtractDayNumber}
         fillRows={props.fillRows}
@@ -57,4 +61,4 @@ const Calendar: FC<CalendarProp> = (props) => {
 
 export default Calendar;
 
-export { CalendarSelectStatusProp } from './interface';
+export { CalendarColumnStatusProp } from './interface';
