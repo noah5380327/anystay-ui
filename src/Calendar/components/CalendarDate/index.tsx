@@ -7,6 +7,7 @@ import {
   getDateWeekDay,
   getFirstCurrentDateStyle,
   getFirstMonthDatesBorderStyle,
+  getSecondCurrentDateStyle,
 } from 'anystay-ui/Calendar/components/CalendarDate/util';
 import React, { useEffect, useRef, type FC } from 'react';
 
@@ -50,7 +51,10 @@ const CalendarDate: FC<CalendarDateProp> = (props) => {
         ))}
         {props.secondMonthDates.map((item, index) => (
           <div key={index} className={`calendar-date-value-item-container`}>
-            <div className={`calendar-date-value-item-wrapper`}>
+            <div
+              className={`calendar-date-value-item-wrapper
+                ${getSecondCurrentDateStyle(props, index)}`}
+            >
               <span className={`calendar-date-value-item-number`}>
                 {getDateNumber(item)}
               </span>

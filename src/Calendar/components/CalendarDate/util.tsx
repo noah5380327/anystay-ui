@@ -30,3 +30,14 @@ export function getFirstCurrentDateStyle(
     ? `calendar-date-value-item-wrapper-selected-container`
     : '';
 }
+
+export function getSecondCurrentDateStyle(
+  props: CalendarDateProp,
+  index: number,
+): string {
+  const secondDate = props.secondMonthDates[index];
+  const today = moment().format('YYYY-MM-DD');
+  return secondDate === today
+    ? `calendar-date-value-item-wrapper-selected-container`
+    : '';
+}

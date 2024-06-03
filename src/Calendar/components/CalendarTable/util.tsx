@@ -1,5 +1,6 @@
 import { CalendarTableSelection } from 'anystay-ui/Calendar/components/CalendarTable/interface';
 import 'anystay-ui/Calendar/components/CalendarTable/style.less';
+import { CalendarRowProp } from 'anystay-ui/Calendar/interface';
 import { Dispatch, SetStateAction } from 'react';
 
 export function getColumnBackgroundSelectedStyle(
@@ -74,6 +75,23 @@ export function getColumnBorderSelectedStyle(
   return value;
 }
 
+export function getCurrentColumnBorderSelectedStyle(
+  rowIndex: number,
+  columnIndex: number,
+  selection: CalendarTableSelection,
+) {
+  const { rowCurrentIndex, columnCurrentIndex } = selection;
+  if (
+    rowCurrentIndex !== -1 &&
+    columnCurrentIndex !== -1 &&
+    rowIndex === rowCurrentIndex &&
+    columnIndex === columnCurrentIndex
+  ) {
+    return `calendar-table-row-column-current-selected-border-container`;
+  }
+  return '';
+}
+
 export function getColumnDisabledStyle(
   columnIndex: number,
   subtractDayNumber: number,
@@ -83,6 +101,25 @@ export function getColumnDisabledStyle(
   }
 
   return '';
+}
+
+export function onClick(
+  rowIndex: number,
+  columnIndex: number,
+  selection: CalendarTableSelection,
+  setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
+  subtractDayNumber: number,
+) {
+  if (columnIndex > subtractDayNumber - 1) {
+    setSelection({
+      rowStartIndex: selection.rowStartIndex,
+      rowEndIndex: rowIndex,
+      rowCurrentIndex: selection.rowCurrentIndex,
+      columnStartIndex: selection.columnStartIndex,
+      columnEndIndex: columnIndex,
+      columnCurrentIndex: selection.columnCurrentIndex,
+    });
+  }
 }
 
 export function onMouseDown(
@@ -97,8 +134,10 @@ export function onMouseDown(
     setSelection({
       rowStartIndex: rowIndex,
       rowEndIndex: -1,
+      rowCurrentIndex: rowIndex,
       columnStartIndex: columnIndex,
       columnEndIndex: -1,
+      columnCurrentIndex: columnIndex,
     });
     const hideSelection = () => {
       setSelectionVisible(false);
@@ -115,14 +154,23 @@ export function onMouseOver(
   selection: CalendarTableSelection,
   setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
   subtractDayNumber: number,
+  rowItem: CalendarRowProp,
 ) {
   if (columnIndex > subtractDayNumber - 1) {
     if (selectionVisible) {
+      const currentRow = selection.rowCurrentIndex;
+      const currentCol = selection.columnCurrentIndex;
+      const rowStart = rowIndex >= currentRow ? currentRow : rowIndex;
+      const rowEnd = !(rowIndex >= currentRow) ? currentRow : rowIndex;
+      const columnStart = columnIndex >= currentCol ? currentCol : columnIndex;
+      const columnEnd = !(columnIndex >= currentCol) ? currentCol : columnIndex;
       setSelection({
-        rowStartIndex: selection.rowStartIndex,
-        rowEndIndex: rowIndex,
-        columnStartIndex: selection.columnStartIndex,
-        columnEndIndex: columnIndex,
+        rowStartIndex: rowStart,
+        rowEndIndex: rowEnd,
+        rowCurrentIndex: currentRow,
+        columnStartIndex: columnStart,
+        columnEndIndex: columnEnd,
+        columnCurrentIndex: currentCol,
       });
     }
   }

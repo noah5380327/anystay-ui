@@ -44,13 +44,17 @@ const Calendar: FC<CalendarProp> = (props) => {
 
       {/* table */}
       <CalendarTable
-        rowNumber={props.rowNumber}
+        rows={props.rows}
         elementWidth={elementWidth}
         dayNumber={dayNumber}
         subtractDayNumber={subtractDayNumber}
+        fillRows={props.fillRows}
+        onSelect={props.onSelect}
       />
     </div>
   );
 };
 
 export default Calendar;
+
+export { CalendarSelectStatusProp } from './interface';
