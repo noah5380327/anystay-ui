@@ -5,6 +5,7 @@ import {
   DEFAULT_COLUMN_WIDTH,
   DEFAULT_DATE_ROW_HEIGHT,
   DEFAULT_DAY_NUMBER,
+  DEFAULT_STEP_DAY_NUMBER,
   DEFAULT_SUBTRACT_DAY_NUMBER,
   DEFAULT_TITLE_ROW_HEIGHT,
 } from 'anystay-ui/Calendar/constant';
@@ -19,6 +20,7 @@ const Calendar: FC<CalendarProp> = (props) => {
   const dayNumber = props.dayNumber || DEFAULT_DAY_NUMBER;
   const subtractDayNumber =
     props.subtractDayNumber || DEFAULT_SUBTRACT_DAY_NUMBER;
+  const stepDayNumber = props.stepDayNumber || DEFAULT_STEP_DAY_NUMBER;
   const columnWidth = props.columnWidth || DEFAULT_COLUMN_WIDTH;
   const titleRowHeight = props.titleRowHeight || DEFAULT_TITLE_ROW_HEIGHT;
   const dateRowHeight = props.dateRowHeight || DEFAULT_DATE_ROW_HEIGHT;
@@ -45,7 +47,6 @@ const Calendar: FC<CalendarProp> = (props) => {
           scrollWidth,
         }) => (
           <div className={`calendar-container`}>
-            {/* title */}
             <CalendarTitle
               monthDate={monthDate}
               columnWidth={columnWidth}
@@ -60,11 +61,10 @@ const Calendar: FC<CalendarProp> = (props) => {
               scrollTop={scrollTop}
               scrollWidth={scrollWidth}
             />
-
-            {/* date */}
             <CalendarDate
               monthDate={monthDate}
               dayNumber={dayNumber}
+              stepDayNumber={stepDayNumber}
               columnWidth={columnWidth}
               dateRowHeight={dateRowHeight}
               clientHeight={clientHeight}
@@ -76,9 +76,8 @@ const Calendar: FC<CalendarProp> = (props) => {
               scrollLeft={customScrollLeft}
               scrollTop={scrollTop}
               scrollWidth={scrollWidth}
+              setCustomScrollLeft={setCustomScrollLeft}
             />
-
-            {/* table */}
             <CalendarTable
               monthDate={monthDate}
               rows={props.rows}

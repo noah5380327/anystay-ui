@@ -8,6 +8,8 @@ import {
   getCurrentStyle,
   getDateNumber,
   getDateWeekDay,
+  onScrollNext,
+  onScrollPrev,
 } from 'anystay-ui/Calendar/components/CalendarDate/util';
 import React, { type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
@@ -17,7 +19,10 @@ const CalendarDate: FC<CalendarDateProp> = (props) => {
 
   return (
     <div className={`calendar-date-container`}>
-      <div className={`calendar-date-operation-container`}>
+      <div
+        className={`calendar-date-operation-container`}
+        onClick={() => onScrollPrev(props)}
+      >
         <img alt={`left`} src={CalendarLeftPng} />
       </div>
       <AutoSizer disableHeight>
@@ -61,6 +66,7 @@ const CalendarDate: FC<CalendarDateProp> = (props) => {
       </AutoSizer>
       <div
         className={`calendar-date-operation-container calendar-date-operation-right-container`}
+        onClick={() => onScrollNext(props)}
       >
         <img alt={`right`} src={CalendarLeftPng} />
       </div>

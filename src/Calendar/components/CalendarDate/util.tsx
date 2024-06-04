@@ -59,3 +59,23 @@ export function getCurrentStyle(dateCell: CalendarDateCell): string {
     ? `calendar-date-value-item-wrapper-selected-container`
     : '';
 }
+
+export function onScrollPrev(props: CalendarDateProp) {
+  let currentScrollLeft = props.scrollLeft;
+  currentScrollLeft -= props.stepDayNumber * props.columnWidth;
+  const minScrollLeft = 0;
+  if (currentScrollLeft < minScrollLeft) {
+    currentScrollLeft = minScrollLeft;
+  }
+  props.setCustomScrollLeft(currentScrollLeft);
+}
+
+export function onScrollNext(props: CalendarDateProp) {
+  let currentScrollLeft = props.scrollLeft;
+  currentScrollLeft += props.stepDayNumber * props.columnWidth;
+  const maxScrollLeft = props.dayNumber * props.columnWidth - props.clientWidth;
+  if (currentScrollLeft > maxScrollLeft) {
+    currentScrollLeft = maxScrollLeft;
+  }
+  props.setCustomScrollLeft(currentScrollLeft);
+}
