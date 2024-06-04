@@ -10,7 +10,7 @@ import {
 } from 'anystay-ui/Calendar/constant';
 import { CalendarMonthDate, CalendarProp } from 'anystay-ui/Calendar/interface';
 import 'anystay-ui/Calendar/style.less';
-import { generateMonthDate } from 'anystay-ui/Calendar/util';
+import { generateMonthDate, onCustomScroll } from 'anystay-ui/Calendar/util';
 import React, { useEffect, useState, type FC } from 'react';
 import { ScrollSync } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -24,6 +24,9 @@ const Calendar: FC<CalendarProp> = (props) => {
   const dateRowHeight = props.dateRowHeight || DEFAULT_DATE_ROW_HEIGHT;
 
   const [monthDate, setMonthDate] = useState<CalendarMonthDate>({});
+  const [customScrollLeft, setCustomScrollLeft] = useState<number>(
+    (subtractDayNumber - 2) * columnWidth,
+  );
 
   useEffect(() => {
     const date = generateMonthDate(dayNumber, subtractDayNumber);
@@ -38,7 +41,6 @@ const Calendar: FC<CalendarProp> = (props) => {
           clientWidth,
           onScroll,
           scrollHeight,
-          scrollLeft,
           scrollTop,
           scrollWidth,
         }) => (
@@ -50,9 +52,11 @@ const Calendar: FC<CalendarProp> = (props) => {
               titleRowHeight={titleRowHeight}
               clientHeight={clientHeight}
               clientWidth={clientWidth}
-              onScroll={onScroll}
+              onScroll={(sp) => {
+                onCustomScroll(sp, setCustomScrollLeft, onScroll);
+              }}
               scrollHeight={scrollHeight}
-              scrollLeft={scrollLeft}
+              scrollLeft={customScrollLeft}
               scrollTop={scrollTop}
               scrollWidth={scrollWidth}
             />
@@ -65,9 +69,11 @@ const Calendar: FC<CalendarProp> = (props) => {
               dateRowHeight={dateRowHeight}
               clientHeight={clientHeight}
               clientWidth={clientWidth}
-              onScroll={onScroll}
+              onScroll={(sp) => {
+                onCustomScroll(sp, setCustomScrollLeft, onScroll);
+              }}
               scrollHeight={scrollHeight}
-              scrollLeft={scrollLeft}
+              scrollLeft={customScrollLeft}
               scrollTop={scrollTop}
               scrollWidth={scrollWidth}
             />
@@ -83,9 +89,11 @@ const Calendar: FC<CalendarProp> = (props) => {
               onSelect={props.onSelect}
               clientHeight={clientHeight}
               clientWidth={clientWidth}
-              onScroll={onScroll}
+              onScroll={(sp) => {
+                onCustomScroll(sp, setCustomScrollLeft, onScroll);
+              }}
               scrollHeight={scrollHeight}
-              scrollLeft={scrollLeft}
+              scrollLeft={customScrollLeft}
               scrollTop={scrollTop}
               scrollWidth={scrollWidth}
             />

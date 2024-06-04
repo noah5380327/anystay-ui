@@ -1,6 +1,8 @@
 import { CalendarMonthDate } from 'anystay-ui/Calendar/interface';
 import 'anystay-ui/Calendar/style.less';
 import moment from 'moment';
+import { Dispatch, SetStateAction } from 'react';
+import { OnScrollParams } from 'react-virtualized';
 
 export function generateMonthDate(
   dayNumber: number,
@@ -25,4 +27,16 @@ export function generateMonthDate(
   });
 
   return groupedByMonth;
+}
+
+export function onCustomScroll(
+  sp: OnScrollParams,
+  setCustomScrollLeft: Dispatch<SetStateAction<number>>,
+  onScroll: (params: OnScrollParams) => void,
+) {
+  setCustomScrollLeft(sp.scrollLeft);
+  onScroll({
+    ...sp,
+    scrollLeft: sp.scrollLeft,
+  });
 }
