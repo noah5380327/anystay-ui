@@ -10,6 +10,8 @@ import { CalendarMonthDate, CalendarProp } from 'anystay-ui/Calendar/interface';
 import 'anystay-ui/Calendar/style.less';
 import { generateMonthDate } from 'anystay-ui/Calendar/util';
 import React, { useEffect, useState, type FC } from 'react';
+import { ScrollSync } from 'react-virtualized';
+import 'react-virtualized/styles.css';
 
 const Calendar: FC<CalendarProp> = (props) => {
   const dayNumber = props.dayNumber || DEFAULT_DAY_NUMBER;
@@ -26,28 +28,64 @@ const Calendar: FC<CalendarProp> = (props) => {
 
   return (
     Object.keys(monthDate).length > 0 && (
-      <div className={`calendar-container`}>
-        {/* title */}
-        <CalendarTitle monthDate={monthDate} columnWidth={columnWidth} />
+      <ScrollSync>
+        {({
+          clientHeight,
+          clientWidth,
+          onScroll,
+          scrollHeight,
+          scrollLeft,
+          scrollTop,
+          scrollWidth,
+        }) => (
+          <div className={`calendar-container`}>
+            {/* title */}
+            <CalendarTitle
+              monthDate={monthDate}
+              columnWidth={columnWidth}
+              clientHeight={clientHeight}
+              clientWidth={clientWidth}
+              onScroll={onScroll}
+              scrollHeight={scrollHeight}
+              scrollLeft={scrollLeft}
+              scrollTop={scrollTop}
+              scrollWidth={scrollWidth}
+            />
 
-        {/* date */}
-        <CalendarDate
-          monthDate={monthDate}
-          dayNumber={dayNumber}
-          columnWidth={columnWidth}
-        />
+            {/* date */}
+            <CalendarDate
+              monthDate={monthDate}
+              dayNumber={dayNumber}
+              columnWidth={columnWidth}
+              clientHeight={clientHeight}
+              clientWidth={clientWidth}
+              onScroll={onScroll}
+              scrollHeight={scrollHeight}
+              scrollLeft={scrollLeft}
+              scrollTop={scrollTop}
+              scrollWidth={scrollWidth}
+            />
 
-        {/* table */}
-        <CalendarTable
-          monthDate={monthDate}
-          rows={props.rows}
-          columnWidth={columnWidth}
-          dayNumber={dayNumber}
-          subtractDayNumber={subtractDayNumber}
-          fillRows={props.fillRows}
-          onSelect={props.onSelect}
-        />
-      </div>
+            {/* table */}
+            <CalendarTable
+              monthDate={monthDate}
+              rows={props.rows}
+              columnWidth={columnWidth}
+              dayNumber={dayNumber}
+              subtractDayNumber={subtractDayNumber}
+              fillRows={props.fillRows}
+              onSelect={props.onSelect}
+              clientHeight={clientHeight}
+              clientWidth={clientWidth}
+              onScroll={onScroll}
+              scrollHeight={scrollHeight}
+              scrollLeft={scrollLeft}
+              scrollTop={scrollTop}
+              scrollWidth={scrollWidth}
+            />
+          </div>
+        )}
+      </ScrollSync>
     )
   );
 };

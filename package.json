@@ -60,6 +60,7 @@
     "@types/moment": "^2.13.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@types/react-virtualized": "^9.21.30",
     "@umijs/lint": "^4.0.0",
     "dumi": "^2.3.0",
     "eslint": "^8.23.0",
@@ -73,5 +74,8 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "stylelint": "^14.9.1"
+  },
+  "dependencies": {
+    "react-virtualized": "^9.22.5"
   }
 }

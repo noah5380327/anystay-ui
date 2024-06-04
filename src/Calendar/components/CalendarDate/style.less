@@ -13,47 +13,47 @@
     }
   }
   .calendar-date-operation-right-container {
+    position: absolute;
+    right: -10px;
+    top: 0;
+    height: 100%;
     img {
       transform: scaleX(-1);
     }
   }
-  .calendar-date-value-container {
+  .calendar-date-value-item-container {
     display: flex;
-    flex: 1;
-    .calendar-date-value-item-container {
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 10px;
+    .calendar-date-value-item-wrapper {
       display: flex;
+      flex: 1;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding-bottom: 10px;
-      .calendar-date-value-item-wrapper {
-        display: flex;
-        flex: 1;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding-bottom: 5px;
-        .calendar-date-value-item-number {
-          font-size: @as-font-size-2;
-          color: @as-text-color-1;
-          font-weight: @as-font-weight-1;
-        }
-        .calendar-date-value-item-week {
-          font-size: @as-font-size-3;
-          color: @as-text-color-1;
-          font-weight: @as-font-weight-1;
-        }
+      padding-bottom: 5px;
+      .calendar-date-value-item-number {
+        font-size: @as-font-size-2;
+        color: @as-text-color-1;
+        font-weight: @as-font-weight-1;
       }
-      .calendar-date-value-item-wrapper-selected-container {
-        background: @as-background-color-2;
-        border-radius: 10px;
-        .calendar-date-value-item-number,
-        .calendar-date-value-item-week {
-          color: @as-text-color-2;
-        }
+      .calendar-date-value-item-week {
+        font-size: @as-font-size-3;
+        color: @as-text-color-1;
+        font-weight: @as-font-weight-1;
       }
     }
-    .calendar-date-value-item-border-container {
-      border-right: 1px solid @as-border-color-1;
+    .calendar-date-value-item-wrapper-selected-container {
+      background: @as-background-color-2;
+      border-radius: 10px;
+      .calendar-date-value-item-number,
+      .calendar-date-value-item-week {
+        color: @as-text-color-2;
+      }
     }
+  }
+  .calendar-date-value-item-border-container {
+    border-right: 1px solid @as-border-color-1;
   }
 }

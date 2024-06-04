@@ -11,7 +11,8 @@ import {
 
 export default () => (
   <Calendar
-    subtractDayNumber={5}
+    subtractDayNumber={50}
+    dayNumber={64}
     rows={[
       { rowId: 1, value: 145 },
       { rowId: 2, value: 145 },

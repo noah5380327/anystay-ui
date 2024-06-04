@@ -5,6 +5,7 @@ import {
   CalendarRowProp,
   CalendarSelectProp,
 } from 'anystay-ui/Calendar/interface';
+import { OnScrollParams } from 'react-virtualized';
 
 export interface CalendarTableProp {
   monthDate: CalendarMonthDate;
@@ -14,6 +15,13 @@ export interface CalendarTableProp {
   subtractDayNumber: number;
   onSelect?: (prop: CalendarSelectProp) => void;
   fillRows?: CalendarFillRowProp[];
+  clientHeight: number;
+  clientWidth: number;
+  onScroll: (params: OnScrollParams) => void;
+  scrollHeight: number;
+  scrollLeft: number;
+  scrollTop: number;
+  scrollWidth: number;
 }
 
 export interface CalendarTableSelection {
