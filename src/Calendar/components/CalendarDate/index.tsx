@@ -13,7 +13,6 @@ import React, { type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
 
 const CalendarDate: FC<CalendarDateProp> = (props) => {
-  const dateRowHeight = 65;
   const dateCells = generateDateCells(props);
 
   return (
@@ -25,11 +24,11 @@ const CalendarDate: FC<CalendarDateProp> = (props) => {
         {({ width }) => (
           <Grid
             width={width}
-            height={dateRowHeight}
+            height={props.dateRowHeight}
             columnCount={dateCells.length}
             columnWidth={props.columnWidth}
             rowCount={1}
-            rowHeight={dateRowHeight}
+            rowHeight={props.dateRowHeight}
             clientHeight={props.clientHeight}
             clientWidth={props.clientWidth}
             onScroll={props.onScroll}

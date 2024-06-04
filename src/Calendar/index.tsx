@@ -3,8 +3,10 @@ import CalendarTable from 'anystay-ui/Calendar/components/CalendarTable';
 import CalendarTitle from 'anystay-ui/Calendar/components/CalendarTitle';
 import {
   DEFAULT_COLUMN_WIDTH,
+  DEFAULT_DATE_ROW_HEIGHT,
   DEFAULT_DAY_NUMBER,
   DEFAULT_SUBTRACT_DAY_NUMBER,
+  DEFAULT_TITLE_ROW_HEIGHT,
 } from 'anystay-ui/Calendar/constant';
 import { CalendarMonthDate, CalendarProp } from 'anystay-ui/Calendar/interface';
 import 'anystay-ui/Calendar/style.less';
@@ -18,6 +20,8 @@ const Calendar: FC<CalendarProp> = (props) => {
   const subtractDayNumber =
     props.subtractDayNumber || DEFAULT_SUBTRACT_DAY_NUMBER;
   const columnWidth = props.columnWidth || DEFAULT_COLUMN_WIDTH;
+  const titleRowHeight = props.titleRowHeight || DEFAULT_TITLE_ROW_HEIGHT;
+  const dateRowHeight = props.dateRowHeight || DEFAULT_DATE_ROW_HEIGHT;
 
   const [monthDate, setMonthDate] = useState<CalendarMonthDate>({});
 
@@ -43,6 +47,7 @@ const Calendar: FC<CalendarProp> = (props) => {
             <CalendarTitle
               monthDate={monthDate}
               columnWidth={columnWidth}
+              titleRowHeight={titleRowHeight}
               clientHeight={clientHeight}
               clientWidth={clientWidth}
               onScroll={onScroll}
@@ -57,6 +62,7 @@ const Calendar: FC<CalendarProp> = (props) => {
               monthDate={monthDate}
               dayNumber={dayNumber}
               columnWidth={columnWidth}
+              dateRowHeight={dateRowHeight}
               clientHeight={clientHeight}
               clientWidth={clientWidth}
               onScroll={onScroll}

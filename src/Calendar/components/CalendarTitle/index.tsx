@@ -9,7 +9,6 @@ import React, { type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
 
 const CalendarTitle: FC<CalendarTitleProp> = (props) => {
-  const titleRowHeight = 45;
   const titleCells = generateTitleCells(props);
 
   return (
@@ -18,13 +17,13 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
         {({ width }) => (
           <Grid
             width={width}
-            height={titleRowHeight}
+            height={props.titleRowHeight}
             columnCount={titleCells.length}
             columnWidth={({ index }) => {
               return props.columnWidth * titleCells[index].dates.length;
             }}
             rowCount={1}
-            rowHeight={titleRowHeight}
+            rowHeight={props.titleRowHeight}
             clientHeight={props.clientHeight}
             clientWidth={props.clientWidth}
             onScroll={props.onScroll}

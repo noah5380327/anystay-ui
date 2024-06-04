@@ -5,6 +5,8 @@ export interface CalendarProp {
   onSelect?: (prop: CalendarSelectProp) => void;
   fillRows?: CalendarFillRowProp[];
   columnWidth?: number;
+  titleRowHeight?: number;
+  dateRowHeight?: number;
 }
 
 export interface CalendarRowProp {

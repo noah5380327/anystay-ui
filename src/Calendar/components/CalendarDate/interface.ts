@@ -5,6 +5,7 @@ export interface CalendarDateProp {
   monthDate: CalendarMonthDate;
   dayNumber: number;
   columnWidth: number;
+  dateRowHeight: number;
   clientHeight: number;
   clientWidth: number;
   onScroll: (params: OnScrollParams) => void;
