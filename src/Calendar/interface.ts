@@ -15,8 +15,6 @@ export interface CalendarRowProp {
 export interface CalendarSelectProp {
   startDate: string;
   endDate: string;
-  status: CalendarColumnStatusProp;
-  value: string;
   rowIds: string[];
 }
 

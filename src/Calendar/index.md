@@ -2,8 +2,12 @@
 
 This is an example component.
 
-```jsx
-import { Calendar, CalendarColumnStatusProp } from 'anystay-ui';
+```tsx
+import {
+  Calendar,
+  CalendarColumnStatusProp,
+  CalendarSelectProp,
+} from 'anystay-ui';
 
 export default () => (
   <Calendar
@@ -41,6 +45,9 @@ export default () => (
         ],
       },
     ]}
+    onSelect={(prop: CalendarSelectProp) => {
+      console.log(prop);
+    }}
   />
 );
 ```

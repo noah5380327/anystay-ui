@@ -14,6 +14,7 @@ import {
   onClick,
   onMouseDown,
   onMouseOver,
+  onMouseUp,
 } from 'anystay-ui/Calendar/components/CalendarTable/util';
 import React, { useState, type FC } from 'react';
 
@@ -89,6 +90,17 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                   selection,
                   setSelection,
                   props.subtractDayNumber,
+                )
+              }
+              onMouseUp={() =>
+                onMouseUp(
+                  columnIndex,
+                  selectionVisible,
+                  setSelectionVisible,
+                  selection,
+                  props.subtractDayNumber,
+                  tableCells,
+                  props.onSelect,
                 )
               }
             >

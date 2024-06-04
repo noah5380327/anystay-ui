@@ -60,5 +60,3 @@ const Calendar: FC<CalendarProp> = (props) => {
 };
 
 export default Calendar;
-
-export { CalendarColumnStatusProp } from './interface';

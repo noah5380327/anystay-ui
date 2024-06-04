@@ -8,6 +8,7 @@ import {
   CalendarColumnStatusProp,
   CalendarFillRowProp,
   CalendarRowProp,
+  CalendarSelectProp,
 } from 'anystay-ui/Calendar/interface';
 import moment from 'moment';
 import { Dispatch, SetStateAction } from 'react';
@@ -161,11 +162,6 @@ export function onMouseDown(
       columnEndIndex: -1,
       columnCurrentIndex: columnIndex,
     });
-    const hideSelection = () => {
-      setSelectionVisible(false);
-      document.removeEventListener('mouseup', hideSelection);
-    };
-    document.addEventListener('mouseup', hideSelection);
   }
 }
 
@@ -193,6 +189,51 @@ export function onMouseOver(
         columnEndIndex: columnEnd,
         columnCurrentIndex: currentCol,
       });
+    }
+  }
+}
+
+export function onMouseUp(
+  columnIndex: number,
+  selectionVisible: boolean,
+  setSelectionVisible: Dispatch<SetStateAction<boolean>>,
+  selection: CalendarTableSelection,
+  subtractDayNumber: number,
+  tableCells: CalendarTableCell[],
+  onSelect?: (prop: CalendarSelectProp) => void,
+) {
+  if (columnIndex > subtractDayNumber - 1) {
+    if (selectionVisible) {
+      setSelectionVisible(false);
+
+      if (onSelect) {
+        const selectProp: CalendarSelectProp = {
+          startDate: '',
+          endDate: '',
+          rowIds: [],
+        };
+
+        const { rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex } =
+          selection;
+        const tableRowCells = getTableRowCells(
+          tableCells,
+          rowStartIndex,
+          rowEndIndex,
+          columnStartIndex,
+        );
+        selectProp.rowIds = tableRowCells.map((i) => i.rowId);
+
+        const tableColumnCells = getTableColumnCells(
+          tableCells,
+          columnStartIndex,
+          columnEndIndex,
+          rowStartIndex,
+        );
+        selectProp.startDate = tableColumnCells[0].date;
+        selectProp.endDate = tableColumnCells[tableColumnCells.length - 1].date;
+
+        onSelect(selectProp);
+      }
     }
   }
 }
@@ -289,4 +330,32 @@ export function getTableCell(
   return tableCells.filter(
     (i) => i.rowIndex === rowIndex && i.columnIndex === columnIndex,
   )?.[0];
+}
+
+export function getTableRowCells(
+  tableCells: CalendarTableCell[],
+  rowStartIndex: number,
+  rowEndIndex: number,
+  columnIndex: number,
+): CalendarTableCell[] {
+  return tableCells.filter(
+    (i) =>
+      i.rowIndex >= rowStartIndex &&
+      i.rowIndex <= rowEndIndex &&
+      i.columnIndex === columnIndex,
+  );
+}
+
+export function getTableColumnCells(
+  tableCells: CalendarTableCell[],
+  columnStartIndex: number,
+  columnEndIndex: number,
+  rowIndex: number,
+): CalendarTableCell[] {
+  return tableCells.filter(
+    (i) =>
+      i.columnIndex >= columnStartIndex &&
+      i.columnIndex <= columnEndIndex &&
+      i.rowIndex === rowIndex,
+  );
 }

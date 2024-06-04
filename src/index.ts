@@ -1,1 +1,5 @@
-export { default as Calendar, CalendarColumnStatusProp } from './Calendar';
+export { default as Calendar } from './Calendar';
+export {
+  CalendarColumnStatusProp,
+  type CalendarSelectProp,
+} from './Calendar/interface';
