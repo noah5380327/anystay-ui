@@ -6,8 +6,16 @@ export function getDateName(value: string): string {
   return `${moment(value).format('MMMM')} ${moment(value).format('YYYY')}`;
 }
 
-export function getFirstMonthDatesBorderStyle(
-  props: CalendarTitleProp,
-): string {
-  return props.secondMonthDates.length > 0 ? 'calendar-title-text-border' : '';
+export function getBorderStyle(props: CalendarTitleProp, key: string): string {
+  if (Object.keys(props.monthDate).length > 1) {
+    const lastKey = Object.keys(props.monthDate)[
+      Object.keys(props.monthDate).length - 1
+    ];
+
+    if (key !== lastKey) {
+      return 'calendar-title-text-border';
+    }
+  }
+
+  return '';
 }

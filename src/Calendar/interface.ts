@@ -35,8 +35,6 @@ export interface CalendarFillColumnProp {
   value: string;
 }
 
-export interface CalendarDates {
-  firstMonthDates: string[];
-  secondMonthDates: string[];
-  allMonthDates: string[];
+export interface CalendarMonthDate {
+  [key: string]: string[];
 }

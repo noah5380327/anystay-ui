@@ -3,11 +3,10 @@ import CalendarLeftPng from 'anystay-ui/Calendar/assets/left.png';
 import { CalendarDateProp } from 'anystay-ui/Calendar/components/CalendarDate/interface';
 import 'anystay-ui/Calendar/components/CalendarDate/style.less';
 import {
+  getBorderStyle,
+  getCurrentStyle,
   getDateNumber,
   getDateWeekDay,
-  getFirstCurrentDateStyle,
-  getFirstMonthDatesBorderStyle,
-  getSecondCurrentDateStyle,
 } from 'anystay-ui/Calendar/components/CalendarDate/util';
 import React, { type FC } from 'react';
 
@@ -18,41 +17,31 @@ const CalendarDate: FC<CalendarDateProp> = (props) => {
         <img alt={`left`} src={CalendarLeftPng} />
       </div>
       <div className={`calendar-date-value-container`}>
-        {props.firstMonthDates.map((item, index) => (
-          <div
-            key={index}
-            className={`calendar-date-value-item-container
-            ${getFirstMonthDatesBorderStyle(props, index)}`}
-            style={{ minWidth: props.columnWidth, maxWidth: props.columnWidth }}
-          >
+        {Object.keys(props.monthDate).map((key) =>
+          props.monthDate[key].map((date, dateIndex) => (
             <div
-              className={`calendar-date-value-item-wrapper
-               ${getFirstCurrentDateStyle(props, index)}`}
+              key={date}
+              className={`calendar-date-value-item-container
+              ${getBorderStyle(props, key, dateIndex)}`}
+              style={{
+                minWidth: props.columnWidth,
+                maxWidth: props.columnWidth,
+              }}
             >
-              <span className={`calendar-date-value-item-number`}>
-                {getDateNumber(item)}
-              </span>
-              <span className={`calendar-date-value-item-week`}>
-                {getDateWeekDay(item)}
-              </span>
+              <div
+                className={`calendar-date-value-item-wrapper
+                ${getCurrentStyle(date)}`}
+              >
+                <span className={`calendar-date-value-item-number`}>
+                  {getDateNumber(date)}
+                </span>
+                <span className={`calendar-date-value-item-week`}>
+                  {getDateWeekDay(date)}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
-        {props.secondMonthDates.map((item, index) => (
-          <div key={index} className={`calendar-date-value-item-container`}>
-            <div
-              className={`calendar-date-value-item-wrapper
-                ${getSecondCurrentDateStyle(props, index)}`}
-            >
-              <span className={`calendar-date-value-item-number`}>
-                {getDateNumber(item)}
-              </span>
-              <span className={`calendar-date-value-item-week`}>
-                {getDateWeekDay(item)}
-              </span>
-            </div>
-          </div>
-        ))}
+          )),
+        )}
       </div>
       <div
         className={`calendar-date-operation-container calendar-date-operation-right-container`}

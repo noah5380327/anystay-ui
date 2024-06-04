@@ -1,12 +1,13 @@
 import {
   CalendarColumnStatusProp,
   CalendarFillRowProp,
+  CalendarMonthDate,
   CalendarRowProp,
   CalendarSelectProp,
 } from 'anystay-ui/Calendar/interface';
 
 export interface CalendarTableProp {
-  allMonthDates: string[];
+  monthDate: CalendarMonthDate;
   rows: CalendarRowProp[];
   columnWidth: number;
   dayNumber: number;

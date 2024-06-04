@@ -10,34 +10,29 @@ export function getDateWeekDay(value: string): string {
   return moment(value).format('ddd');
 }
 
-export function getFirstMonthDatesBorderStyle(
+export function getBorderStyle(
   props: CalendarDateProp,
-  index: number,
+  key: string,
+  dateIndex: number,
 ): string {
-  return props.secondMonthDates.length > 0 &&
-    index === props.firstMonthDates.length - 1
-    ? `calendar-date-value-item-border-container`
-    : '';
+  if (Object.keys(props.monthDate).length > 1) {
+    const lastKey = Object.keys(props.monthDate)[
+      Object.keys(props.monthDate).length - 1
+    ];
+
+    if (key !== lastKey) {
+      const lastDateIndex = props.monthDate[key].length - 1;
+      if (dateIndex === lastDateIndex)
+        return 'calendar-date-value-item-border-container';
+    }
+  }
+
+  return '';
 }
 
-export function getFirstCurrentDateStyle(
-  props: CalendarDateProp,
-  index: number,
-): string {
-  const firstDate = props.firstMonthDates[index];
+export function getCurrentStyle(date: string): string {
   const today = moment().format('YYYY-MM-DD');
-  return firstDate === today
-    ? `calendar-date-value-item-wrapper-selected-container`
-    : '';
-}
-
-export function getSecondCurrentDateStyle(
-  props: CalendarDateProp,
-  index: number,
-): string {
-  const secondDate = props.secondMonthDates[index];
-  const today = moment().format('YYYY-MM-DD');
-  return secondDate === today
+  return date === today
     ? `calendar-date-value-item-wrapper-selected-container`
     : '';
 }

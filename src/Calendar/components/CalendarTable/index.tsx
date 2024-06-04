@@ -31,7 +31,7 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
   });
 
   const tableCells = generateTableCells(
-    props.allMonthDates,
+    props.monthDate,
     props.rows,
     props.fillRows || [],
   );

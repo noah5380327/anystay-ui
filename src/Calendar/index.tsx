@@ -6,9 +6,9 @@ import {
   DEFAULT_DAY_NUMBER,
   DEFAULT_SUBTRACT_DAY_NUMBER,
 } from 'anystay-ui/Calendar/constant';
-import { CalendarProp } from 'anystay-ui/Calendar/interface';
+import { CalendarMonthDate, CalendarProp } from 'anystay-ui/Calendar/interface';
 import 'anystay-ui/Calendar/style.less';
-import { generateDates } from 'anystay-ui/Calendar/util';
+import { generateMonthDate } from 'anystay-ui/Calendar/util';
 import React, { useEffect, useState, type FC } from 'react';
 
 const Calendar: FC<CalendarProp> = (props) => {
@@ -17,45 +17,38 @@ const Calendar: FC<CalendarProp> = (props) => {
     props.subtractDayNumber || DEFAULT_SUBTRACT_DAY_NUMBER;
   const columnWidth = props.columnWidth || DEFAULT_COLUMN_WIDTH;
 
-  const [firstMonthDates, setFirstMonthDates] = useState<string[]>([]);
-  const [secondMonthDates, setSecondMonthDates] = useState<string[]>([]);
-  const [allMonthDates, setAllMonthDates] = useState<string[]>([]);
+  const [monthDate, setMonthDate] = useState<CalendarMonthDate>({});
 
   useEffect(() => {
-    const dates = generateDates(dayNumber, subtractDayNumber);
-    setFirstMonthDates(dates.firstMonthDates);
-    setSecondMonthDates(dates.secondMonthDates);
-    setAllMonthDates(dates.allMonthDates);
+    const date = generateMonthDate(dayNumber, subtractDayNumber);
+    setMonthDate(date);
   }, []);
 
   return (
-    <div className={`calendar-container`}>
-      {/* title */}
-      <CalendarTitle
-        firstMonthDates={firstMonthDates}
-        secondMonthDates={secondMonthDates}
-        columnWidth={columnWidth}
-      />
+    Object.keys(monthDate).length > 0 && (
+      <div className={`calendar-container`}>
+        {/* title */}
+        <CalendarTitle monthDate={monthDate} columnWidth={columnWidth} />
 
-      {/* date */}
-      <CalendarDate
-        firstMonthDates={firstMonthDates}
-        secondMonthDates={secondMonthDates}
-        dayNumber={dayNumber}
-        columnWidth={columnWidth}
-      />
+        {/* date */}
+        <CalendarDate
+          monthDate={monthDate}
+          dayNumber={dayNumber}
+          columnWidth={columnWidth}
+        />
 
-      {/* table */}
-      <CalendarTable
-        allMonthDates={allMonthDates}
-        rows={props.rows}
-        columnWidth={columnWidth}
-        dayNumber={dayNumber}
-        subtractDayNumber={subtractDayNumber}
-        fillRows={props.fillRows}
-        onSelect={props.onSelect}
-      />
-    </div>
+        {/* table */}
+        <CalendarTable
+          monthDate={monthDate}
+          rows={props.rows}
+          columnWidth={columnWidth}
+          dayNumber={dayNumber}
+          subtractDayNumber={subtractDayNumber}
+          fillRows={props.fillRows}
+          onSelect={props.onSelect}
+        />
+      </div>
+    )
   );
 };
 

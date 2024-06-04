@@ -1,6 +1,7 @@
+import { CalendarMonthDate } from 'anystay-ui/Calendar/interface';
+
 export interface CalendarDateProp {
-  firstMonthDates: string[];
-  secondMonthDates: string[];
+  monthDate: CalendarMonthDate;
   dayNumber: number;
   columnWidth: number;
 }

@@ -7,6 +7,7 @@ import 'anystay-ui/Calendar/components/CalendarTable/style.less';
 import {
   CalendarColumnStatusProp,
   CalendarFillRowProp,
+  CalendarMonthDate,
   CalendarRowProp,
   CalendarSelectProp,
 } from 'anystay-ui/Calendar/interface';
@@ -273,12 +274,13 @@ export function getFillRowCell(
 }
 
 export function generateTableCells(
-  allMonthDates: string[],
+  monthDate: CalendarMonthDate,
   rows: CalendarRowProp[],
   fillRows: CalendarFillRowProp[],
 ): CalendarTableCell[] {
   const tableCells: CalendarTableCell[] = [];
   const fillRowCells = generateFillTableCells(fillRows);
+  const allMonthDates = Object.values(monthDate).flat();
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
