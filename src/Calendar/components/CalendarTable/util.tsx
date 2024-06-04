@@ -126,25 +126,6 @@ export function getColumBlockStyle(
   return '';
 }
 
-export function onClick(
-  rowIndex: number,
-  columnIndex: number,
-  selection: CalendarTableSelection,
-  setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
-  subtractDayNumber: number,
-) {
-  if (columnIndex > subtractDayNumber - 1) {
-    setSelection({
-      rowStartIndex: selection.rowStartIndex,
-      rowEndIndex: rowIndex,
-      rowCurrentIndex: selection.rowCurrentIndex,
-      columnStartIndex: selection.columnStartIndex,
-      columnEndIndex: columnIndex,
-      columnCurrentIndex: selection.columnCurrentIndex,
-    });
-  }
-}
-
 export function onMouseDown(
   rowIndex: number,
   columnIndex: number,
@@ -156,12 +137,18 @@ export function onMouseDown(
     setSelectionVisible(true);
     setSelection({
       rowStartIndex: rowIndex,
-      rowEndIndex: -1,
+      rowEndIndex: rowIndex,
       rowCurrentIndex: rowIndex,
       columnStartIndex: columnIndex,
-      columnEndIndex: -1,
+      columnEndIndex: columnIndex,
       columnCurrentIndex: columnIndex,
     });
+
+    const hideSelection = () => {
+      setSelectionVisible(false);
+      document.removeEventListener('mouseup', hideSelection);
+    };
+    document.addEventListener('mouseup', hideSelection);
   }
 }
 
@@ -194,46 +181,44 @@ export function onMouseOver(
 }
 
 export function onMouseUp(
-  columnIndex: number,
-  selectionVisible: boolean,
-  setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   selection: CalendarTableSelection,
-  subtractDayNumber: number,
   tableCells: CalendarTableCell[],
   onSelect?: (prop: CalendarSelectProp) => void,
 ) {
-  if (columnIndex > subtractDayNumber - 1) {
-    if (selectionVisible) {
-      setSelectionVisible(false);
+  const { rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex } =
+    selection;
 
-      if (onSelect) {
-        const selectProp: CalendarSelectProp = {
-          startDate: '',
-          endDate: '',
-          rowIds: [],
-        };
+  if (
+    rowStartIndex > -1 &&
+    rowEndIndex > -1 &&
+    columnStartIndex > -1 &&
+    columnEndIndex > -1
+  ) {
+    if (onSelect) {
+      const selectProp: CalendarSelectProp = {
+        startDate: '',
+        endDate: '',
+        rowIds: [],
+      };
 
-        const { rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex } =
-          selection;
-        const tableRowCells = getTableRowCells(
-          tableCells,
-          rowStartIndex,
-          rowEndIndex,
-          columnStartIndex,
-        );
-        selectProp.rowIds = tableRowCells.map((i) => i.rowId);
+      const tableRowCells = getTableRowCells(
+        tableCells,
+        rowStartIndex,
+        rowEndIndex,
+        columnStartIndex,
+      );
+      selectProp.rowIds = tableRowCells.map((i) => i.rowId);
 
-        const tableColumnCells = getTableColumnCells(
-          tableCells,
-          columnStartIndex,
-          columnEndIndex,
-          rowStartIndex,
-        );
-        selectProp.startDate = tableColumnCells[0].date;
-        selectProp.endDate = tableColumnCells[tableColumnCells.length - 1].date;
+      const tableColumnCells = getTableColumnCells(
+        tableCells,
+        columnStartIndex,
+        columnEndIndex,
+        rowStartIndex,
+      );
+      selectProp.startDate = tableColumnCells[0].date;
+      selectProp.endDate = tableColumnCells[tableColumnCells.length - 1].date;
 
-        onSelect(selectProp);
-      }
+      onSelect(selectProp);
     }
   }
 }

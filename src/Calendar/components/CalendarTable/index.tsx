@@ -11,12 +11,11 @@ import {
   getColumnDisabledStyle,
   getCurrentColumnBorderSelectedStyle,
   getTableCell,
-  onClick,
   onMouseDown,
   onMouseOver,
   onMouseUp,
 } from 'anystay-ui/Calendar/components/CalendarTable/util';
-import React, { useState, type FC } from 'react';
+import React, { useEffect, useState, type FC } from 'react';
 
 const CalendarTable: FC<CalendarTableProp> = (props) => {
   const columns: number[] = new Array(props.dayNumber).fill(0);
@@ -36,6 +35,12 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
     props.rows,
     props.fillRows || [],
   );
+
+  useEffect(() => {
+    if (!selectionVisible) {
+      onMouseUp(selection, tableCells, props.onSelect);
+    }
+  }, [selectionVisible]);
 
   return (
     <div className={`calendar-table-container`}>
@@ -64,15 +69,6 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                 minHeight: props.columnWidth,
                 maxHeight: props.columnWidth,
               }}
-              onClick={() =>
-                onClick(
-                  rowIndex,
-                  columnIndex,
-                  selection,
-                  setSelection,
-                  props.subtractDayNumber,
-                )
-              }
               onMouseDown={() =>
                 onMouseDown(
                   rowIndex,
@@ -90,17 +86,6 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                   selection,
                   setSelection,
                   props.subtractDayNumber,
-                )
-              }
-              onMouseUp={() =>
-                onMouseUp(
-                  columnIndex,
-                  selectionVisible,
-                  setSelectionVisible,
-                  selection,
-                  props.subtractDayNumber,
-                  tableCells,
-                  props.onSelect,
                 )
               }
             >
