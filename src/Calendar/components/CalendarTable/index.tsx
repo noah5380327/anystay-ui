@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import {
   CalendarTableProp,
   CalendarTableSelection,
@@ -14,6 +15,7 @@ import {
   onMouseDown,
   onMouseOver,
   onMouseUp,
+  returnToToday,
 } from 'anystay-ui/Calendar/components/CalendarTable/util';
 import React, { useEffect, useState, type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
@@ -49,7 +51,7 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
             className={`calendar-date-value-container`}
             width={width}
             height={props.columnWidth * props.rows.length}
-            columnCount={props.dayNumber}
+            columnCount={props.totalDayNumber}
             columnWidth={props.columnWidth}
             rowCount={props.rows.length}
             rowHeight={props.columnWidth}
@@ -108,6 +110,18 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
           />
         )}
       </AutoSizer>
+
+      {props.showReturnToToday && (
+        <div className={`calendar-table-return-today-container`}>
+          <Button
+            type="primary"
+            onClick={() => returnToToday(props)}
+            className={`calendar-table-return-today-btn`}
+          >
+            Return to today
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

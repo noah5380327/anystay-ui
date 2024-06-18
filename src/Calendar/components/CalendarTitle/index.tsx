@@ -1,15 +1,30 @@
+import { DatePicker } from 'antd';
+// @ts-ignore
+import CalendarLeftPng from 'anystay-ui/Calendar/assets/left.png';
 import { CalendarTitleProp } from 'anystay-ui/Calendar/components/CalendarTitle/interface';
 import 'anystay-ui/Calendar/components/CalendarTitle/style.less';
 import {
   generateTitleCells,
   getBorderStyle,
   getDateName,
+  getTitleDate,
+  reSetScrollLeft,
 } from 'anystay-ui/Calendar/components/CalendarTitle/util';
-import React, { type FC } from 'react';
+import dayjs from 'dayjs';
+import React, { useEffect, useState, type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
 
 const CalendarTitle: FC<CalendarTitleProp> = (props) => {
   const titleCells = generateTitleCells(props);
+  const titleDate = getTitleDate(titleCells);
+
+  const [selectedDate, setSelectedDay] = useState<dayjs.Dayjs>(dayjs());
+
+  useEffect(() => {
+    if (!props.showReturnToToday) {
+      setSelectedDay(dayjs());
+    }
+  }, [props.showReturnToToday]);
 
   return (
     <div className={`calendar-title-container`}>
@@ -45,6 +60,29 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
           />
         )}
       </AutoSizer>
+
+      <div className={`calendar-title-action-container`}>
+        <DatePicker
+          inputReadOnly
+          minDate={dayjs(titleDate.firstDate)}
+          maxDate={dayjs(titleDate.lastDate)}
+          value={selectedDate}
+          format={`${titleDate.firstDate} - ${titleDate.lastDate}`}
+          allowClear={false}
+          showNow={false}
+          suffixIcon={
+            <img
+              alt={`left`}
+              src={CalendarLeftPng}
+              className={`calendar-title-action-operation-image`}
+            />
+          }
+          onChange={(date) => {
+            setSelectedDay(date);
+            reSetScrollLeft(date.format('YYYY-MM-DD'), props, titleDate);
+          }}
+        />
+      </div>
     </div>
   );
 };

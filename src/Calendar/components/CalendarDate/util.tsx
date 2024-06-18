@@ -73,7 +73,8 @@ export function onScrollPrev(props: CalendarDateProp) {
 export function onScrollNext(props: CalendarDateProp) {
   let currentScrollLeft = props.scrollLeft;
   currentScrollLeft += props.stepDayNumber * props.columnWidth;
-  const maxScrollLeft = props.dayNumber * props.columnWidth - props.clientWidth;
+  const maxScrollLeft =
+    props.totalDayNumber * props.columnWidth - props.clientWidth;
   if (currentScrollLeft > maxScrollLeft) {
     currentScrollLeft = maxScrollLeft;
   }

@@ -5,13 +5,14 @@ import {
   CalendarRowProp,
   CalendarSelectProp,
 } from 'anystay-ui/Calendar/interface';
+import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
 export interface CalendarTableProp {
   monthDate: CalendarMonthDate;
   rows: CalendarRowProp[];
   columnWidth: number;
-  dayNumber: number;
+  totalDayNumber: number;
   subtractDayNumber: number;
   onSelect?: (prop: CalendarSelectProp) => void;
   fillRows?: CalendarFillRowProp[];
@@ -22,6 +23,9 @@ export interface CalendarTableProp {
   scrollLeft: number;
   scrollTop: number;
   scrollWidth: number;
+  setCustomScrollLeft: Dispatch<SetStateAction<number>>;
+  showReturnToToday: boolean;
+  setShowReturnToToday: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface CalendarTableSelection {

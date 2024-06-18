@@ -12,7 +12,7 @@ import {
 export default () => (
   <Calendar
     subtractDayNumber={730}
-    dayNumber={1095}
+    totalDayNumber={1095}
     rows={[
       { rowId: 1, value: 145 },
       { rowId: 2, value: 145 },

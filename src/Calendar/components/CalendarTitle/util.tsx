@@ -1,5 +1,6 @@
 import {
   CalendarTitleCell,
+  CalendarTitleDate,
   CalendarTitleProp,
 } from 'anystay-ui/Calendar/components/CalendarTitle/interface';
 import 'anystay-ui/Calendar/components/CalendarTitle/style.less';
@@ -22,6 +23,17 @@ export function generateTitleCells(
   return titleCells;
 }
 
+export function getTitleDate(cells: CalendarTitleCell[]): CalendarTitleDate {
+  const firstDate = moment(cells[0].dates[0]).format('D MMM YYYY');
+  const lastDate = moment(
+    cells[cells.length - 1].dates[cells[cells.length - 1].dates.length - 1],
+  ).format('D MMM YYYY');
+  return {
+    firstDate,
+    lastDate,
+  };
+}
+
 export function getDateName(titleCell: CalendarTitleCell): string {
   const value = titleCell.month;
   return `${moment(value).format('MMMM')} ${moment(value).format('YYYY')}`;
@@ -42,4 +54,16 @@ export function getBorderStyle(
   }
 
   return '';
+}
+
+export function reSetScrollLeft(
+  date: string,
+  props: CalendarTitleProp,
+  titleDate: CalendarTitleDate,
+) {
+  const selectedDate = moment(date);
+  const firstDate = moment(titleDate.firstDate);
+  const diffDays = selectedDate.diff(firstDate, 'days');
+  props.setCustomScrollLeft((diffDays - 2) * props.columnWidth);
+  props.setShowReturnToToday(false);
 }

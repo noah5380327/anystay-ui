@@ -5,6 +5,7 @@
   flex-direction: column;
   padding: 0 14px;
   user-select: none;
+  position: relative;
   .calendar-table-row-column-container {
     display: flex;
     box-sizing: border-box;
@@ -112,6 +113,15 @@
   .calendar-table-row-column-container:first-child {
     &::before {
       border-left: 2px solid @as-border-color-1;
+    }
+  }
+  .calendar-table-return-today-container {
+    position: absolute;
+    left: 40%;
+    top: 40%;
+    padding: 0 14px;
+    .calendar-table-return-today-btn {
+      border-radius: 50px;
     }
   }
 }

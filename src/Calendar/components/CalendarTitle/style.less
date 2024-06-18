@@ -3,6 +3,7 @@
 .calendar-title-container {
   display: flex;
   padding: 0 14px;
+  position: relative;
   .calendar-title-text {
     font-size: @as-font-size-1;
     color: @as-text-color-1;
@@ -17,5 +18,15 @@
   .calendar-title-text-border {
     padding-left: 0;
     border-right: 1px solid @as-border-color-1;
+  }
+  .calendar-title-action-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .calendar-title-action-operation-image {
+    width: 8px;
+    height: 10px;
+    transform: rotate(-90deg);
   }
 }

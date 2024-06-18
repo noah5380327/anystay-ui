@@ -4,7 +4,7 @@ import { OnScrollParams } from 'react-virtualized';
 
 export interface CalendarDateProp {
   monthDate: CalendarMonthDate;
-  dayNumber: number;
+  totalDayNumber: number;
   stepDayNumber: number;
   columnWidth: number;
   dateRowHeight: number;

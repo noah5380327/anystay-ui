@@ -1,6 +1,6 @@
 export interface CalendarProp {
   rows: CalendarRowProp[];
-  dayNumber?: number;
+  totalDayNumber?: number;
   subtractDayNumber?: number;
   stepDayNumber?: number;
   onSelect?: (prop: CalendarSelectProp) => void;

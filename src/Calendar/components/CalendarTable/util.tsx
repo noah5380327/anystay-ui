@@ -1,6 +1,7 @@
 import {
   CalendarFillRowCell,
   CalendarTableCell,
+  CalendarTableProp,
   CalendarTableSelection,
 } from 'anystay-ui/Calendar/components/CalendarTable/interface';
 import 'anystay-ui/Calendar/components/CalendarTable/style.less';
@@ -345,4 +346,9 @@ export function getTableColumnCells(
       i.columnIndex <= columnEndIndex &&
       i.rowIndex === rowIndex,
   );
+}
+
+export function returnToToday(props: CalendarTableProp) {
+  props.setCustomScrollLeft((props.subtractDayNumber - 2) * props.columnWidth);
+  props.setShowReturnToToday(false);
 }

@@ -5,13 +5,13 @@ import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
 export function generateMonthDate(
-  dayNumber: number,
+  totalDayNumber: number,
   subtractDayNumber: number,
 ): CalendarMonthDate {
   const startDay = moment().subtract(subtractDayNumber, 'days');
 
   const dates = [];
-  for (let i = 0; i < dayNumber; i++) {
+  for (let i = 0; i < totalDayNumber; i++) {
     dates.push(startDay.clone().add(i, 'days'));
   }
 
@@ -31,12 +31,20 @@ export function generateMonthDate(
 
 export function onCustomScroll(
   sp: OnScrollParams,
+  customScrollLeft: number,
   setCustomScrollLeft: Dispatch<SetStateAction<number>>,
   onScroll: (params: OnScrollParams) => void,
+  setShowReturnToToday: Dispatch<SetStateAction<boolean>>,
+  subtractDayNumber: number,
+  columnWidth: number,
 ) {
   setCustomScrollLeft(sp.scrollLeft);
   onScroll({
     ...sp,
     scrollLeft: sp.scrollLeft,
   });
+
+  if (customScrollLeft !== (subtractDayNumber - 2) * columnWidth) {
+    setShowReturnToToday(true);
+  }
 }
