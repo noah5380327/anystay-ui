@@ -27,6 +27,47 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .calendar-table-row-column-content-occupied-wrapper {
+      position: absolute;
+      top: 5px;
+      height: calc(100% - 10px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: @as-background-color-2;
+      color: @as-text-color-2;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      z-index: 5;
+      .calendar-table-row-column-content-occupied-image-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding-left: 5px;
+        img {
+          height: calc(100% - 10px);
+          aspect-ratio: 1;
+          border-radius: 50px;
+        }
+      }
+      .calendar-table-row-column-content-occupied-text-container {
+        display: flex;
+        flex-direction: column;
+        padding-left: 5px;
+        height: calc(100% - 10px);
+        justify-content: center;
+        .calendar-table-row-column-content-occupied-text-name {
+          font-size: @as-font-size-4;
+          color: @as-text-color-2;
+        }
+        .calendar-table-row-column-content-occupied-text {
+          font-size: @as-font-size-3;
+          color: @as-text-color-2;
+        }
+      }
+    }
   }
   .calendar-table-row-column-selected-background-container {
     &::after {

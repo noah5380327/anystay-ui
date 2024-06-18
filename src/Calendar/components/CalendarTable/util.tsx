@@ -1,6 +1,7 @@
 import {
   CalendarFillRowCell,
   CalendarTableCell,
+  CalendarTableOccupiedCell,
   CalendarTableProp,
   CalendarTableSelection,
 } from 'anystay-ui/Calendar/components/CalendarTable/interface';
@@ -249,16 +250,25 @@ export function generateFillTableCells(
     const fillRow = fillRows[i];
     for (let j = 0; j < fillRow.columns.length; j++) {
       const fillRowColumn = fillRow.columns[j];
-      const dates = generateDatesFromStartAndEnd(
-        fillRowColumn.startDate,
-        fillRowColumn.endDate,
-      );
+      const startDate = fillRowColumn.startDate;
+      let endDate = fillRowColumn.endDate;
+      if (fillRowColumn.status === CalendarColumnStatusProp.Occupied) {
+        endDate = startDate;
+      }
+      const dates = generateDatesFromStartAndEnd(startDate, endDate);
       for (let k = 0; k < dates.length; k++) {
         fillRowCells.push({
           rowId: fillRow.rowId,
           date: dates[k],
+          startDate,
+          endDate: CalendarColumnStatusProp.Occupied
+            ? fillRowColumn.endDate
+            : endDate,
           status: fillRowColumn.status,
           value: fillRowColumn.value,
+          avatar: fillRowColumn.avatar,
+          name: fillRowColumn.name,
+          text: fillRowColumn.text,
         });
       }
     }
@@ -290,10 +300,20 @@ export function generateTableCells(
       const column = allMonthDates[j];
       let value = row.value;
       let status = CalendarColumnStatusProp.Normal;
+      let startDate = column;
+      let endDate = column;
+      let avatar;
+      let name;
+      let text;
       const fillRowCell = getFillRowCell(fillRowCells, rowId, column);
       if (fillRowCell) {
         value = fillRowCell.value;
         status = fillRowCell.status;
+        startDate = fillRowCell.startDate;
+        endDate = fillRowCell.endDate;
+        avatar = fillRowCell.avatar;
+        name = fillRowCell.name;
+        text = fillRowCell.text;
       }
 
       tableCells.push({
@@ -301,8 +321,13 @@ export function generateTableCells(
         columnIndex: j,
         rowId,
         date: column,
+        startDate,
+        endDate,
         value,
         status,
+        avatar,
+        name,
+        text,
       });
     }
   }
@@ -351,4 +376,30 @@ export function getTableColumnCells(
 export function returnToToday(props: CalendarTableProp) {
   props.setCustomScrollLeft((props.subtractDayNumber - 2) * props.columnWidth);
   props.setShowReturnToToday(false);
+}
+
+export function getTableCellOccupied(
+  tableCells: CalendarTableCell[],
+  rowIndex: number,
+  columnIndex: number,
+  props: CalendarTableProp,
+): CalendarTableOccupiedCell {
+  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+  const startDate = tableCell.startDate;
+  const endDate = tableCell.endDate;
+  const date = tableCell.date;
+  const widthHours = moment
+    .duration(moment(endDate).diff(moment(startDate)))
+    .asHours();
+  const hourColumnWidth = props.columnWidth / 24;
+  const width = hourColumnWidth * widthHours;
+  const leftHours = moment
+    .duration(moment(startDate).diff(moment(date)))
+    .asHours();
+  const left = hourColumnWidth * leftHours;
+
+  return {
+    width,
+    left,
+  };
 }

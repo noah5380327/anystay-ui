@@ -1,4 +1,5 @@
 import { Button } from 'antd';
+import { CalendarColumnStatusProp } from 'anystay-ui';
 import {
   CalendarTableProp,
   CalendarTableSelection,
@@ -12,6 +13,7 @@ import {
   getColumnDisabledStyle,
   getCurrentColumnBorderSelectedStyle,
   getTableCell,
+  getTableCellOccupied,
   onMouseDown,
   onMouseOver,
   onMouseUp,
@@ -66,19 +68,23 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
               <div
                 key={key}
                 className={`calendar-table-row-column-container
-               ${getColumnBackgroundSelectedStyle(
-                 rowIndex,
-                 columnIndex,
-                 selection,
-               )}
-               ${getCurrentColumnBorderSelectedStyle(
-                 rowIndex,
-                 columnIndex,
-                 selection,
-               )}
-               ${getColumnBorderSelectedStyle(rowIndex, columnIndex, selection)}
-               ${getColumnDisabledStyle(columnIndex, props.subtractDayNumber)}
-               ${getColumBlockStyle(tableCells, rowIndex, columnIndex)}`}
+                ${getColumnBackgroundSelectedStyle(
+                  rowIndex,
+                  columnIndex,
+                  selection,
+                )}
+                ${getCurrentColumnBorderSelectedStyle(
+                  rowIndex,
+                  columnIndex,
+                  selection,
+                )}
+                ${getColumnBorderSelectedStyle(
+                  rowIndex,
+                  columnIndex,
+                  selection,
+                )}
+                ${getColumnDisabledStyle(columnIndex, props.subtractDayNumber)}
+                ${getColumBlockStyle(tableCells, rowIndex, columnIndex)}`}
                 style={style}
                 onMouseDown={() =>
                   onMouseDown(
@@ -105,6 +111,51 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                     {getTableCell(tableCells, rowIndex, columnIndex)?.value}
                   </div>
                 </div>
+                {getTableCell(tableCells, rowIndex, columnIndex)?.status ===
+                  CalendarColumnStatusProp.Occupied && (
+                  <div
+                    className={`calendar-table-row-column-content-occupied-wrapper`}
+                    style={{
+                      width: getTableCellOccupied(
+                        tableCells,
+                        rowIndex,
+                        columnIndex,
+                        props,
+                      ).width,
+                      left: getTableCellOccupied(
+                        tableCells,
+                        rowIndex,
+                        columnIndex,
+                        props,
+                      ).left,
+                    }}
+                  >
+                    <div
+                      className={`calendar-table-row-column-content-occupied-image-container`}
+                    >
+                      <img
+                        src={
+                          getTableCell(tableCells, rowIndex, columnIndex).avatar
+                        }
+                        alt={`avatar`}
+                      />
+                    </div>
+                    <div
+                      className={`calendar-table-row-column-content-occupied-text-container`}
+                    >
+                      <span
+                        className={`calendar-table-row-column-content-occupied-text-name`}
+                      >
+                        {getTableCell(tableCells, rowIndex, columnIndex).name}
+                      </span>
+                      <span
+                        className={`calendar-table-row-column-content-occupied-text`}
+                      >
+                        {getTableCell(tableCells, rowIndex, columnIndex).text}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           />

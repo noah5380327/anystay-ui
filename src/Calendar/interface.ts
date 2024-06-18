@@ -24,6 +24,7 @@ export interface CalendarSelectProp {
 export enum CalendarColumnStatusProp {
   Normal = 'Normal',
   Block = 'Block',
+  Occupied = 'Occupied',
 }
 
 export interface CalendarFillRowProp {
@@ -36,6 +37,9 @@ export interface CalendarFillColumnProp {
   endDate: string;
   status: CalendarColumnStatusProp;
   value: string;
+  avatar?: string;
+  name?: string;
+  text?: string;
 }
 
 export interface CalendarMonthDate {

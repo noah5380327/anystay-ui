@@ -42,13 +42,28 @@ export interface CalendarTableCell {
   columnIndex: number;
   rowId: string;
   date: string;
+  startDate: string;
+  endDate: string;
   value: string;
   status: CalendarColumnStatusProp;
+  avatar?: string;
+  name?: string;
+  text?: string;
 }
 
 export interface CalendarFillRowCell {
   rowId: string;
   date: string;
+  startDate: string;
+  endDate: string;
   status: CalendarColumnStatusProp;
   value: string;
+  avatar?: string;
+  name?: string;
+  text?: string;
+}
+
+export interface CalendarTableOccupiedCell {
+  width: number;
+  left: number;
 }
