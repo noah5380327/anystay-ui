@@ -11,11 +11,11 @@ import {
   DEFAULT_TOTAL_DAY_NUMBER,
 } from 'anystay-ui/Calendar/constant';
 import { CalendarMonthDate, CalendarProp } from 'anystay-ui/Calendar/interface';
-import 'anystay-ui/Calendar/style.less';
 import { generateMonthDate, onCustomScroll } from 'anystay-ui/Calendar/util';
 import React, { useEffect, useState, type FC } from 'react';
 import { ScrollSync } from 'react-virtualized';
 import 'react-virtualized/styles.css';
+import './style.less';
 
 const Calendar: FC<CalendarProp> = (props) => {
   const totalDayNumber = props.totalDayNumber || DEFAULT_TOTAL_DAY_NUMBER;

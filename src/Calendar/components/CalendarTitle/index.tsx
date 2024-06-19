@@ -2,7 +2,6 @@ import { DatePicker } from 'antd';
 // @ts-ignore
 import CalendarLeftPng from 'anystay-ui/Calendar/assets/left.png';
 import { CalendarTitleProp } from 'anystay-ui/Calendar/components/CalendarTitle/interface';
-import 'anystay-ui/Calendar/components/CalendarTitle/style.less';
 import {
   generateTitleCells,
   getBorderStyle,
@@ -13,6 +12,7 @@ import {
 import dayjs from 'dayjs';
 import React, { useEffect, useState, type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
+import './style.less';
 
 const CalendarTitle: FC<CalendarTitleProp> = (props) => {
   const titleCells = generateTitleCells(props);

@@ -4,7 +4,6 @@ import {
   CalendarTableProp,
   CalendarTableSelection,
 } from 'anystay-ui/Calendar/components/CalendarTable/interface';
-import 'anystay-ui/Calendar/components/CalendarTable/style.less';
 import {
   generateTableCells,
   getColumBlockStyle,
@@ -21,6 +20,7 @@ import {
 } from 'anystay-ui/Calendar/components/CalendarTable/util';
 import React, { useEffect, useState, type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
+import './style.less';
 
 const CalendarTable: FC<CalendarTableProp> = (props) => {
   const [selectionVisible, setSelectionVisible] = useState<boolean>(false);

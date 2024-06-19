@@ -1,7 +1,6 @@
 // @ts-ignore
 import CalendarLeftPng from 'anystay-ui/Calendar/assets/left.png';
 import { CalendarDateProp } from 'anystay-ui/Calendar/components/CalendarDate/interface';
-import 'anystay-ui/Calendar/components/CalendarDate/style.less';
 import {
   generateDateCells,
   getBorderStyle,
@@ -13,6 +12,7 @@ import {
 } from 'anystay-ui/Calendar/components/CalendarDate/util';
 import React, { type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
+import './style.less';
 
 const CalendarDate: FC<CalendarDateProp> = (props) => {
   const dateCells = generateDateCells(props);
