@@ -6,11 +6,12 @@ import {
   generateTitleCells,
   getBorderStyle,
   getDateName,
+  getScrollDate,
   getTitleDate,
   reSetScrollLeft,
 } from 'anystay-ui/Calendar/components/CalendarTitle/util';
 import dayjs from 'dayjs';
-import React, { useEffect, useState, type FC } from 'react';
+import React, { useState, type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
 import './style.less';
 
@@ -18,13 +19,7 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
   const titleCells = generateTitleCells(props);
   const titleDate = getTitleDate(titleCells);
 
-  const [selectedDate, setSelectedDay] = useState<dayjs.Dayjs>(dayjs());
-
-  useEffect(() => {
-    if (!props.showReturnToToday) {
-      setSelectedDay(dayjs());
-    }
-  }, [props.showReturnToToday]);
+  const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs>(dayjs());
 
   return (
     <div className={`calendar-title-container`}>
@@ -41,7 +36,11 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
             rowHeight={props.titleRowHeight}
             clientHeight={props.clientHeight}
             clientWidth={props.clientWidth}
-            onScroll={props.onScroll}
+            onScroll={(params) => {
+              const date = getScrollDate(params, props, titleDate);
+              setSelectedDate(date);
+              props.onScroll(params);
+            }}
             scrollHeight={props.scrollHeight}
             scrollLeft={props.scrollLeft}
             scrollTop={props.scrollTop}
@@ -64,10 +63,8 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
       <div className={`calendar-title-action-container`}>
         <DatePicker
           inputReadOnly
-          minDate={dayjs(titleDate.firstDate)}
-          maxDate={dayjs(titleDate.lastDate)}
+          picker="month"
           value={selectedDate}
-          format={`${titleDate.firstDate} - ${titleDate.lastDate}`}
           allowClear={false}
           showNow={false}
           suffixIcon={
@@ -78,7 +75,7 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
             />
           }
           onChange={(date) => {
-            setSelectedDay(date);
+            setSelectedDate(date);
             reSetScrollLeft(date.format('YYYY-MM-DD'), props, titleDate);
           }}
         />
