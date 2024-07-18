@@ -135,23 +135,27 @@ export function onMouseDown(
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
   subtractDayNumber: number,
+  tableCells: CalendarTableCell[],
 ) {
   if (columnIndex > subtractDayNumber - 1) {
-    setSelectionVisible(true);
-    setSelection({
-      rowStartIndex: rowIndex,
-      rowEndIndex: rowIndex,
-      rowCurrentIndex: rowIndex,
-      columnStartIndex: columnIndex,
-      columnEndIndex: columnIndex,
-      columnCurrentIndex: columnIndex,
-    });
+    const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+    if (tableCell?.status !== CalendarColumnStatusProp.Occupied) {
+      setSelectionVisible(true);
+      setSelection({
+        rowStartIndex: rowIndex,
+        rowEndIndex: rowIndex,
+        rowCurrentIndex: rowIndex,
+        columnStartIndex: columnIndex,
+        columnEndIndex: columnIndex,
+        columnCurrentIndex: columnIndex,
+      });
 
-    const hideSelection = () => {
-      setSelectionVisible(false);
-      document.removeEventListener('mouseup', hideSelection);
-    };
-    document.addEventListener('mouseup', hideSelection);
+      const hideSelection = () => {
+        setSelectionVisible(false);
+        document.removeEventListener('mouseup', hideSelection);
+      };
+      document.addEventListener('mouseup', hideSelection);
+    }
   }
 }
 

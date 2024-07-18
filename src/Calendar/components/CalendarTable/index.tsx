@@ -93,6 +93,7 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                     setSelectionVisible,
                     setSelection,
                     props.subtractDayNumber,
+                    tableCells,
                   )
                 }
                 onMouseOver={() =>
