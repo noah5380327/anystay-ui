@@ -23,10 +23,10 @@ export interface CalendarSelectProp {
 
 export interface CalenderSelectRowProp {
   id: string;
-  columns: CalendarSelectRowColumnProp[];
+  cells: CalendarSelectRowCellProp[];
 }
 
-export interface CalendarSelectRowColumnProp {
+export interface CalendarSelectRowCellProp {
   status: CalendarColumnStatusProp;
   value: string;
   avatar?: string;

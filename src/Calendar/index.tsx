@@ -31,11 +31,17 @@ const Calendar: FC<CalendarProp> = (props) => {
     (subtractDayNumber - 2) * columnWidth,
   );
   const [showReturnToToday, setShowReturnToToday] = useState<boolean>(false);
+  const [forceClearSelect, setForceClearSelect] = useState<boolean>(false);
 
   useEffect(() => {
     const date = generateMonthDate(totalDayNumber, subtractDayNumber);
     setMonthDate(date);
   }, []);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function clearSelect() {
+    setForceClearSelect(true);
+  }
 
   return (
     <ConfigProvider
@@ -134,6 +140,8 @@ const Calendar: FC<CalendarProp> = (props) => {
                 setCustomScrollLeft={setCustomScrollLeft}
                 showReturnToToday={showReturnToToday}
                 setShowReturnToToday={setShowReturnToToday}
+                forceClearSelect={forceClearSelect}
+                setForceClearSelect={setForceClearSelect}
               />
             </div>
           )}

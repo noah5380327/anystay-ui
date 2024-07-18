@@ -45,6 +45,20 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
     }
   }, [selectionVisible]);
 
+  useEffect(() => {
+    if (props.forceClearSelect) {
+      setSelection({
+        rowStartIndex: -1,
+        rowEndIndex: -1,
+        rowCurrentIndex: -1,
+        columnStartIndex: -1,
+        columnEndIndex: -1,
+        columnCurrentIndex: -1,
+      });
+      props.setForceClearSelect(false);
+    }
+  }, [props.forceClearSelect]);
+
   return (
     <div className={`calendar-table-container`}>
       <AutoSizer disableHeight>

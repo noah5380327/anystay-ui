@@ -219,7 +219,7 @@ export function onMouseUp(
       );
       selectProp.rows = tableRowCells.map((i) => ({
         id: i.rowId,
-        columns: [],
+        cells: [],
       }));
 
       const tableColumnCells = getTableColumnCells(
@@ -231,20 +231,28 @@ export function onMouseUp(
       selectProp.startDate = tableColumnCells[0].date;
       selectProp.endDate = tableColumnCells[tableColumnCells.length - 1].date;
 
-      for (let i = 0; i < tableColumnCells.length; i++) {
-        const tableColumnCell = tableColumnCells[i];
-        const index = selectProp.rows.findIndex(
-          (item) => item.id === tableColumnCell.rowId,
+      for (let i = rowStartIndex; i <= rowEndIndex; i++) {
+        const cells = getTableColumnCells(
+          tableCells,
+          columnStartIndex,
+          columnEndIndex,
+          i,
         );
-        if (index > -1) {
-          selectProp.rows[index].columns.push({
-            status: tableColumnCell.status,
-            value: tableColumnCell.value,
-            avatar: tableColumnCell.avatar || '',
-            name: tableColumnCell.name || '',
-            text: tableColumnCell.text || '',
-            extra: tableColumnCell.extra || '',
-          });
+        for (let j = 0; j < cells.length; j++) {
+          const cell = cells[j];
+          const index = selectProp.rows.findIndex(
+            (item) => item.id === cell.rowId,
+          );
+          if (index > -1) {
+            selectProp.rows[index].cells.push({
+              status: cell.status,
+              value: cell.value,
+              avatar: cell.avatar || '',
+              name: cell.name || '',
+              text: cell.text || '',
+              extra: cell.extra || '',
+            });
+          }
         }
       }
 
