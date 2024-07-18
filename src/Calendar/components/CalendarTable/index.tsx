@@ -90,6 +90,7 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                   onMouseDown(
                     rowIndex,
                     columnIndex,
+                    selectionVisible,
                     setSelectionVisible,
                     setSelection,
                     props.subtractDayNumber,

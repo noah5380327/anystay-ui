@@ -132,6 +132,7 @@ export function getColumBlockStyle(
 export function onMouseDown(
   rowIndex: number,
   columnIndex: number,
+  selectionVisible: boolean,
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
   subtractDayNumber: number,
@@ -140,21 +141,23 @@ export function onMouseDown(
   if (columnIndex > subtractDayNumber - 1) {
     const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
     if (tableCell?.status !== CalendarColumnStatusProp.Occupied) {
-      setSelectionVisible(true);
-      setSelection({
-        rowStartIndex: rowIndex,
-        rowEndIndex: rowIndex,
-        rowCurrentIndex: rowIndex,
-        columnStartIndex: columnIndex,
-        columnEndIndex: columnIndex,
-        columnCurrentIndex: columnIndex,
-      });
-
-      const hideSelection = () => {
-        setSelectionVisible(false);
-        document.removeEventListener('mouseup', hideSelection);
-      };
-      document.addEventListener('mouseup', hideSelection);
+      if (!selectionVisible) {
+        setSelectionVisible(true);
+        setSelection({
+          rowStartIndex: rowIndex,
+          rowEndIndex: rowIndex,
+          rowCurrentIndex: rowIndex,
+          columnStartIndex: columnIndex,
+          columnEndIndex: columnIndex,
+          columnCurrentIndex: columnIndex,
+        });
+      } else {
+        const hideSelection = () => {
+          setSelectionVisible(false);
+          document.removeEventListener('mouseup', hideSelection);
+        };
+        document.addEventListener('mouseup', hideSelection);
+      }
     }
   }
 }
