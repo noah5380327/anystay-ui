@@ -205,7 +205,7 @@ export function onMouseUp(
       const selectProp: CalendarSelectProp = {
         startDate: '',
         endDate: '',
-        rowIds: [],
+        rows: [],
       };
 
       const tableRowCells = getTableRowCells(
@@ -214,7 +214,10 @@ export function onMouseUp(
         rowEndIndex,
         columnStartIndex,
       );
-      selectProp.rowIds = tableRowCells.map((i) => i.rowId);
+      selectProp.rows = tableRowCells.map((i) => ({
+        id: i.rowId,
+        columns: [],
+      }));
 
       const tableColumnCells = getTableColumnCells(
         tableCells,
@@ -224,6 +227,23 @@ export function onMouseUp(
       );
       selectProp.startDate = tableColumnCells[0].date;
       selectProp.endDate = tableColumnCells[tableColumnCells.length - 1].date;
+
+      for (let i = 0; i < tableColumnCells.length; i++) {
+        const tableColumnCell = tableColumnCells[i];
+        const index = selectProp.rows.findIndex(
+          (item) => item.id === tableColumnCell.rowId,
+        );
+        if (index > -1) {
+          selectProp.rows[index].columns.push({
+            status: tableColumnCell.status,
+            value: tableColumnCell.value,
+            avatar: tableColumnCell.avatar || '',
+            name: tableColumnCell.name || '',
+            text: tableColumnCell.text || '',
+            extra: tableColumnCell.extra || '',
+          });
+        }
+      }
 
       onSelect(selectProp);
     }
@@ -273,6 +293,7 @@ export function generateFillTableCells(
           avatar: fillRowColumn.avatar,
           name: fillRowColumn.name,
           text: fillRowColumn.text,
+          extra: fillRowColumn.extra,
         });
       }
     }
@@ -309,6 +330,7 @@ export function generateTableCells(
       let avatar;
       let name;
       let text;
+      let extra;
       const fillRowCell = getFillRowCell(fillRowCells, rowId, column);
       if (fillRowCell) {
         value = fillRowCell.value;
@@ -318,6 +340,7 @@ export function generateTableCells(
         avatar = fillRowCell.avatar;
         name = fillRowCell.name;
         text = fillRowCell.text;
+        extra = fillRowCell.extra;
       }
 
       tableCells.push({
@@ -332,6 +355,7 @@ export function generateTableCells(
         avatar,
         name,
         text,
+        extra,
       });
     }
   }

@@ -18,7 +18,21 @@ export interface CalendarRowProp {
 export interface CalendarSelectProp {
   startDate: string;
   endDate: string;
-  rowIds: string[];
+  rows: CalenderSelectRowProp[];
+}
+
+export interface CalenderSelectRowProp {
+  id: string;
+  columns: CalendarSelectRowColumnProp[];
+}
+
+export interface CalendarSelectRowColumnProp {
+  status: CalendarColumnStatusProp;
+  value: string;
+  avatar?: string;
+  name?: string;
+  text?: string;
+  extra?: any;
 }
 
 export enum CalendarColumnStatusProp {
@@ -40,6 +54,7 @@ export interface CalendarFillColumnProp {
   avatar?: string;
   name?: string;
   text?: string;
+  extra?: any;
 }
 
 export interface CalendarMonthDate {

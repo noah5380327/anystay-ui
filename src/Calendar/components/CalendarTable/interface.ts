@@ -49,6 +49,7 @@ export interface CalendarTableCell {
   avatar?: string;
   name?: string;
   text?: string;
+  extra?: any;
 }
 
 export interface CalendarFillRowCell {
@@ -61,6 +62,7 @@ export interface CalendarFillRowCell {
   avatar?: string;
   name?: string;
   text?: string;
+  extra?: any;
 }
 
 export interface CalendarTableOccupiedCell {
