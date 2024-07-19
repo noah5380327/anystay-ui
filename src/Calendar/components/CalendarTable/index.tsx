@@ -1,5 +1,4 @@
 import { Button } from 'antd';
-import { CalendarColumnStatusProp } from 'anystay-ui';
 import {
   CalendarTableProp,
   CalendarTableSelection,
@@ -13,6 +12,7 @@ import {
   getCurrentColumnBorderSelectedStyle,
   getTableCell,
   getTableCellOccupied,
+  getTableCellOccupiedCondition,
   onMouseDown,
   onMouseOver,
   onMouseUp,
@@ -127,8 +127,11 @@ const CalendarTable: FC<CalendarTableProp> = (props) => {
                     {getTableCell(tableCells, rowIndex, columnIndex)?.value}
                   </div>
                 </div>
-                {getTableCell(tableCells, rowIndex, columnIndex)?.status ===
-                  CalendarColumnStatusProp.Occupied && (
+                {getTableCellOccupiedCondition(
+                  tableCells,
+                  rowIndex,
+                  columnIndex,
+                ) && (
                   <div
                     className={`calendar-table-row-column-content-occupied-wrapper`}
                     style={{

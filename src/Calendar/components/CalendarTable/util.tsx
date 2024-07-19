@@ -286,19 +286,14 @@ export function generateFillTableCells(
     for (let j = 0; j < fillRow.columns.length; j++) {
       const fillRowColumn = fillRow.columns[j];
       const startDate = fillRowColumn.startDate;
-      let endDate = fillRowColumn.endDate;
-      if (fillRowColumn.status === CalendarColumnStatusProp.Occupied) {
-        endDate = startDate;
-      }
+      const endDate = fillRowColumn.endDate;
       const dates = generateDatesFromStartAndEnd(startDate, endDate);
       for (let k = 0; k < dates.length; k++) {
         fillRowCells.push({
           rowId: fillRow.rowId,
           date: dates[k],
           startDate,
-          endDate: CalendarColumnStatusProp.Occupied
-            ? fillRowColumn.endDate
-            : endDate,
+          endDate,
           status: fillRowColumn.status,
           value: fillRowColumn.value,
           avatar: fillRowColumn.avatar,
@@ -415,6 +410,21 @@ export function getTableColumnCells(
 export function returnToToday(props: CalendarTableProp) {
   props.setCustomScrollLeft((props.subtractDayNumber - 2) * props.columnWidth);
   props.setShowReturnToToday(false);
+}
+
+export function getTableCellOccupiedCondition(
+  tableCells: CalendarTableCell[],
+  rowIndex: number,
+  columnIndex: number,
+) {
+  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+
+  const startDate = moment(tableCell.startDate);
+  const date = moment(tableCell.date);
+  return (
+    tableCell?.status === CalendarColumnStatusProp.Occupied &&
+    startDate.isSame(date, 'day')
+  );
 }
 
 export function getTableCellOccupied(
