@@ -16,6 +16,9 @@ import {
 import moment from 'moment';
 import { Dispatch, SetStateAction } from 'react';
 
+let timer: NodeJS.Timeout;
+const longPressThreshold = 500;
+
 export function getColumnBackgroundSelectedStyle(
   rowIndex: number,
   columnIndex: number,
@@ -148,14 +151,24 @@ export function onMouseDown(
         columnEndIndex: columnIndex,
         columnCurrentIndex: columnIndex,
       });
+      timer = setTimeout(() => {
+        clearSelection(setSelectionVisible);
+      }, longPressThreshold);
     } else {
-      const hideSelection = () => {
-        setSelectionVisible(false);
-        document.removeEventListener('mouseup', hideSelection);
-      };
-      document.addEventListener('mouseup', hideSelection);
+      clearTimeout(timer);
+      clearSelection(setSelectionVisible);
     }
   }
+}
+
+export function clearSelection(
+  setSelectionVisible: Dispatch<SetStateAction<boolean>>,
+) {
+  const hideSelection = () => {
+    setSelectionVisible(false);
+    document.removeEventListener('mouseup', hideSelection);
+  };
+  document.addEventListener('mouseup', hideSelection);
 }
 
 export function onMouseOver(
