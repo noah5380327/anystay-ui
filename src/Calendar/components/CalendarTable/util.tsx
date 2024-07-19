@@ -136,28 +136,24 @@ export function onMouseDown(
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   setSelection: Dispatch<SetStateAction<CalendarTableSelection>>,
   subtractDayNumber: number,
-  tableCells: CalendarTableCell[],
 ) {
   if (columnIndex > subtractDayNumber - 1) {
-    const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-    if (tableCell?.status !== CalendarColumnStatusProp.Occupied) {
-      if (!selectionVisible) {
-        setSelectionVisible(true);
-        setSelection({
-          rowStartIndex: rowIndex,
-          rowEndIndex: rowIndex,
-          rowCurrentIndex: rowIndex,
-          columnStartIndex: columnIndex,
-          columnEndIndex: columnIndex,
-          columnCurrentIndex: columnIndex,
-        });
-      } else {
-        const hideSelection = () => {
-          setSelectionVisible(false);
-          document.removeEventListener('mouseup', hideSelection);
-        };
-        document.addEventListener('mouseup', hideSelection);
-      }
+    if (!selectionVisible) {
+      setSelectionVisible(true);
+      setSelection({
+        rowStartIndex: rowIndex,
+        rowEndIndex: rowIndex,
+        rowCurrentIndex: rowIndex,
+        columnStartIndex: columnIndex,
+        columnEndIndex: columnIndex,
+        columnCurrentIndex: columnIndex,
+      });
+    } else {
+      const hideSelection = () => {
+        setSelectionVisible(false);
+        document.removeEventListener('mouseup', hideSelection);
+      };
+      document.addEventListener('mouseup', hideSelection);
     }
   }
 }
