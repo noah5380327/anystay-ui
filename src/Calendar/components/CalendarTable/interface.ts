@@ -26,8 +26,6 @@ export interface CalendarTableProp {
   setCustomScrollLeft: Dispatch<SetStateAction<number>>;
   showReturnToToday: boolean;
   setShowReturnToToday: Dispatch<SetStateAction<boolean>>;
-  forceClearSelect: boolean;
-  setForceClearSelect: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface CalendarTableSelection {

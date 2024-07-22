@@ -12,12 +12,18 @@ import {
 } from 'anystay-ui/Calendar/constant';
 import { CalendarMonthDate, CalendarProp } from 'anystay-ui/Calendar/interface';
 import { generateMonthDate, onCustomScroll } from 'anystay-ui/Calendar/util';
-import React, { useEffect, useState, type FC } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { ScrollSync } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 import './style.less';
 
-const Calendar: FC<CalendarProp> = (props) => {
+const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
   const totalDayNumber = props.totalDayNumber || DEFAULT_TOTAL_DAY_NUMBER;
   const subtractDayNumber =
     props.subtractDayNumber || DEFAULT_SUBTRACT_DAY_NUMBER;
@@ -31,17 +37,22 @@ const Calendar: FC<CalendarProp> = (props) => {
     (subtractDayNumber - 2) * columnWidth,
   );
   const [showReturnToToday, setShowReturnToToday] = useState<boolean>(false);
-  const [forceClearSelect, setForceClearSelect] = useState<boolean>(false);
+  const tableRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const date = generateMonthDate(totalDayNumber, subtractDayNumber);
     setMonthDate(date);
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function clearSelect() {
-    setForceClearSelect(true);
-  }
+  // @ts-ignore
+  useImperativeHandle(ref, () => ({
+    forceClearSelect: () => {
+      if (tableRef.current) {
+        // @ts-ignore
+        tableRef.current.forceClearSelect();
+      }
+    },
+  }));
 
   return (
     <ConfigProvider
@@ -61,7 +72,7 @@ const Calendar: FC<CalendarProp> = (props) => {
             scrollTop,
             scrollWidth,
           }) => (
-            <div className={`calendar-container`}>
+            <div ref={ref} className={`calendar-container`}>
               <CalendarTitle
                 monthDate={monthDate}
                 columnWidth={columnWidth}
@@ -113,6 +124,7 @@ const Calendar: FC<CalendarProp> = (props) => {
                 setCustomScrollLeft={setCustomScrollLeft}
               />
               <CalendarTable
+                ref={tableRef}
                 monthDate={monthDate}
                 rows={props.rows}
                 columnWidth={columnWidth}
@@ -140,8 +152,6 @@ const Calendar: FC<CalendarProp> = (props) => {
                 setCustomScrollLeft={setCustomScrollLeft}
                 showReturnToToday={showReturnToToday}
                 setShowReturnToToday={setShowReturnToToday}
-                forceClearSelect={forceClearSelect}
-                setForceClearSelect={setForceClearSelect}
               />
             </div>
           )}
@@ -149,6 +159,6 @@ const Calendar: FC<CalendarProp> = (props) => {
       )}
     </ConfigProvider>
   );
-};
+});
 
 export default Calendar;
