@@ -1,16 +1,16 @@
 import {
-  CalendarTitleCell,
-  CalendarTitleDate,
-  CalendarTitleProp,
-} from 'anystay-ui/Calendar/components/CalendarTitle/interface';
-import 'anystay-ui/Calendar/components/CalendarTitle/style.less';
+  CalendarDayTitleCell,
+  CalendarDayTitleDate,
+  CalendarDayTitleProp,
+} from 'anystay-ui/Calendar/components/CalendarDayTitle/interface';
+import 'anystay-ui/Calendar/components/CalendarDayTitle/style.less';
 import dayjs from 'dayjs';
 import { OnScrollParams } from 'react-virtualized';
 
 export function generateTitleCells(
-  props: CalendarTitleProp,
-): CalendarTitleCell[] {
-  const titleCells: CalendarTitleCell[] = [];
+  props: CalendarDayTitleProp,
+): CalendarDayTitleCell[] {
+  const titleCells: CalendarDayTitleCell[] = [];
 
   for (let i = 0; i < Object.keys(props.monthDate).length; i++) {
     const key = Object.keys(props.monthDate)[i];
@@ -24,7 +24,9 @@ export function generateTitleCells(
   return titleCells;
 }
 
-export function getTitleDate(cells: CalendarTitleCell[]): CalendarTitleDate {
+export function getTitleDate(
+  cells: CalendarDayTitleCell[],
+): CalendarDayTitleDate {
   const firstDate = dayjs(cells[0].dates[0]).format('D MMM YYYY');
   const lastDate = dayjs(
     cells[cells.length - 1].dates[cells[cells.length - 1].dates.length - 1],
@@ -35,14 +37,14 @@ export function getTitleDate(cells: CalendarTitleCell[]): CalendarTitleDate {
   };
 }
 
-export function getDateName(titleCell: CalendarTitleCell): string {
+export function getDateName(titleCell: CalendarDayTitleCell): string {
   const value = titleCell.month;
   return `${dayjs(value).format('MMMM')} ${dayjs(value).format('YYYY')}`;
 }
 
 export function getBorderStyle(
-  props: CalendarTitleProp,
-  titleCell: CalendarTitleCell,
+  props: CalendarDayTitleProp,
+  titleCell: CalendarDayTitleCell,
 ): string {
   if (Object.keys(props.monthDate).length > 1) {
     const lastKey = Object.keys(props.monthDate)[
@@ -50,7 +52,7 @@ export function getBorderStyle(
     ];
 
     if (titleCell.month !== lastKey) {
-      return 'calendar-title-text-border';
+      return 'calendar-day-title-text-border';
     }
   }
 
@@ -59,8 +61,8 @@ export function getBorderStyle(
 
 export function reSetScrollLeft(
   date: string,
-  props: CalendarTitleProp,
-  titleDate: CalendarTitleDate,
+  props: CalendarDayTitleProp,
+  titleDate: CalendarDayTitleDate,
 ) {
   const selectedDate = dayjs(date).startOf('month');
   const firstDate = dayjs(titleDate.firstDate);
@@ -71,8 +73,8 @@ export function reSetScrollLeft(
 
 export function getScrollDate(
   params: OnScrollParams,
-  props: CalendarTitleProp,
-  titleDate: CalendarTitleDate,
+  props: CalendarDayTitleProp,
+  titleDate: CalendarDayTitleDate,
 ) {
   const number = Math.round(params.scrollLeft / props.columnWidth);
   return dayjs(titleDate.firstDate).add(number + 2, 'day');

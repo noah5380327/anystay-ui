@@ -2,12 +2,10 @@ import { CalendarMonthDate } from 'anystay-ui/Calendar/interface';
 import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
-export interface CalendarDateProp {
+export interface CalendarDayTitleProp {
   monthDate: CalendarMonthDate;
-  totalDayNumber: number;
-  stepDayNumber: number;
   columnWidth: number;
-  dateRowHeight: number;
+  titleRowHeight: number;
   clientHeight: number;
   clientWidth: number;
   onScroll: (params: OnScrollParams) => void;
@@ -16,10 +14,16 @@ export interface CalendarDateProp {
   scrollTop: number;
   scrollWidth: number;
   setCustomScrollLeft: Dispatch<SetStateAction<number>>;
+  showReturnToToday: boolean;
+  setShowReturnToToday: Dispatch<SetStateAction<boolean>>;
 }
 
-export interface CalendarDateCell {
-  date: string;
+export interface CalendarDayTitleCell {
   month: string;
-  dateIndex: number;
+  dates: string[];
+}
+
+export interface CalendarDayTitleDate {
+  firstDate: string;
+  lastDate: string;
 }

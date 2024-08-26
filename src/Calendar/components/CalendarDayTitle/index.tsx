@@ -1,7 +1,7 @@
 import { DatePicker } from 'antd';
 // @ts-ignore
 import CalendarLeftPng from 'anystay-ui/Calendar/assets/left.png';
-import { CalendarTitleProp } from 'anystay-ui/Calendar/components/CalendarTitle/interface';
+import { CalendarDayTitleProp } from 'anystay-ui/Calendar/components/CalendarDayTitle/interface';
 import {
   generateTitleCells,
   getBorderStyle,
@@ -9,20 +9,20 @@ import {
   getScrollDate,
   getTitleDate,
   reSetScrollLeft,
-} from 'anystay-ui/Calendar/components/CalendarTitle/util';
+} from 'anystay-ui/Calendar/components/CalendarDayTitle/util';
 import dayjs from 'dayjs';
 import React, { useState, type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
 import './style.less';
 
-const CalendarTitle: FC<CalendarTitleProp> = (props) => {
+const CalendarDayTitle: FC<CalendarDayTitleProp> = (props) => {
   const titleCells = generateTitleCells(props);
   const titleDate = getTitleDate(titleCells);
 
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs>(dayjs());
 
   return (
-    <div className={`calendar-title-container`}>
+    <div className={`calendar-day-title-container`}>
       <AutoSizer disableHeight>
         {({ width }) => (
           <Grid
@@ -49,7 +49,7 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
             cellRenderer={({ columnIndex, key, style }) => (
               <span
                 key={key}
-                className={`calendar-title-text
+                className={`calendar-day-title-text
                 ${getBorderStyle(props, titleCells[columnIndex])}`}
                 style={style}
               >
@@ -60,7 +60,7 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
         )}
       </AutoSizer>
 
-      <div className={`calendar-title-action-container`}>
+      <div className={`calendar-day-title-action-container`}>
         <DatePicker
           inputReadOnly
           picker="month"
@@ -71,7 +71,7 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
             <img
               alt={`left`}
               src={CalendarLeftPng}
-              className={`calendar-title-action-operation-image`}
+              className={`calendar-day-title-action-operation-image`}
             />
           }
           onChange={(date) => {
@@ -84,4 +84,4 @@ const CalendarTitle: FC<CalendarTitleProp> = (props) => {
   );
 };
 
-export default CalendarTitle;
+export default CalendarDayTitle;

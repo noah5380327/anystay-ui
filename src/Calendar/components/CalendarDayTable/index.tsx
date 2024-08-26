@@ -1,8 +1,8 @@
 import { Button } from 'antd';
 import {
-  CalendarTableProp,
-  CalendarTableSelection,
-} from 'anystay-ui/Calendar/components/CalendarTable/interface';
+  CalendarDayTableProp,
+  CalendarDayTableSelection,
+} from 'anystay-ui/Calendar/components/CalendarDayTable/interface';
 import {
   generateTableCells,
   getColumBlockStyle,
@@ -16,8 +16,9 @@ import {
   onMouseDown,
   onMouseOver,
   onMouseUp,
+  onOccupiedClick,
   returnToToday,
-} from 'anystay-ui/Calendar/components/CalendarTable/util';
+} from 'anystay-ui/Calendar/components/CalendarDayTable/util';
 import React, {
   forwardRef,
   useEffect,
@@ -27,10 +28,10 @@ import React, {
 import { AutoSizer, Grid } from 'react-virtualized';
 import './style.less';
 
-const CalendarTable = forwardRef<HTMLInputElement, CalendarTableProp>(
+const CalendarDayTable = forwardRef<HTMLInputElement, CalendarDayTableProp>(
   (props, ref) => {
     const [selectionVisible, setSelectionVisible] = useState<boolean>(false);
-    const [selection, setSelection] = useState<CalendarTableSelection>({
+    const [selection, setSelection] = useState<CalendarDayTableSelection>({
       rowStartIndex: -1,
       rowEndIndex: -1,
       rowCurrentIndex: -1,
@@ -43,6 +44,8 @@ const CalendarTable = forwardRef<HTMLInputElement, CalendarTableProp>(
       props.monthDate,
       props.rows,
       props.fillRows || [],
+      props.blockRows || [],
+      props.occupiedRows || [],
     );
 
     useEffect(() => {
@@ -66,11 +69,11 @@ const CalendarTable = forwardRef<HTMLInputElement, CalendarTableProp>(
     }));
 
     return (
-      <div ref={ref} className={`calendar-table-container`}>
+      <div ref={ref} className={`calendar-day-table-container`}>
         <AutoSizer disableHeight>
           {({ width }) => (
             <Grid
-              className={`calendar-date-value-container`}
+              className={`calendar-day-date-value-container`}
               width={width}
               height={props.columnWidth * props.rows.length}
               columnCount={props.totalDayNumber}
@@ -87,24 +90,27 @@ const CalendarTable = forwardRef<HTMLInputElement, CalendarTableProp>(
               cellRenderer={({ columnIndex, key, rowIndex, style }) => (
                 <div
                   key={key}
-                  className={`calendar-table-row-column-container
-                ${getColumnBackgroundSelectedStyle(
-                  rowIndex,
-                  columnIndex,
-                  selection,
-                )}
-                ${getCurrentColumnBorderSelectedStyle(
-                  rowIndex,
-                  columnIndex,
-                  selection,
-                )}
-                ${getColumnBorderSelectedStyle(
-                  rowIndex,
-                  columnIndex,
-                  selection,
-                )}
-                ${getColumnDisabledStyle(columnIndex, props.subtractDayNumber)}
-                ${getColumBlockStyle(tableCells, rowIndex, columnIndex)}`}
+                  className={`calendar-day-table-row-column-container
+                  ${getColumnBackgroundSelectedStyle(
+                    rowIndex,
+                    columnIndex,
+                    selection,
+                  )}
+                  ${getCurrentColumnBorderSelectedStyle(
+                    rowIndex,
+                    columnIndex,
+                    selection,
+                  )}
+                  ${getColumnBorderSelectedStyle(
+                    rowIndex,
+                    columnIndex,
+                    selection,
+                  )}
+                  ${getColumnDisabledStyle(
+                    columnIndex,
+                    props.subtractDayNumber,
+                  )}
+                  ${getColumBlockStyle(tableCells, rowIndex, columnIndex)}`}
                   style={style}
                   onMouseDown={() =>
                     onMouseDown(
@@ -128,10 +134,10 @@ const CalendarTable = forwardRef<HTMLInputElement, CalendarTableProp>(
                   }
                 >
                   <div
-                    className={`calendar-table-row-column-content-container`}
+                    className={`calendar-day-table-row-column-content-container`}
                   >
                     <div
-                      className={`calendar-table-row-column-content-wrapper`}
+                      className={`calendar-day-table-row-column-content-wrapper`}
                     >
                       {getTableCell(tableCells, rowIndex, columnIndex)?.value}
                     </div>
@@ -142,7 +148,7 @@ const CalendarTable = forwardRef<HTMLInputElement, CalendarTableProp>(
                     columnIndex,
                   ) && (
                     <div
-                      className={`calendar-table-row-column-content-occupied-wrapper`}
+                      className={`calendar-day-table-row-column-content-occupied-wrapper`}
                       style={{
                         width: getTableCellOccupied(
                           tableCells,
@@ -157,30 +163,53 @@ const CalendarTable = forwardRef<HTMLInputElement, CalendarTableProp>(
                           props,
                         ).left,
                       }}
+                      onClick={() =>
+                        onOccupiedClick(
+                          tableCells,
+                          rowIndex,
+                          columnIndex,
+                          props,
+                        )
+                      }
+                      onMouseDown={(e) => {
+                        e.stopPropagation();
+                      }}
+                      onMouseOver={(e) => {
+                        e.stopPropagation();
+                      }}
                     >
+                      {getTableCell(tableCells, rowIndex, columnIndex).occupied
+                        ?.avatar && (
+                        <div
+                          className={`calendar-day-table-row-column-content-occupied-image-container`}
+                        >
+                          <img
+                            src={
+                              getTableCell(tableCells, rowIndex, columnIndex)
+                                .occupied?.avatar
+                            }
+                            alt={`avatar`}
+                          />
+                        </div>
+                      )}
                       <div
-                        className={`calendar-table-row-column-content-occupied-image-container`}
-                      >
-                        <img
-                          src={
-                            getTableCell(tableCells, rowIndex, columnIndex)
-                              .avatar
-                          }
-                          alt={`avatar`}
-                        />
-                      </div>
-                      <div
-                        className={`calendar-table-row-column-content-occupied-text-container`}
+                        className={`calendar-day-table-row-column-content-occupied-text-container`}
                       >
                         <span
-                          className={`calendar-table-row-column-content-occupied-text-name`}
+                          className={`calendar-day-table-row-column-content-occupied-text-name`}
                         >
-                          {getTableCell(tableCells, rowIndex, columnIndex).name}
+                          {
+                            getTableCell(tableCells, rowIndex, columnIndex)
+                              .occupied?.name
+                          }
                         </span>
                         <span
-                          className={`calendar-table-row-column-content-occupied-text`}
+                          className={`calendar-day-table-row-column-content-occupied-text`}
                         >
-                          {getTableCell(tableCells, rowIndex, columnIndex).text}
+                          {
+                            getTableCell(tableCells, rowIndex, columnIndex)
+                              .occupied?.text
+                          }
                         </span>
                       </div>
                     </div>
@@ -192,11 +221,11 @@ const CalendarTable = forwardRef<HTMLInputElement, CalendarTableProp>(
         </AutoSizer>
 
         {props.showReturnToToday && (
-          <div className={`calendar-table-return-today-container`}>
+          <div className={`calendar-day-table-return-today-container`}>
             <Button
               type="primary"
               onClick={() => returnToToday(props)}
-              className={`calendar-table-return-today-btn`}
+              className={`calendar-day-table-return-today-btn`}
             >
               Return to today
             </Button>
@@ -207,4 +236,4 @@ const CalendarTable = forwardRef<HTMLInputElement, CalendarTableProp>(
   },
 );
 
-export default CalendarTable;
+export default CalendarDayTable;

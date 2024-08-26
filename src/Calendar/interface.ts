@@ -5,9 +5,14 @@ export interface CalendarProp {
   stepDayNumber?: number;
   onSelect?: (prop: CalendarSelectProp) => void;
   fillRows?: CalendarFillRowProp[];
+  blockRows?: CalendarBlockRowProp[];
+  occupiedRows?: CalendarOccupiedRowProp[];
+  onOccupiedClick?: (prop: string) => void;
   columnWidth?: number;
   titleRowHeight?: number;
   dateRowHeight?: number;
+  type?: CalendarType;
+  tableHeight?: number;
 }
 
 export interface CalendarRowProp {
@@ -27,18 +32,23 @@ export interface CalenderSelectRowProp {
 }
 
 export interface CalendarSelectRowCellProp {
-  status: CalendarColumnStatusProp;
+  status: CalendarCellStatusProp;
   value: string;
+  extra?: any;
+  occupied?: CalendarSelectRowCellOccupiedProp;
+}
+
+export interface CalendarSelectRowCellOccupiedProp {
+  link: string;
+  name: string;
+  text: string;
   avatar?: string;
-  name?: string;
-  text?: string;
   extra?: any;
 }
 
-export enum CalendarColumnStatusProp {
+export enum CalendarCellStatusProp {
   Normal = 'Normal',
   Block = 'Block',
-  Occupied = 'Occupied',
 }
 
 export interface CalendarFillRowProp {
@@ -46,17 +56,45 @@ export interface CalendarFillRowProp {
   columns: CalendarFillColumnProp[];
 }
 
+export interface CalendarBlockRowProp {
+  rowId: string;
+  columns: CalendarBlockColumnProp[];
+}
+
+export interface CalendarOccupiedRowProp {
+  rowId: string;
+  columns: CalendarOccupiedColumnProp[];
+}
+
 export interface CalendarFillColumnProp {
   startDate: string;
   endDate: string;
-  status: CalendarColumnStatusProp;
   value: string;
+  extra?: any;
+}
+
+export interface CalendarBlockColumnProp {
+  startDate: string;
+  endDate: string;
+  value: string;
+  extra?: any;
+}
+
+export interface CalendarOccupiedColumnProp {
+  startDate: string;
+  endDate: string;
+  link: string;
+  name: string;
+  text: string;
   avatar?: string;
-  name?: string;
-  text?: string;
   extra?: any;
 }
 
 export interface CalendarMonthDate {
   [key: string]: string[];
+}
+
+export enum CalendarType {
+  Day = 'Day',
+  Month = 'Month',
 }

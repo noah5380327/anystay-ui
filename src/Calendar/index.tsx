@@ -1,17 +1,29 @@
 import { ConfigProvider } from 'antd';
-import CalendarDate from 'anystay-ui/Calendar/components/CalendarDate';
-import CalendarTable from 'anystay-ui/Calendar/components/CalendarTable';
-import CalendarTitle from 'anystay-ui/Calendar/components/CalendarTitle';
+import CalendarDayDate from 'anystay-ui/Calendar/components/CalendarDayDate';
+import CalendarDayTable from 'anystay-ui/Calendar/components/CalendarDayTable';
+import CalendarDayTitle from 'anystay-ui/Calendar/components/CalendarDayTitle';
+import CalendarMonthTable from 'anystay-ui/Calendar/components/CalendarMonthTable';
+import CalendarMonthTitle from 'anystay-ui/Calendar/components/CalendarMonthTitle';
 import {
   DEFAULT_COLUMN_WIDTH,
   DEFAULT_DATE_ROW_HEIGHT,
   DEFAULT_STEP_DAY_NUMBER,
   DEFAULT_SUBTRACT_DAY_NUMBER,
+  DEFAULT_TABLE_HEIGHT,
   DEFAULT_TITLE_ROW_HEIGHT,
   DEFAULT_TOTAL_DAY_NUMBER,
+  DEFAULT_TYPE,
 } from 'anystay-ui/Calendar/constant';
-import { CalendarMonthDate, CalendarProp } from 'anystay-ui/Calendar/interface';
-import { generateMonthDate, onCustomScroll } from 'anystay-ui/Calendar/util';
+import {
+  CalendarMonthDate,
+  CalendarProp,
+  CalendarType,
+} from 'anystay-ui/Calendar/interface';
+import {
+  generateMonthDate,
+  onCustomDayScroll,
+  onCustomMonthScroll,
+} from 'anystay-ui/Calendar/util';
 import React, {
   forwardRef,
   useEffect,
@@ -31,11 +43,15 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
   const columnWidth = props.columnWidth || DEFAULT_COLUMN_WIDTH;
   const titleRowHeight = props.titleRowHeight || DEFAULT_TITLE_ROW_HEIGHT;
   const dateRowHeight = props.dateRowHeight || DEFAULT_DATE_ROW_HEIGHT;
+  const type = props.type || DEFAULT_TYPE;
+  const tableHeight = props.tableHeight || DEFAULT_TABLE_HEIGHT;
 
   const [monthDate, setMonthDate] = useState<CalendarMonthDate>({});
   const [customScrollLeft, setCustomScrollLeft] = useState<number>(
     (subtractDayNumber - 2) * columnWidth,
   );
+  const [customScrollTop, setCustomScrollTop] = useState<number>(0);
+  const [monthTitle, setMonthTitle] = useState<string>('');
   const [showReturnToToday, setShowReturnToToday] = useState<boolean>(false);
   const tableRef = useRef<HTMLInputElement>(null);
 
@@ -62,7 +78,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
         },
       }}
     >
-      {Object.keys(monthDate).length > 0 && (
+      {Object.keys(monthDate).length > 0 && type === CalendarType.Day && (
         <ScrollSync>
           {({
             clientHeight,
@@ -73,14 +89,14 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
             scrollWidth,
           }) => (
             <div ref={ref} className={`calendar-container`}>
-              <CalendarTitle
+              <CalendarDayTitle
                 monthDate={monthDate}
                 columnWidth={columnWidth}
                 titleRowHeight={titleRowHeight}
                 clientHeight={clientHeight}
                 clientWidth={clientWidth}
                 onScroll={(sp) => {
-                  onCustomScroll(
+                  onCustomDayScroll(
                     sp,
                     customScrollLeft,
                     setCustomScrollLeft,
@@ -98,7 +114,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                 showReturnToToday={showReturnToToday}
                 setShowReturnToToday={setShowReturnToToday}
               />
-              <CalendarDate
+              <CalendarDayDate
                 monthDate={monthDate}
                 totalDayNumber={totalDayNumber}
                 stepDayNumber={stepDayNumber}
@@ -107,7 +123,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                 clientHeight={clientHeight}
                 clientWidth={clientWidth}
                 onScroll={(sp) => {
-                  onCustomScroll(
+                  onCustomDayScroll(
                     sp,
                     customScrollLeft,
                     setCustomScrollLeft,
@@ -123,7 +139,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                 scrollWidth={scrollWidth}
                 setCustomScrollLeft={setCustomScrollLeft}
               />
-              <CalendarTable
+              <CalendarDayTable
                 ref={tableRef}
                 monthDate={monthDate}
                 rows={props.rows}
@@ -131,11 +147,14 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                 totalDayNumber={totalDayNumber}
                 subtractDayNumber={subtractDayNumber}
                 fillRows={props.fillRows}
+                blockRows={props.blockRows}
+                occupiedRows={props.occupiedRows}
                 onSelect={props.onSelect}
+                onOccupiedClick={props.onOccupiedClick}
                 clientHeight={clientHeight}
                 clientWidth={clientWidth}
                 onScroll={(sp) => {
-                  onCustomScroll(
+                  onCustomDayScroll(
                     sp,
                     customScrollLeft,
                     setCustomScrollLeft,
@@ -152,6 +171,44 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                 setCustomScrollLeft={setCustomScrollLeft}
                 showReturnToToday={showReturnToToday}
                 setShowReturnToToday={setShowReturnToToday}
+              />
+            </div>
+          )}
+        </ScrollSync>
+      )}
+
+      {Object.keys(monthDate).length > 0 && type === CalendarType.Month && (
+        <ScrollSync>
+          {({
+            clientHeight,
+            clientWidth,
+            onScroll,
+            scrollHeight,
+            scrollWidth,
+            scrollLeft,
+          }) => (
+            <div ref={ref} className={`calendar-container`}>
+              <CalendarMonthTitle monthTitle={monthTitle} />
+              <CalendarMonthTable
+                ref={tableRef}
+                monthDate={monthDate}
+                rows={props.rows}
+                tableHeight={tableHeight}
+                fillRows={props.fillRows}
+                blockRows={props.blockRows}
+                occupiedRows={props.occupiedRows}
+                onSelect={props.onSelect}
+                monthTitle={monthTitle}
+                setMonthTitle={setMonthTitle}
+                clientHeight={clientHeight}
+                clientWidth={clientWidth}
+                onScroll={(sp) => {
+                  onCustomMonthScroll(sp, setCustomScrollTop, onScroll);
+                }}
+                scrollHeight={scrollHeight}
+                scrollLeft={scrollLeft}
+                scrollTop={customScrollTop}
+                scrollWidth={scrollWidth}
               />
             </div>
           )}

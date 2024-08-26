@@ -29,7 +29,7 @@ export function generateMonthDate(
   return groupedByMonth;
 }
 
-export function onCustomScroll(
+export function onCustomDayScroll(
   sp: OnScrollParams,
   customScrollLeft: number,
   setCustomScrollLeft: Dispatch<SetStateAction<number>>,
@@ -47,4 +47,16 @@ export function onCustomScroll(
   if (customScrollLeft !== (subtractDayNumber - 2) * columnWidth) {
     setShowReturnToToday(true);
   }
+}
+
+export function onCustomMonthScroll(
+  sp: OnScrollParams,
+  setCustomScrollTop: Dispatch<SetStateAction<number>>,
+  onScroll: (params: OnScrollParams) => void,
+) {
+  setCustomScrollTop(sp.scrollTop);
+  onScroll({
+    ...sp,
+    scrollTop: sp.scrollTop,
+  });
 }

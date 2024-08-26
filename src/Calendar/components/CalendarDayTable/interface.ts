@@ -1,14 +1,16 @@
 import {
-  CalendarColumnStatusProp,
+  CalendarBlockRowProp,
+  CalendarCellStatusProp,
   CalendarFillRowProp,
   CalendarMonthDate,
+  CalendarOccupiedRowProp,
   CalendarRowProp,
   CalendarSelectProp,
 } from 'anystay-ui/Calendar/interface';
 import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
-export interface CalendarTableProp {
+export interface CalendarDayTableProp {
   monthDate: CalendarMonthDate;
   rows: CalendarRowProp[];
   columnWidth: number;
@@ -16,6 +18,9 @@ export interface CalendarTableProp {
   subtractDayNumber: number;
   onSelect?: (prop: CalendarSelectProp) => void;
   fillRows?: CalendarFillRowProp[];
+  blockRows?: CalendarBlockRowProp[];
+  occupiedRows?: CalendarOccupiedRowProp[];
+  onOccupiedClick?: (prop: string) => void;
   clientHeight: number;
   clientWidth: number;
   onScroll: (params: OnScrollParams) => void;
@@ -28,7 +33,7 @@ export interface CalendarTableProp {
   setShowReturnToToday: Dispatch<SetStateAction<boolean>>;
 }
 
-export interface CalendarTableSelection {
+export interface CalendarDayTableSelection {
   rowStartIndex: number;
   rowEndIndex: number;
   rowCurrentIndex: number;
@@ -37,7 +42,7 @@ export interface CalendarTableSelection {
   columnCurrentIndex: number;
 }
 
-export interface CalendarTableCell {
+export interface CalendarDayTableCell {
   rowIndex: number;
   columnIndex: number;
   rowId: string;
@@ -45,27 +50,52 @@ export interface CalendarTableCell {
   startDate: string;
   endDate: string;
   value: string;
-  status: CalendarColumnStatusProp;
+  status: CalendarCellStatusProp;
+  extra?: any;
+  occupied?: CalendarDayTableCellOccupied;
+}
+
+export interface CalendarDayTableCellOccupied {
+  startDate: string;
+  endDate: string;
+  link: string;
+  name: string;
+  text: string;
   avatar?: string;
-  name?: string;
-  text?: string;
   extra?: any;
 }
 
-export interface CalendarFillRowCell {
+export interface CalendarDayFillRowCell {
   rowId: string;
   date: string;
   startDate: string;
   endDate: string;
-  status: CalendarColumnStatusProp;
   value: string;
-  avatar?: string;
-  name?: string;
-  text?: string;
   extra?: any;
 }
 
-export interface CalendarTableOccupiedCell {
+export interface CalendarDayBlockRowCell {
+  rowId: string;
+  date: string;
+  startDate: string;
+  endDate: string;
+  value: string;
+  extra?: any;
+}
+
+export interface CalendarDayOccupiedRowCell {
+  rowId: string;
+  date: string;
+  startDate: string;
+  endDate: string;
+  link: string;
+  name: string;
+  text: string;
+  avatar?: string;
+  extra?: any;
+}
+
+export interface CalendarDayTableOccupiedCell {
   width: number;
   left: number;
 }
