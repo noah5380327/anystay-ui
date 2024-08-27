@@ -63,6 +63,14 @@ export default () => (
         columns: [
           {
             startDate: '2024-09-22 13:00:00',
+            endDate: '2024-09-23 15:00:00',
+            name: 'John',
+            text: 'Confirmed',
+            link: 'https://www.baidu.com',
+            avatar: 'http://localhost:4000/favicon.ico',
+          },
+          {
+            startDate: '2024-09-23 17:00:00',
             endDate: '2024-09-25 15:00:00',
             name: 'John',
             text: 'Confirmed',
