@@ -156,6 +156,12 @@ const CalendarDayTable = forwardRef<HTMLInputElement, CalendarDayTableProp>(
                           columnIndex,
                           props,
                         ).width,
+                        minWidth: getTableCellOccupied(
+                          tableCells,
+                          rowIndex,
+                          columnIndex,
+                          props,
+                        ).width,
                         left: getTableCellOccupied(
                           tableCells,
                           rowIndex,
