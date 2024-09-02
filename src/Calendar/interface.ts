@@ -87,6 +87,7 @@ export interface CalendarOccupiedColumnProp {
   name: string;
   text: string;
   avatar?: string;
+  color?: string;
   extra?: any;
 }
 

@@ -168,6 +168,11 @@ const CalendarDayTable = forwardRef<HTMLInputElement, CalendarDayTableProp>(
                           columnIndex,
                           props,
                         ).left,
+                        background: getTableCell(
+                          tableCells,
+                          rowIndex,
+                          columnIndex,
+                        ).occupied?.color,
                       }}
                       onClick={() =>
                         onOccupiedClick(

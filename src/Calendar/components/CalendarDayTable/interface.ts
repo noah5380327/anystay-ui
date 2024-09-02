@@ -62,6 +62,7 @@ export interface CalendarDayTableCellOccupied {
   name: string;
   text: string;
   avatar?: string;
+  color?: string;
   extra?: any;
 }
 
@@ -92,6 +93,7 @@ export interface CalendarDayOccupiedRowCell {
   name: string;
   text: string;
   avatar?: string;
+  color?: string;
   extra?: any;
 }
 

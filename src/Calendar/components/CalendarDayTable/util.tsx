@@ -383,6 +383,7 @@ export function generateOccupiedTableCells(
           name: occupiedRowColumn.name,
           text: occupiedRowColumn.text,
           avatar: occupiedRowColumn.avatar,
+          color: occupiedRowColumn.color,
           extra: occupiedRowColumn.extra,
         });
       }
@@ -455,6 +456,7 @@ export function generateTableCells(
           name: occupiedRowCell.name,
           text: occupiedRowCell.text,
           avatar: occupiedRowCell.avatar,
+          color: occupiedRowCell.color,
           extra: occupiedRowCell.extra,
         };
       }

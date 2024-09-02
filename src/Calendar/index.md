@@ -68,6 +68,7 @@ export default () => (
             text: 'Confirmed',
             link: 'https://www.baidu.com',
             avatar: 'http://localhost:4000/favicon.ico',
+            color: '#FFA01D',
           },
           {
             startDate: '2024-09-23 17:00:00',
