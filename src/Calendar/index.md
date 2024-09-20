@@ -3,15 +3,11 @@
 This is an example component.
 
 ```tsx
-import {
-  Calendar,
-  CalendarSelectProp,
-  CalendarType,
-} from 'anystay-ui';
+import { Calendar, CalendarSelectProp, CalendarType } from 'anystay-ui';
 
 export default () => (
   <Calendar
-    type={CalendarType.Day}
+    type={CalendarType.Month}
     subtractDayNumber={0}
     totalDayNumber={50}
     rows={[
