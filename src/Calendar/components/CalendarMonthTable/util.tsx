@@ -20,9 +20,6 @@ import moment from 'moment';
 import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
-let timer: NodeJS.Timeout;
-const longPressThreshold = 500;
-
 export function generateVirtualCell(
   tableCells: CalendarMonthTableCell[],
   rowIndex: number,
@@ -537,6 +534,14 @@ export function onScrollDate(
   const tableCell = getTableCell(tableCells, number, 0);
   if (tableCell?.virtual && tableCell?.value) {
     props.setMonthTitle(tableCell.value);
+  } else if (tableCell?.date) {
+    const date = new Date(tableCell.date);
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+    };
+    const formattedDate: string = date.toLocaleDateString('en-US', options);
+    props.setMonthTitle(formattedDate);
   }
 }
 
@@ -555,23 +560,16 @@ export function onMouseDown(
     !tableCell.virtual &&
     dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
   ) {
-    if (!selectionVisible) {
-      setSelectionVisible(true);
-      setSelection({
-        rowStartIndex: rowIndex,
-        rowEndIndex: rowIndex,
-        rowCurrentIndex: rowIndex,
-        columnStartIndex: columnIndex,
-        columnEndIndex: columnIndex,
-        columnCurrentIndex: columnIndex,
-      });
-      timer = setTimeout(() => {
-        clearSelection(setSelectionVisible);
-      }, longPressThreshold);
-    } else {
-      clearTimeout(timer);
-      clearSelection(setSelectionVisible);
-    }
+    setSelectionVisible(true);
+    setSelection({
+      rowStartIndex: rowIndex,
+      rowEndIndex: rowIndex,
+      rowCurrentIndex: rowIndex,
+      columnStartIndex: columnIndex,
+      columnEndIndex: columnIndex,
+      columnCurrentIndex: columnIndex,
+    });
+    clearSelection(setSelectionVisible);
   }
 }
 
