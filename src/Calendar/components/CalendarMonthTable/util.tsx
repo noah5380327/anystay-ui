@@ -560,16 +560,33 @@ export function onMouseDown(
     !tableCell.virtual &&
     dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
   ) {
-    setSelectionVisible(true);
-    setSelection({
-      rowStartIndex: rowIndex,
-      rowEndIndex: rowIndex,
-      rowCurrentIndex: rowIndex,
-      columnStartIndex: columnIndex,
-      columnEndIndex: columnIndex,
-      columnCurrentIndex: columnIndex,
-    });
-    clearSelection(setSelectionVisible);
+    if (window.innerWidth < 768) {
+      if (selectionVisible) {
+        setSelectionVisible(false);
+        return;
+      } else {
+        setSelectionVisible(true);
+      }
+      setSelection({
+        rowStartIndex: rowIndex,
+        rowEndIndex: rowIndex,
+        rowCurrentIndex: rowIndex,
+        columnStartIndex: columnIndex,
+        columnEndIndex: columnIndex,
+        columnCurrentIndex: columnIndex,
+      });
+    } else {
+      setSelectionVisible(true);
+      setSelection({
+        rowStartIndex: rowIndex,
+        rowEndIndex: rowIndex,
+        rowCurrentIndex: rowIndex,
+        columnStartIndex: columnIndex,
+        columnEndIndex: columnIndex,
+        columnCurrentIndex: columnIndex,
+      });
+      clearSelection(setSelectionVisible);
+    }
   }
 }
 
