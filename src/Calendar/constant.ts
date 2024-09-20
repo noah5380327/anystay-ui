@@ -12,6 +12,6 @@ export const DEFAULT_TITLE_ROW_HEIGHT = 45;
 
 export const DEFAULT_DATE_ROW_HEIGHT = 65;
 
-export const DEFAULT_TYPE = CalendarType.Month;
+export const DEFAULT_TYPE = CalendarType.Day;
 
 export const DEFAULT_TABLE_HEIGHT = 300;
