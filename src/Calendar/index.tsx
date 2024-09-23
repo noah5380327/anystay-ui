@@ -12,6 +12,7 @@ import {
   DEFAULT_TABLE_HEIGHT,
   DEFAULT_TITLE_ROW_HEIGHT,
   DEFAULT_TOTAL_DAY_NUMBER,
+  DEFAULT_TOTAL_MONTH_NUMBER,
   DEFAULT_TYPE,
 } from 'anystay-ui/Calendar/constant';
 import {
@@ -21,6 +22,7 @@ import {
 } from 'anystay-ui/Calendar/interface';
 import {
   generateMonthDate,
+  generateMonthDateForMonthly,
   onCustomDayScroll,
   onCustomMonthScroll,
 } from 'anystay-ui/Calendar/util';
@@ -37,6 +39,7 @@ import './style.less';
 
 const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
   const totalDayNumber = props.totalDayNumber || DEFAULT_TOTAL_DAY_NUMBER;
+  const totalMonthNumber = props.totalMonthNumber || DEFAULT_TOTAL_MONTH_NUMBER;
   const subtractDayNumber =
     props.subtractDayNumber || DEFAULT_SUBTRACT_DAY_NUMBER;
   const stepDayNumber = props.stepDayNumber || DEFAULT_STEP_DAY_NUMBER;
@@ -47,6 +50,8 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
   const tableHeight = props.tableHeight || DEFAULT_TABLE_HEIGHT;
 
   const [monthDate, setMonthDate] = useState<CalendarMonthDate>({});
+  const [monthDateForMonthly, setMonthDateForMonthly] =
+    useState<CalendarMonthDate>({});
   const [customScrollLeft, setCustomScrollLeft] = useState<number>(
     (subtractDayNumber - 2) * columnWidth,
   );
@@ -58,6 +63,11 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
   useEffect(() => {
     const date = generateMonthDate(totalDayNumber, subtractDayNumber);
     setMonthDate(date);
+  }, []);
+
+  useEffect(() => {
+    const date = generateMonthDateForMonthly(totalMonthNumber);
+    setMonthDateForMonthly(date);
   }, []);
 
   // @ts-ignore
@@ -177,43 +187,48 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
         </ScrollSync>
       )}
 
-      {Object.keys(monthDate).length > 0 && type === CalendarType.Month && (
-        <ScrollSync>
-          {({
-            clientHeight,
-            clientWidth,
-            onScroll,
-            scrollHeight,
-            scrollWidth,
-            scrollLeft,
-          }) => (
-            <div ref={ref} className={`calendar-container`}>
-              <CalendarMonthTitle monthTitle={monthTitle} />
-              <CalendarMonthTable
-                ref={tableRef}
-                monthDate={monthDate}
-                rows={props.rows}
-                tableHeight={tableHeight}
-                fillRows={props.fillRows}
-                blockRows={props.blockRows}
-                occupiedRows={props.occupiedRows}
-                onSelect={props.onSelect}
-                monthTitle={monthTitle}
-                setMonthTitle={setMonthTitle}
-                clientHeight={clientHeight}
-                clientWidth={clientWidth}
-                onScroll={(sp) => {
-                  onCustomMonthScroll(sp, setCustomScrollTop, onScroll);
-                }}
-                scrollHeight={scrollHeight}
-                scrollLeft={scrollLeft}
-                scrollTop={customScrollTop}
-                scrollWidth={scrollWidth}
-              />
-            </div>
-          )}
-        </ScrollSync>
-      )}
+      {Object.keys(monthDateForMonthly).length > 0 &&
+        type === CalendarType.Month && (
+          <ScrollSync>
+            {({
+              clientHeight,
+              clientWidth,
+              onScroll,
+              scrollHeight,
+              scrollWidth,
+              scrollLeft,
+            }) => (
+              <div ref={ref} className={`calendar-container`}>
+                <CalendarMonthTitle monthTitle={monthTitle} />
+                <CalendarMonthTable
+                  ref={tableRef}
+                  monthDate={monthDateForMonthly}
+                  rows={props.rows}
+                  tableHeight={tableHeight}
+                  fillRows={props.fillRows}
+                  blockRows={props.blockRows}
+                  occupiedRows={props.occupiedRows}
+                  onSelect={props.onSelect}
+                  monthTitle={monthTitle}
+                  setMonthTitle={setMonthTitle}
+                  clientHeight={clientHeight}
+                  clientWidth={clientWidth}
+                  onScroll={(sp) => {
+                    onCustomMonthScroll(sp, setCustomScrollTop, onScroll);
+                  }}
+                  setCustomScrollTop={setCustomScrollTop}
+                  customScrollTop={customScrollTop}
+                  scrollHeight={scrollHeight}
+                  scrollLeft={scrollLeft}
+                  scrollTop={customScrollTop}
+                  scrollWidth={scrollWidth}
+                  setShowReturnToToday={setShowReturnToToday}
+                  showReturnToToday={showReturnToToday}
+                />
+              </div>
+            )}
+          </ScrollSync>
+        )}
     </ConfigProvider>
   );
 });

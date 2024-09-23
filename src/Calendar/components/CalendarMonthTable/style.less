@@ -6,6 +6,16 @@
   flex-direction: column;
   user-select: none;
   position: relative;
+  .calendar-day-table-return-today-container {
+    position: absolute;
+    left: 50%;
+    bottom: 10%;
+    transform: translateX(-50%);
+    padding: 0 14px;
+    .calendar-day-table-return-today-btn {
+      border-radius: 50px;
+    }
+  }
   .calendar-month-table-row-column-container {
     display: flex;
     box-sizing: border-box;
@@ -23,10 +33,26 @@
     }
     .calendar-month-table-row-column-content-wrapper {
       width: 100%;
-      padding: 10px;
+      padding: 16px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .calendar-month-table-row-column-content-day {
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 28px;
+        margin: 0;
+      }
+      .calendar-month-table-row-column-content-price {
+        font-size: 14px;
+        font-weight: 450;
+        line-height: 18px;
+        margin: 0;
+        color: #737373;
+      }
     }
     .calendar-month-table-row-column-content-virtual-wrapper {
       position: absolute;

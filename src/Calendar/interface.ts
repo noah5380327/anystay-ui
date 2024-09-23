@@ -13,6 +13,7 @@ export interface CalendarProp {
   dateRowHeight?: number;
   type?: CalendarType;
   tableHeight?: number;
+  totalMonthNumber?: number;
 }
 
 export interface CalendarRowProp {

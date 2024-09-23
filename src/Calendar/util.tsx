@@ -28,6 +28,44 @@ export function generateMonthDate(
 
   return groupedByMonth;
 }
+export function generateMonthDateForMonthly(
+  totalMonthNumber: number,
+): CalendarMonthDate {
+  // Start from the first day of the current month
+  const startDay = moment().startOf('month');
+
+  const dates = [];
+
+  // Loop through each month based on the totalMonthNumber
+  for (let monthIndex = 0; monthIndex < totalMonthNumber; monthIndex++) {
+    const currentMonthStart = startDay
+      .clone()
+      .add(monthIndex, 'months')
+      .startOf('month');
+    const currentMonthEnd = currentMonthStart.clone().endOf('month');
+
+    // Loop through all days of the current month
+    const currentDate = currentMonthStart.clone();
+    while (currentDate.isSameOrBefore(currentMonthEnd)) {
+      dates.push(currentDate.clone());
+      currentDate.add(1, 'days');
+    }
+  }
+
+  const groupedByMonth: CalendarMonthDate = {};
+
+  // Group the dates by month (formatted as YYYY-MM)
+  dates.forEach((date) => {
+    const formattedDate = date.format('YYYY-MM-DD');
+    const month = date.format('YYYY-MM');
+    if (!groupedByMonth[month]) {
+      groupedByMonth[month] = [];
+    }
+    groupedByMonth[month].push(formattedDate);
+  });
+
+  return groupedByMonth;
+}
 
 export function onCustomDayScroll(
   sp: OnScrollParams,
