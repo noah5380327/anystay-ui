@@ -27,6 +27,10 @@ export interface CalendarMonthTableProp {
   scrollLeft: number;
   scrollTop: number;
   scrollWidth: number;
+  setCustomScrollTop: Dispatch<SetStateAction<number>>;
+  customScrollTop: number;
+  setShowReturnToToday: Dispatch<SetStateAction<boolean>>;
+  showReturnToToday: boolean;
 }
 
 export interface CalendarMonthTableSelection {

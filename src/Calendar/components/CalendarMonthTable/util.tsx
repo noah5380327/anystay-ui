@@ -20,6 +20,9 @@ import moment from 'moment';
 import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
+let timer: NodeJS.Timeout;
+const longPressThreshold = 500;
+
 export function generateVirtualCell(
   tableCells: CalendarMonthTableCell[],
   rowIndex: number,
@@ -544,6 +547,21 @@ export function onScrollDate(
     props.setMonthTitle(formattedDate);
   }
 }
+export function showReturnToToday(
+  cellHeight: number,
+  customScrollTop: number,
+  todayScrollTop: number,
+  setShowReturnToday: Dispatch<SetStateAction<boolean>>,
+) {
+  if (
+    customScrollTop > todayScrollTop + cellHeight ||
+    customScrollTop < todayScrollTop - cellHeight
+  ) {
+    setShowReturnToday(true);
+  } else {
+    setShowReturnToday(false);
+  }
+}
 
 export function onMouseDown(
   rowIndex: number,
@@ -560,22 +578,7 @@ export function onMouseDown(
     !tableCell.virtual &&
     dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
   ) {
-    if (window.innerWidth < 768) {
-      if (selectionVisible) {
-        setSelectionVisible(false);
-        return;
-      } else {
-        setSelectionVisible(true);
-      }
-      setSelection({
-        rowStartIndex: rowIndex,
-        rowEndIndex: rowIndex,
-        rowCurrentIndex: rowIndex,
-        columnStartIndex: columnIndex,
-        columnEndIndex: columnIndex,
-        columnCurrentIndex: columnIndex,
-      });
-    } else {
+    if (!selectionVisible) {
       setSelectionVisible(true);
       setSelection({
         rowStartIndex: rowIndex,
@@ -585,6 +588,11 @@ export function onMouseDown(
         columnEndIndex: columnIndex,
         columnCurrentIndex: columnIndex,
       });
+      timer = setTimeout(() => {
+        clearSelection(setSelectionVisible);
+      }, longPressThreshold);
+    } else {
+      clearTimeout(timer);
       clearSelection(setSelectionVisible);
     }
   }
@@ -620,8 +628,10 @@ export function onMouseOver(
       const currentCol = selection.columnCurrentIndex;
       const rowStart = rowIndex >= currentRow ? currentRow : rowIndex;
       const rowEnd = !(rowIndex >= currentRow) ? currentRow : rowIndex;
+
       const columnStart = columnIndex >= currentCol ? currentCol : columnIndex;
       const columnEnd = !(columnIndex >= currentCol) ? currentCol : columnIndex;
+
       setSelection({
         rowStartIndex: rowStart,
         rowEndIndex: rowEnd,

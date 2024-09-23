@@ -5,11 +5,15 @@ This is an example component.
 ```tsx
 import { Calendar, CalendarSelectProp, CalendarType } from 'anystay-ui';
 
+//monthly use totalMonthNumber
+//day use totalDayNUmber
+
 export default () => (
   <Calendar
     type={CalendarType.Month}
     subtractDayNumber={0}
     totalDayNumber={50}
+    totalMonthNumber={2}
     rows={[
       { rowId: 1, value: 145 },
       { rowId: 2, value: 145 },

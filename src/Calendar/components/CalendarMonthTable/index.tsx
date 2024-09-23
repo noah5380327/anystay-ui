@@ -1,7 +1,9 @@
+import { Button } from 'antd';
 import {
   CalendarMonthTableProp,
   CalendarMonthTableSelection,
 } from 'anystay-ui/Calendar/components/CalendarMonthTable/interface';
+
 import {
   generateTableCells,
   getColumBlockStyle,
@@ -15,14 +17,18 @@ import {
   onMouseOver,
   onMouseUp,
   onScrollDate,
+  showReturnToToday,
 } from 'anystay-ui/Calendar/components/CalendarMonthTable/util';
+import dayjs from 'dayjs';
 import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
+
 import './style.less';
 
 const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
@@ -44,6 +50,9 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
       props.blockRows || [],
       props.occupiedRows || [],
     );
+    const todayScrollTop = useRef(0);
+    const init = useRef(false);
+    // const [todayScrollTop, setTodayScrollTop] = useState<number>(0);
 
     useEffect(() => {
       if (!selectionVisible) {
@@ -83,8 +92,31 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
               rowHeight={width / 7}
               clientHeight={props.clientHeight}
               clientWidth={props.clientWidth}
+              onSectionRendered={() => {
+                if (init.current) return;
+                const months = Object.keys(props.monthDate);
+                let scrollTop = 0;
+                for (let i = 0; i < props.monthDate[months[0]].length; i++) {
+                  if (
+                    props.monthDate[months[0]][i] ===
+                    dayjs().format('YYYY-MM-DD')
+                  ) {
+                    scrollTop = Math.floor(i / 7);
+                  }
+                }
+                //add number of row + the virtual row height;
+                props.setCustomScrollTop((scrollTop * width) / 7 + width / 7);
+                todayScrollTop.current = (scrollTop * width) / 7 + width / 7;
+                init.current = true;
+              }}
               onScroll={(params) => {
                 onScrollDate(params, width / 7, tableCells, props);
+                showReturnToToday(
+                  width / 7,
+                  props.customScrollTop,
+                  todayScrollTop.current,
+                  props.setShowReturnToToday,
+                );
                 props.onScroll(params);
               }}
               scrollHeight={props.scrollHeight}
@@ -162,6 +194,17 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
             />
           )}
         </AutoSizer>
+        {props.showReturnToToday && (
+          <div className={`calendar-day-table-return-today-container`}>
+            <Button
+              type="primary"
+              onClick={() => props.setCustomScrollTop(todayScrollTop.current)}
+              className={`calendar-day-table-return-today-btn`}
+            >
+              Return to today
+            </Button>
+          </div>
+        )}
       </div>
     );
   },
