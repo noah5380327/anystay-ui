@@ -123,10 +123,16 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
               scrollLeft={props.scrollLeft}
               scrollTop={props.scrollTop}
               scrollWidth={props.scrollWidth}
-              cellRenderer={({ columnIndex, key, rowIndex, style }) => (
-                <div
-                  key={key}
-                  className={`calendar-month-table-row-column-container
+              cellRenderer={({ columnIndex, key, rowIndex, style }) => {
+                const tableCell = getTableCell(
+                  tableCells,
+                  rowIndex,
+                  columnIndex,
+                );
+                return (
+                  <div
+                    key={key}
+                    className={`calendar-month-table-row-column-container
                   ${getColumnBackgroundSelectedStyle(
                     rowIndex,
                     columnIndex,
@@ -140,57 +146,65 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                   ${getColumnDisabledStyle(tableCells, rowIndex, columnIndex)}
                   ${getColumBlockStyle(tableCells, rowIndex, columnIndex)}
                   ${getColumnVirtualStyle(tableCells, rowIndex, columnIndex)}`}
-                  style={style}
-                  onMouseDown={() =>
-                    onMouseDown(
-                      rowIndex,
-                      columnIndex,
-                      selectionVisible,
-                      setSelectionVisible,
-                      setSelection,
-                      tableCells,
-                    )
-                  }
-                  onMouseOver={() =>
-                    onMouseOver(
-                      rowIndex,
-                      columnIndex,
-                      selectionVisible,
-                      selection,
-                      setSelection,
-                      tableCells,
-                    )
-                  }
-                >
-                  <div
-                    className={`calendar-month-table-row-column-content-container`}
-                  >
-                    <div
-                      className={`calendar-month-table-row-column-content-wrapper`}
-                    >
-                      {getTableCellVirtualCondition(
-                        tableCells,
+                    style={style}
+                    onMouseDown={() =>
+                      onMouseDown(
                         rowIndex,
                         columnIndex,
-                      ) && (
-                        <div
-                          className={`calendar-month-table-row-column-content-virtual-wrapper`}
-                        >
-                          <span
-                            className={`calendar-month-table-row-column-content-virtual-text`}
+                        selectionVisible,
+                        setSelectionVisible,
+                        setSelection,
+                        tableCells,
+                      )
+                    }
+                    onMouseOver={() =>
+                      onMouseOver(
+                        rowIndex,
+                        columnIndex,
+                        selectionVisible,
+                        selection,
+                        setSelection,
+                        tableCells,
+                      )
+                    }
+                  >
+                    <div
+                      className={`calendar-month-table-row-column-content-container`}
+                    >
+                      <div
+                        className={`calendar-month-table-row-column-content-wrapper`}
+                      >
+                        {getTableCellVirtualCondition(
+                          tableCells,
+                          rowIndex,
+                          columnIndex,
+                        ) && (
+                          <div
+                            className={`calendar-month-table-row-column-content-virtual-wrapper`}
                           >
-                            {
-                              getTableCell(tableCells, rowIndex, columnIndex)
-                                ?.value
-                            }
-                          </span>
-                        </div>
-                      )}
-                      {getTableCell(tableCells, rowIndex, columnIndex)?.day}
+                            <span
+                              className={`calendar-month-table-row-column-content-virtual-text`}
+                            >
+                              {tableCell?.value}
+                            </span>
+                          </div>
+                        )}
+
+                        <p
+                          className={`calendar-month-table-row-column-content-day`}
+                        >
+                          {tableCell?.day}
+                        </p>
+                        <p
+                          className={`calendar-month-table-row-column-content-price`}
+                        >
+                          {!tableCell?.virtual && `$${tableCell?.value}`}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                );
+              }}
             />
           )}
         </AutoSizer>
