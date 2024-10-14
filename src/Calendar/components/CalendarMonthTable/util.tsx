@@ -456,18 +456,22 @@ export function getTableCellVirtualCondition(
   return tableCell?.virtual;
 }
 
-export function getTableRowCells(
+export function getSelectedTableCell(
   tableCells: CalendarMonthTableCell[],
   rowStartIndex: number,
   rowEndIndex: number,
-  columnIndex: number,
+  columnStartIndex: number,
+  columnEndIndex: number,
 ): CalendarMonthTableCell[] {
-  return tableCells.filter(
-    (i) =>
-      i.rowIndex >= rowStartIndex &&
-      i.rowIndex <= rowEndIndex &&
-      i.columnIndex === columnIndex,
-  );
+  // const numberOfColumns = 7; // hard coded 7
+
+  return tableCells.filter((i) => {
+    const isWithinRowRange =
+      (i.rowIndex === rowStartIndex && i.columnIndex >= columnStartIndex) || // Row 3, columns 4 to 6
+      (i.rowIndex === rowEndIndex && i.columnIndex <= columnEndIndex); // Row 4, columns 0 to 2
+
+    return isWithinRowRange;
+  });
 }
 
 export function getTableColumnCellsByStartAndEnd(
@@ -570,6 +574,7 @@ export function onMouseDown(
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   setSelection: Dispatch<SetStateAction<CalendarMonthTableSelection>>,
   tableCells: CalendarMonthTableCell[],
+  firstSelection: React.MutableRefObject<CalendarMonthTableSelection>,
 ) {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
 
@@ -588,6 +593,14 @@ export function onMouseDown(
         columnEndIndex: columnIndex,
         columnCurrentIndex: columnIndex,
       });
+      firstSelection.current = {
+        rowStartIndex: rowIndex,
+        rowEndIndex: rowIndex,
+        rowCurrentIndex: rowIndex,
+        columnStartIndex: columnIndex,
+        columnEndIndex: columnIndex,
+        columnCurrentIndex: columnIndex,
+      };
       timer = setTimeout(() => {
         clearSelection(setSelectionVisible);
       }, longPressThreshold);
@@ -615,9 +628,9 @@ export function onMouseOver(
   selection: CalendarMonthTableSelection,
   setSelection: Dispatch<SetStateAction<CalendarMonthTableSelection>>,
   tableCells: CalendarMonthTableCell[],
+  firstSelection: React.MutableRefObject<CalendarMonthTableSelection>,
 ) {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-
   if (
     tableCell &&
     !tableCell.virtual &&
@@ -625,12 +638,39 @@ export function onMouseOver(
   ) {
     if (selectionVisible) {
       const currentRow = selection.rowCurrentIndex;
-      const currentCol = selection.columnCurrentIndex;
       const rowStart = rowIndex >= currentRow ? currentRow : rowIndex;
       const rowEnd = !(rowIndex >= currentRow) ? currentRow : rowIndex;
 
-      const columnStart = columnIndex >= currentCol ? currentCol : columnIndex;
-      const columnEnd = !(columnIndex >= currentCol) ? currentCol : columnIndex;
+      const currentCol = selection.columnCurrentIndex;
+
+      let columnStart = -1;
+      if (rowIndex < firstSelection.current.rowStartIndex) {
+        columnStart = columnIndex;
+      } else if (rowIndex === firstSelection.current.rowStartIndex) {
+        if (columnIndex < firstSelection.current.columnStartIndex) {
+          columnStart = columnIndex;
+        } else {
+          columnStart = firstSelection.current.columnStartIndex;
+        }
+      } else {
+        columnStart = firstSelection.current.columnStartIndex;
+      }
+      let columnEnd = -1;
+
+      if (rowIndex < firstSelection.current.rowEndIndex) {
+        columnEnd = firstSelection.current.columnEndIndex;
+      } else if (rowIndex === firstSelection.current.rowEndIndex) {
+        if (columnIndex < firstSelection.current.columnEndIndex) {
+          columnEnd = firstSelection.current.columnEndIndex;
+        } else {
+          columnEnd = columnIndex;
+        }
+      } else {
+        columnEnd = columnIndex;
+      }
+
+      // const columnStart = rowIndex  firstSelect.rowStartIndex && columnIndex >= firstSelect.columnStartIndex ? firstSelect.columnStartIndex : columnIndex;
+      // const columnEnd = !(columnIndex >= currentCol) ? currentCol : columnIndex;
 
       setSelection({
         rowStartIndex: rowStart,
@@ -665,27 +705,22 @@ export function onMouseUp(
         rows: [],
       };
 
-      const tableRowCells = getTableRowCells(
+      const selectedTableCells = getSelectedTableCell(
         tableCells,
         rowStartIndex,
         rowEndIndex,
         columnStartIndex,
+        columnEndIndex,
       );
-      selectProp.rows = tableRowCells.map((i) => ({
+
+      selectProp.rows = selectedTableCells.map((i) => ({
         id: i.rowId,
         cells: [],
       }));
 
-      const tableColumnCells = getTableColumnCellsByStartAndEnd(
-        tableCells,
-        columnStartIndex,
-        columnEndIndex,
-        rowStartIndex,
-        rowEndIndex,
-      );
-      selectProp.startDate = tableColumnCells[0].date || '';
+      selectProp.startDate = selectedTableCells[0].date || '';
       selectProp.endDate =
-        tableColumnCells[tableColumnCells.length - 1].date || '';
+        selectedTableCells[selectedTableCells.length - 1].date || '';
 
       for (let i = rowStartIndex; i <= rowEndIndex; i++) {
         const cells = getTableColumnCells(

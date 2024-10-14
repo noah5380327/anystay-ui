@@ -13,11 +13,8 @@ export default () => (
     type={CalendarType.Month}
     subtractDayNumber={0}
     totalDayNumber={50}
-    totalMonthNumber={2}
-    rows={[
-      { rowId: 1, value: 145 },
-      { rowId: 2, value: 145 },
-    ]}
+    totalMonthNumber={10}
+    rows={[{ rowId: 1, value: 145 }]}
     fillRows={[
       {
         rowId: 1,
@@ -42,16 +39,6 @@ export default () => (
           {
             startDate: '2024-09-20',
             endDate: '2024-09-21',
-            value: 125,
-          },
-        ],
-      },
-      {
-        rowId: 2,
-        columns: [
-          {
-            startDate: '2024-09-05',
-            endDate: '2024-09-07',
             value: 125,
           },
         ],
