@@ -570,6 +570,7 @@ export function onMouseDown(
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   setSelection: Dispatch<SetStateAction<CalendarMonthTableSelection>>,
   tableCells: CalendarMonthTableCell[],
+  firstSelection: React.MutableRefObject<CalendarMonthTableSelection>,
 ) {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
 
@@ -588,6 +589,14 @@ export function onMouseDown(
         columnEndIndex: columnIndex,
         columnCurrentIndex: columnIndex,
       });
+      firstSelection.current = {
+        rowStartIndex: rowIndex,
+        rowEndIndex: rowIndex,
+        rowCurrentIndex: rowIndex,
+        columnStartIndex: columnIndex,
+        columnEndIndex: columnIndex,
+        columnCurrentIndex: columnIndex,
+      };
       timer = setTimeout(() => {
         clearSelection(setSelectionVisible);
       }, longPressThreshold);
@@ -615,9 +624,9 @@ export function onMouseOver(
   selection: CalendarMonthTableSelection,
   setSelection: Dispatch<SetStateAction<CalendarMonthTableSelection>>,
   tableCells: CalendarMonthTableCell[],
+  firstSelection: React.MutableRefObject<CalendarMonthTableSelection>,
 ) {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-
   if (
     tableCell &&
     !tableCell.virtual &&
@@ -625,12 +634,39 @@ export function onMouseOver(
   ) {
     if (selectionVisible) {
       const currentRow = selection.rowCurrentIndex;
-      const currentCol = selection.columnCurrentIndex;
       const rowStart = rowIndex >= currentRow ? currentRow : rowIndex;
       const rowEnd = !(rowIndex >= currentRow) ? currentRow : rowIndex;
 
-      const columnStart = columnIndex >= currentCol ? currentCol : columnIndex;
-      const columnEnd = !(columnIndex >= currentCol) ? currentCol : columnIndex;
+      const currentCol = selection.columnCurrentIndex;
+
+      let columnStart = -1;
+      if (rowIndex < firstSelection.current.rowStartIndex) {
+        columnStart = columnIndex;
+      } else if (rowIndex === firstSelection.current.rowStartIndex) {
+        if (columnIndex < firstSelection.current.columnStartIndex) {
+          columnStart = columnIndex;
+        } else {
+          columnStart = firstSelection.current.columnStartIndex;
+        }
+      } else {
+        columnStart = firstSelection.current.columnStartIndex;
+      }
+      let columnEnd = -1;
+
+      if (rowIndex < firstSelection.current.rowEndIndex) {
+        columnEnd = firstSelection.current.columnEndIndex;
+      } else if (rowIndex === firstSelection.current.rowEndIndex) {
+        if (columnIndex < firstSelection.current.columnEndIndex) {
+          columnEnd = firstSelection.current.columnEndIndex;
+        } else {
+          columnEnd = columnIndex;
+        }
+      } else {
+        columnEnd = columnIndex;
+      }
+
+      // const columnStart = rowIndex  firstSelect.rowStartIndex && columnIndex >= firstSelect.columnStartIndex ? firstSelect.columnStartIndex : columnIndex;
+      // const columnEnd = !(columnIndex >= currentCol) ? currentCol : columnIndex;
 
       setSelection({
         rowStartIndex: rowStart,

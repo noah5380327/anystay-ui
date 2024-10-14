@@ -42,6 +42,14 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
       columnEndIndex: -1,
       columnCurrentIndex: -1,
     });
+    const firstSelection = useRef<CalendarMonthTableSelection>({
+      rowStartIndex: -1,
+      rowEndIndex: -1,
+      rowCurrentIndex: -1,
+      columnStartIndex: -1,
+      columnEndIndex: -1,
+      columnCurrentIndex: -1,
+    });
 
     const tableCells = generateTableCells(
       props.monthDate,
@@ -155,6 +163,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                         setSelectionVisible,
                         setSelection,
                         tableCells,
+                        firstSelection,
                       )
                     }
                     onMouseOver={() =>
@@ -165,6 +174,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                         selection,
                         setSelection,
                         tableCells,
+                        firstSelection,
                       )
                     }
                   >
