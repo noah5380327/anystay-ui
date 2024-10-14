@@ -456,18 +456,22 @@ export function getTableCellVirtualCondition(
   return tableCell?.virtual;
 }
 
-export function getTableRowCells(
+export function getSelectedTableCell(
   tableCells: CalendarMonthTableCell[],
   rowStartIndex: number,
   rowEndIndex: number,
-  columnIndex: number,
+  columnStartIndex: number,
+  columnEndIndex: number,
 ): CalendarMonthTableCell[] {
-  return tableCells.filter(
-    (i) =>
-      i.rowIndex >= rowStartIndex &&
-      i.rowIndex <= rowEndIndex &&
-      i.columnIndex === columnIndex,
-  );
+  // const numberOfColumns = 7; // hard coded 7
+
+  return tableCells.filter((i) => {
+    const isWithinRowRange =
+      (i.rowIndex === rowStartIndex && i.columnIndex >= columnStartIndex) || // Row 3, columns 4 to 6
+      (i.rowIndex === rowEndIndex && i.columnIndex <= columnEndIndex); // Row 4, columns 0 to 2
+
+    return isWithinRowRange;
+  });
 }
 
 export function getTableColumnCellsByStartAndEnd(
@@ -701,27 +705,22 @@ export function onMouseUp(
         rows: [],
       };
 
-      const tableRowCells = getTableRowCells(
+      const selectedTableCells = getSelectedTableCell(
         tableCells,
         rowStartIndex,
         rowEndIndex,
         columnStartIndex,
+        columnEndIndex,
       );
-      selectProp.rows = tableRowCells.map((i) => ({
+
+      selectProp.rows = selectedTableCells.map((i) => ({
         id: i.rowId,
         cells: [],
       }));
 
-      const tableColumnCells = getTableColumnCellsByStartAndEnd(
-        tableCells,
-        columnStartIndex,
-        columnEndIndex,
-        rowStartIndex,
-        rowEndIndex,
-      );
-      selectProp.startDate = tableColumnCells[0].date || '';
+      selectProp.startDate = selectedTableCells[0].date || '';
       selectProp.endDate =
-        tableColumnCells[tableColumnCells.length - 1].date || '';
+        selectedTableCells[selectedTableCells.length - 1].date || '';
 
       for (let i = rowStartIndex; i <= rowEndIndex; i++) {
         const cells = getTableColumnCells(
