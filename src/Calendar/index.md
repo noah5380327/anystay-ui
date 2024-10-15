@@ -8,20 +8,39 @@ import { Calendar, CalendarSelectProp, CalendarType } from 'anystay-ui';
 //monthly use totalMonthNumber
 //day use totalDayNUmber
 
+//calendar type
+//type={CalendarType.Day}
+
+//for day calendar
+//subtractDayNumber={0}
+
+//for day calendar
+//totalDayNumber={50}
+
+//for month calendar
+//subtractMonthNumber={0}
+
+//for month calendar
+//totalMonthNumber={10}
+
+//day calendar can have multiple row, monthly canlendar only have one row
+//rows={[{ rowId: 1, value: 145 }]}
+
 export default () => (
   <Calendar
     type={CalendarType.Month}
-    subtractDayNumber={0}
-    totalDayNumber={50}
-    totalMonthNumber={10}
+    subtractDayNumber={50}
+    subtractMonthNumber={10}
+    totalDayNumber={100}
+    totalMonthNumber={20}
     rows={[{ rowId: 1, value: 145 }]}
     fillRows={[
       {
         rowId: 1,
         columns: [
           {
-            startDate: '2024-09-15',
-            endDate: '2024-09-16',
+            startDate: '2024-10-15',
+            endDate: '2024-10-16',
             value: 185,
           },
         ],
@@ -32,13 +51,13 @@ export default () => (
         rowId: 1,
         columns: [
           {
-            startDate: '2024-09-18',
-            endDate: '2024-09-19',
+            startDate: '2024-10-18',
+            endDate: '2024-10-19',
             value: 125,
           },
           {
-            startDate: '2024-09-20',
-            endDate: '2024-09-21',
+            startDate: '2024-10-20',
+            endDate: '2024-10-21',
             value: 125,
           },
         ],
@@ -68,7 +87,7 @@ export default () => (
         ],
       },
     ]}
-    onSelect={(prop: CalendarSelectProp) => {
+    onSelect={(prop: CalendarSelectProp | CalendarMonthlySelectprop) => {
       console.log(prop);
     }}
     onOccupiedClick={(prop: string) => {

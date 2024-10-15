@@ -9,6 +9,7 @@ import {
   DEFAULT_DATE_ROW_HEIGHT,
   DEFAULT_STEP_DAY_NUMBER,
   DEFAULT_SUBTRACT_DAY_NUMBER,
+  DEFAULT_SUBTRACT_MONTH_NUMBER,
   DEFAULT_TABLE_HEIGHT,
   DEFAULT_TITLE_ROW_HEIGHT,
   DEFAULT_TOTAL_DAY_NUMBER,
@@ -42,6 +43,8 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
   const totalMonthNumber = props.totalMonthNumber || DEFAULT_TOTAL_MONTH_NUMBER;
   const subtractDayNumber =
     props.subtractDayNumber || DEFAULT_SUBTRACT_DAY_NUMBER;
+  const subtractMonthNumber =
+    props.subtractMonthNumber || DEFAULT_SUBTRACT_MONTH_NUMBER;
   const stepDayNumber = props.stepDayNumber || DEFAULT_STEP_DAY_NUMBER;
   const columnWidth = props.columnWidth || DEFAULT_COLUMN_WIDTH;
   const titleRowHeight = props.titleRowHeight || DEFAULT_TITLE_ROW_HEIGHT;
@@ -66,7 +69,10 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
   }, []);
 
   useEffect(() => {
-    const date = generateMonthDateForMonthly(totalMonthNumber);
+    const date = generateMonthDateForMonthly(
+      totalMonthNumber,
+      subtractMonthNumber,
+    );
     setMonthDateForMonthly(date);
   }, []);
 

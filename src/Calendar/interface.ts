@@ -2,8 +2,9 @@ export interface CalendarProp {
   rows: CalendarRowProp[];
   totalDayNumber?: number;
   subtractDayNumber?: number;
+  subtractMonthNumber?: number;
   stepDayNumber?: number;
-  onSelect?: (prop: CalendarSelectProp) => void;
+  onSelect?: (prop: CalendarSelectProp | CalendarMonthlySelectProp) => void;
   fillRows?: CalendarFillRowProp[];
   blockRows?: CalendarBlockRowProp[];
   occupiedRows?: CalendarOccupiedRowProp[];
@@ -25,6 +26,11 @@ export interface CalendarSelectProp {
   startDate: string;
   endDate: string;
   rows: CalenderSelectRowProp[];
+}
+export interface CalendarMonthlySelectProp {
+  startDate: string;
+  endDate: string;
+  cells: CalendarSelectRowCellProp[];
 }
 
 export interface CalenderSelectRowProp {
