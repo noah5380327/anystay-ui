@@ -6,6 +6,8 @@ export const DEFAULT_TOTAL_MONTH_NUMBER = 2;
 
 export const DEFAULT_SUBTRACT_DAY_NUMBER = 2;
 
+export const DEFAULT_SUBTRACT_MONTH_NUMBER = 1;
+
 export const DEFAULT_STEP_DAY_NUMBER = 14;
 
 export const DEFAULT_COLUMN_WIDTH = 50;

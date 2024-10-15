@@ -25,14 +25,13 @@ export function generateMonthDate(
     }
     groupedByMonth[month].push(v);
   });
-
   return groupedByMonth;
 }
 export function generateMonthDateForMonthly(
   totalMonthNumber: number,
+  subtractMonthNumber: number,
 ): CalendarMonthDate {
-  // Start from the first day of the current month
-  const startDay = moment().startOf('month');
+  const startDay = moment().subtract(subtractMonthNumber, 'month');
 
   const dates = [];
 

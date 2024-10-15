@@ -3,9 +3,9 @@ import {
   CalendarCellStatusProp,
   CalendarFillRowProp,
   CalendarMonthDate,
+  CalendarMonthlySelectProp,
   CalendarOccupiedRowProp,
   CalendarRowProp,
-  CalendarSelectProp,
 } from 'anystay-ui/Calendar/interface';
 import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
@@ -14,7 +14,7 @@ export interface CalendarMonthTableProp {
   monthDate: CalendarMonthDate;
   rows: CalendarRowProp[];
   tableHeight: number;
-  onSelect?: (prop: CalendarSelectProp) => void;
+  onSelect?: (prop: CalendarMonthlySelectProp) => void;
   fillRows?: CalendarFillRowProp[];
   blockRows?: CalendarBlockRowProp[];
   occupiedRows?: CalendarOccupiedRowProp[];

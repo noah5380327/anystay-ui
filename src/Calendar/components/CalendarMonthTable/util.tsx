@@ -11,9 +11,9 @@ import {
   CalendarCellStatusProp,
   CalendarFillRowProp,
   CalendarMonthDate,
+  CalendarMonthlySelectProp,
   CalendarOccupiedRowProp,
   CalendarRowProp,
-  CalendarSelectProp,
 } from 'anystay-ui/Calendar/interface';
 import dayjs, { Dayjs } from 'dayjs';
 import moment from 'moment';
@@ -456,7 +456,7 @@ export function getTableCellVirtualCondition(
   return tableCell?.virtual;
 }
 
-export function getSelectedTableCell(
+export function getSelectedTableStartEndCell(
   tableCells: CalendarMonthTableCell[],
   rowStartIndex: number,
   rowEndIndex: number,
@@ -467,8 +467,8 @@ export function getSelectedTableCell(
 
   return tableCells.filter((i) => {
     const isWithinRowRange =
-      (i.rowIndex === rowStartIndex && i.columnIndex >= columnStartIndex) || // Row 3, columns 4 to 6
-      (i.rowIndex === rowEndIndex && i.columnIndex <= columnEndIndex); // Row 4, columns 0 to 2
+      (i.rowIndex === rowStartIndex && i.columnIndex === columnStartIndex) || // Row 3, columns 4 to 6
+      (i.rowIndex === rowEndIndex && i.columnIndex === columnEndIndex); // Row 4, columns 0 to 2
 
     return isWithinRowRange;
   });
@@ -559,7 +559,7 @@ export function showReturnToToday(
 ) {
   if (
     customScrollTop > todayScrollTop + cellHeight ||
-    customScrollTop < todayScrollTop - cellHeight
+    customScrollTop < todayScrollTop - cellHeight * 2
   ) {
     setShowReturnToday(true);
   } else {
@@ -687,7 +687,7 @@ export function onMouseOver(
 export function onMouseUp(
   selection: CalendarMonthTableSelection,
   tableCells: CalendarMonthTableCell[],
-  onSelect?: (prop: CalendarSelectProp) => void,
+  onSelect?: (prop: CalendarMonthlySelectProp) => void,
 ) {
   const { rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex } =
     selection;
@@ -699,13 +699,13 @@ export function onMouseUp(
     columnEndIndex > -1
   ) {
     if (onSelect) {
-      const selectProp: CalendarSelectProp = {
+      const selectProp: CalendarMonthlySelectProp = {
         startDate: '',
         endDate: '',
-        rows: [],
+        cells: [],
       };
 
-      const selectedTableCells = getSelectedTableCell(
+      const selectedTableCells = getSelectedTableStartEndCell(
         tableCells,
         rowStartIndex,
         rowEndIndex,
@@ -713,14 +713,8 @@ export function onMouseUp(
         columnEndIndex,
       );
 
-      selectProp.rows = selectedTableCells.map((i) => ({
-        id: i.rowId,
-        cells: [],
-      }));
-
       selectProp.startDate = selectedTableCells[0].date || '';
-      selectProp.endDate =
-        selectedTableCells[selectedTableCells.length - 1].date || '';
+      selectProp.endDate = selectedTableCells[1].date || '';
 
       for (let i = rowStartIndex; i <= rowEndIndex; i++) {
         const cells = getTableColumnCells(
@@ -734,7 +728,7 @@ export function onMouseUp(
         for (let j = 0; j < cells.length; j++) {
           const cell = cells[j];
           if (!cell.virtual) {
-            selectProp.rows[i - rowStartIndex].cells.push({
+            selectProp.cells.push({
               status: cell.status || CalendarCellStatusProp.Normal,
               value: cell.value,
               extra: cell.extra || '',
@@ -749,11 +743,61 @@ export function onMouseUp(
           }
         }
       }
-
-      selectProp.rows = selectProp.rows.filter(
-        (item) => item.cells.length !== 0,
-      );
       onSelect(selectProp);
     }
+  }
+}
+
+export function onSectionRenderJumpToToday(
+  init: React.MutableRefObject<boolean>,
+  todayScrollTop: React.MutableRefObject<number>,
+  monthDate: CalendarMonthDate,
+  setCustomScrollTop: Dispatch<SetStateAction<number>>,
+  width: number,
+) {
+  //width / 7 = row height
+  if (init.current) return;
+  function getRowsUntilThisMonth(year: number, month: number) {
+    // 获取该月的第一天
+    const firstDayOfMonth = new Date(year, month, 1);
+    const firstDayOfWeek = firstDayOfMonth.getDay(); // 星期天是0，星期一是1，...
+    // 获取该月的最后一天
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const totalDaysInMonth = lastDayOfMonth.getDate(); // 获取该月天数
+    // 计算需要多少行（周）
+    const totalCells = totalDaysInMonth + firstDayOfWeek; // 天数 + 偏移量
+    const numberOfRows = Math.ceil(totalCells / 7); // 每行7天
+    return numberOfRows;
+  }
+  function getRowsUntilToday() {
+    // 获取该月的第一天
+    const year = dayjs().year(); // Returns the year as a number
+    const month = dayjs().month(); // Returns the month (0-based: 0 = January, 11 = December)
+    const day = dayjs().date(); // Returns the day of the month
+    const firstDayOfMonth = new Date(year, month, 1);
+    const firstDayOfWeek = firstDayOfMonth.getDay(); // 星期天是0，星期一是1...
+    // 计算今天之前的总单元格数，包括今天
+    const totalCellsUntilToday = day + firstDayOfWeek;
+    // 计算今天之前的行数
+    const rowsUntilToday = Math.ceil(totalCellsUntilToday / 7);
+    return rowsUntilToday;
+  }
+
+  const months = Object.keys(monthDate);
+  let numberOfRow = 0;
+  for (let i = 0; i < months.length; i++) {
+    for (let j = 0; j < monthDate[months[i]].length; j++) {
+      if (monthDate[months[i]][j] === dayjs().format('YYYY-MM-DD')) {
+        numberOfRow += getRowsUntilToday();
+        let scrollTop = numberOfRow * (width / 7);
+        setCustomScrollTop(scrollTop);
+        todayScrollTop.current = scrollTop;
+        init.current = true;
+        return;
+      }
+    }
+    const year = Number(months[i].split('-')[0]);
+    const month = Number(months[i].split('-')[1]) - 1;
+    numberOfRow += getRowsUntilThisMonth(year, month) + 1; //title take 1 row
   }
 }

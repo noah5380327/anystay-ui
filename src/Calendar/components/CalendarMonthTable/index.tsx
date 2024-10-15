@@ -17,9 +17,9 @@ import {
   onMouseOver,
   onMouseUp,
   onScrollDate,
+  onSectionRenderJumpToToday,
   showReturnToToday,
 } from 'anystay-ui/Calendar/components/CalendarMonthTable/util';
-import dayjs from 'dayjs';
 import React, {
   forwardRef,
   useEffect,
@@ -101,21 +101,13 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
               clientHeight={props.clientHeight}
               clientWidth={props.clientWidth}
               onSectionRendered={() => {
-                if (init.current) return;
-                const months = Object.keys(props.monthDate);
-                let scrollTop = 0;
-                for (let i = 0; i < props.monthDate[months[0]].length; i++) {
-                  if (
-                    props.monthDate[months[0]][i] ===
-                    dayjs().format('YYYY-MM-DD')
-                  ) {
-                    scrollTop = Math.floor(i / 7);
-                  }
-                }
-                //add number of row + the virtual row height;
-                props.setCustomScrollTop((scrollTop * width) / 7 + width / 7);
-                todayScrollTop.current = (scrollTop * width) / 7 + width / 7;
-                init.current = true;
+                onSectionRenderJumpToToday(
+                  init,
+                  todayScrollTop,
+                  props.monthDate,
+                  props.setCustomScrollTop,
+                  width,
+                );
               }}
               onScroll={(params) => {
                 onScrollDate(params, width / 7, tableCells, props);
