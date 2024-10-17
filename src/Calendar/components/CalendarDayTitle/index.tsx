@@ -1,6 +1,3 @@
-import { DatePicker } from 'antd';
-// @ts-ignore
-import CalendarLeftPng from 'anystay-ui/Calendar/assets/left.png';
 import { CalendarDayTitleProp } from 'anystay-ui/Calendar/components/CalendarDayTitle/interface';
 import {
   generateTitleCells,
@@ -8,17 +5,16 @@ import {
   getDateName,
   getScrollDate,
   getTitleDate,
-  reSetScrollLeft,
 } from 'anystay-ui/Calendar/components/CalendarDayTitle/util';
 import dayjs from 'dayjs';
 import React, { useState, type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
+import CalendarDatePicker from '../CalendarDatePicker';
 import './style.less';
 
 const CalendarDayTitle: FC<CalendarDayTitleProp> = (props) => {
   const titleCells = generateTitleCells(props);
   const titleDate = getTitleDate(titleCells);
-
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs>(dayjs());
 
   return (
@@ -59,27 +55,14 @@ const CalendarDayTitle: FC<CalendarDayTitleProp> = (props) => {
           />
         )}
       </AutoSizer>
-
-      <div className={`calendar-day-title-action-container`}>
-        <DatePicker
-          inputReadOnly
-          picker="month"
-          value={selectedDate}
-          allowClear={false}
-          showNow={false}
-          suffixIcon={
-            <img
-              alt={`left`}
-              src={CalendarLeftPng}
-              className={`calendar-day-title-action-operation-image`}
-            />
-          }
-          onChange={(date) => {
-            setSelectedDate(date);
-            reSetScrollLeft(date.format('YYYY-MM-DD'), props, titleDate);
-          }}
-        />
-      </div>
+      <CalendarDatePicker
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        titleDate={titleDate}
+        calendarTitleProp={props}
+        type={props.type}
+        monthDate={props.monthDate}
+      />
     </div>
   );
 };

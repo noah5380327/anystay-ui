@@ -1,6 +1,6 @@
+import { CalendarDayTitleDate } from 'anystay-ui/Calendar/components/CalendarDatePicker/interface';
 import {
   CalendarDayTitleCell,
-  CalendarDayTitleDate,
   CalendarDayTitleProp,
 } from 'anystay-ui/Calendar/components/CalendarDayTitle/interface';
 import 'anystay-ui/Calendar/components/CalendarDayTitle/style.less';
@@ -57,18 +57,6 @@ export function getBorderStyle(
   }
 
   return '';
-}
-
-export function reSetScrollLeft(
-  date: string,
-  props: CalendarDayTitleProp,
-  titleDate: CalendarDayTitleDate,
-) {
-  const selectedDate = dayjs(date).startOf('month');
-  const firstDate = dayjs(titleDate.firstDate);
-  const diffDays = selectedDate.diff(firstDate, 'days');
-  props.setCustomScrollLeft((diffDays - 2) * props.columnWidth);
-  props.setShowReturnToToday(false);
 }
 
 export function getScrollDate(

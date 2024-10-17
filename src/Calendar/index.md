@@ -29,11 +29,11 @@ import { Calendar, CalendarSelectProp, CalendarType } from 'anystay-ui';
 export default () => (
   <Calendar
     type={CalendarType.Month}
-    subtractDayNumber={50}
+    subtractDayNumber={48}
     subtractMonthNumber={10}
     totalDayNumber={100}
     totalMonthNumber={20}
-    rows={[{ rowId: 1, value: 145 }]}
+    rows={[{ rowId: 1, value: 200 }]}
     fillRows={[
       {
         rowId: 1,
@@ -68,8 +68,8 @@ export default () => (
         rowId: 1,
         columns: [
           {
-            startDate: '2024-09-22 13:00:00',
-            endDate: '2024-09-23 15:00:00',
+            startDate: '2024-10-22 13:00:00',
+            endDate: '2024-10-24 15:00:00',
             name: 'John',
             text: 'Confirmed',
             link: 'https://www.baidu.com',
@@ -77,8 +77,8 @@ export default () => (
             color: '#FFA01D',
           },
           {
-            startDate: '2024-09-23 17:00:00',
-            endDate: '2024-09-25 15:00:00',
+            startDate: '2024-10-26 11:00:00',
+            endDate: '2024-10-28 15:00:00',
             name: 'John',
             text: 'Confirmed',
             link: 'https://www.baidu.com',

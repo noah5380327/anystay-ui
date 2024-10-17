@@ -7,6 +7,7 @@ import {
   CalendarOccupiedRowProp,
   CalendarRowProp,
 } from 'anystay-ui/Calendar/interface';
+import dayjs from 'dayjs';
 import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
@@ -31,6 +32,11 @@ export interface CalendarMonthTableProp {
   customScrollTop: number;
   setShowReturnToToday: Dispatch<SetStateAction<boolean>>;
   showReturnToToday: boolean;
+  todayScrollTop: React.MutableRefObject<number>;
+  setMonthlyTitleSelectedDate: React.Dispatch<
+    React.SetStateAction<dayjs.Dayjs>
+  >;
+  onOccupiedClick?: (prop: string) => void;
 }
 
 export interface CalendarMonthTableSelection {
@@ -65,6 +71,7 @@ export interface CalendarMonthTableCellOccupied {
   text: string;
   avatar?: string;
   extra?: any;
+  color?: string;
 }
 
 export interface CalendarMonthFillRowCell {
@@ -95,4 +102,11 @@ export interface CalendarMonthOccupiedRowCell {
   text: string;
   avatar?: string;
   extra?: any;
+  color?: string;
+}
+
+export interface CalendarMonthTableOccupiedCell {
+  width: number;
+  left?: number;
+  right?: number;
 }
