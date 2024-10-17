@@ -77,7 +77,7 @@ export default () => (
             color: '#FFA01D',
           },
           {
-            startDate: '2024-10-26 11:00:00',
+            startDate: '2024-10-25 11:00:00',
             endDate: '2024-10-28 15:00:00',
             name: 'John',
             text: 'Confirmed',

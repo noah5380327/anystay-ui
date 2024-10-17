@@ -36,8 +36,9 @@ const CalendarDatePicker: FC<CalendarDatePickerProps> = (props) => {
   }, [props.monthDate]);
 
   return (
-    <div className={`calendar-day-title-action-container`}>
+    <div className={`calendar-date-picker-title-action-container`}>
       <DatePicker
+        className={'calendar-date-picker'}
         inputReadOnly
         picker="month"
         value={props.selectedDate}
@@ -49,7 +50,7 @@ const CalendarDatePicker: FC<CalendarDatePickerProps> = (props) => {
           <img
             alt={`left`}
             src={CalendarLeftPng}
-            className={`calendar-day-title-action-operation-image`}
+            className={`calendar-date-picker-title-action-operation-image`}
           />
         }
         onChange={(date) => {

@@ -19,8 +19,8 @@
   }
   .calendar-month-table-row-column-content-occupied-wrapper {
     position: absolute;
-    top: 5px;
-    height: calc(100% - 10px);
+    height: 50%;
+    bottom: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -55,10 +55,14 @@
       justify-content: center;
       .calendar-month-table-row-column-content-occupied-text-name {
         font-size: @as-font-size-4;
+        line-height: @as-line-height-4;
+        font-weight: @as-font-weight-2;
         color: @as-text-color-2;
       }
       .calendar-month-table-row-column-content-occupied-text {
         font-size: @as-font-size-3;
+        line-height: @as-line-height-3;
+        font-weight: @as-font-weight-2;
         color: @as-text-color-2;
       }
     }
@@ -116,19 +120,20 @@
   }
   .calendar-month-table-row-column-selected-background-container {
     &::after {
-      background: @as-background-color-2 !important;
+      background: @as-background-color-1 !important;
       opacity: 0.5;
     }
   }
   .calendar-month-table-row-column-current-selected-border-container {
     &::after {
-      border: 1px solid @as-border-color-2;
+      border: 2px solid @as-border-color-2;
+      border-radius: 8px;
     }
   }
   .calendar-month-table-row-column-disabled-container {
     cursor: not-allowed;
     &::after {
-      background: @as-background-color-1;
+      background: @as-background-color-4;
       opacity: 0.5;
     }
   }
@@ -151,7 +156,7 @@
       rgb(255, 255, 255) 100%
     ) !important;
     &::after {
-      background: @as-background-color-1;
+      background: @as-background-color-4;
       opacity: 0.5;
     }
     .calendar-month-table-row-column-content-container {
