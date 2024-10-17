@@ -3,6 +3,7 @@ import {
   CalendarMonthTableProp,
   CalendarMonthTableSelection,
 } from 'anystay-ui/Calendar/components/CalendarMonthTable/interface';
+import { onOccupiedClick } from '../CalendarMonthTable/util';
 
 import {
   generateTableCells,
@@ -12,6 +13,9 @@ import {
   getColumnVirtualStyle,
   getCurrentColumnBorderSelectedStyle,
   getTableCell,
+  getTableCellEndOccupiedCondition,
+  getTableCellOccupied,
+  getTableCellStartOccupiedCondition,
   getTableCellVirtualCondition,
   onMouseDown,
   onMouseOver,
@@ -58,9 +62,8 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
       props.blockRows || [],
       props.occupiedRows || [],
     );
-    const todayScrollTop = useRef(0);
+
     const init = useRef(false);
-    // const [todayScrollTop, setTodayScrollTop] = useState<number>(0);
 
     useEffect(() => {
       if (!selectionVisible) {
@@ -103,7 +106,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
               onSectionRendered={() => {
                 onSectionRenderJumpToToday(
                   init,
-                  todayScrollTop,
+                  props.todayScrollTop,
                   props.monthDate,
                   props.setCustomScrollTop,
                   width,
@@ -114,7 +117,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                 showReturnToToday(
                   width / 7,
                   props.customScrollTop,
-                  todayScrollTop.current,
+                  props.todayScrollTop.current,
                   props.setShowReturnToToday,
                 );
                 props.onScroll(params);
@@ -204,6 +207,174 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                         </p>
                       </div>
                     </div>
+                    {getTableCellStartOccupiedCondition(
+                      tableCells,
+                      rowIndex,
+                      columnIndex,
+                    ) && (
+                      <div
+                        className={`calendar-month-table-row-column-content-occupied-wrapper`}
+                        style={{
+                          width: getTableCellOccupied(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                            width / 7,
+                          ).width,
+                          minWidth: getTableCellOccupied(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                            width / 7,
+                          ).width,
+                          left: getTableCellOccupied(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                            width / 7,
+                          ).left,
+                          background: getTableCell(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                          ).occupied?.color,
+                        }}
+                        onClick={() =>
+                          onOccupiedClick(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                            props,
+                          )
+                        }
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                        }}
+                        onMouseOver={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        {getTableCell(tableCells, rowIndex, columnIndex)
+                          .occupied?.avatar && (
+                          <div
+                            className={`calendar-month-table-row-column-content-occupied-image-container`}
+                          >
+                            <img
+                              src={
+                                getTableCell(tableCells, rowIndex, columnIndex)
+                                  .occupied?.avatar
+                              }
+                              alt={`avatar`}
+                            />
+                          </div>
+                        )}
+                        <div
+                          className={`calendar-month-table-row-column-content-occupied-text-container`}
+                        >
+                          <span
+                            className={`calendar-month-table-row-column-content-occupied-text-name`}
+                          >
+                            {
+                              getTableCell(tableCells, rowIndex, columnIndex)
+                                .occupied?.name
+                            }
+                          </span>
+                          <span
+                            className={`calendar-month-table-row-column-content-occupied-text`}
+                          >
+                            {
+                              getTableCell(tableCells, rowIndex, columnIndex)
+                                .occupied?.text
+                            }
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    {getTableCellEndOccupiedCondition(
+                      tableCells,
+                      rowIndex,
+                      columnIndex,
+                    ) && (
+                      <div
+                        className={`calendar-month-table-row-column-content-occupied-wrapper`}
+                        style={{
+                          width: getTableCellOccupied(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                            width / 7,
+                          ).width,
+                          minWidth: getTableCellOccupied(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                            width / 7,
+                          ).width,
+                          right: getTableCellOccupied(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                            width / 7,
+                          ).right,
+                          borderBottomLeftRadius: '0',
+                          borderTopLeftRadius: '0',
+                          background: getTableCell(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                          ).occupied?.color,
+                        }}
+                        onClick={() =>
+                          onOccupiedClick(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                            props,
+                          )
+                        }
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                        }}
+                        onMouseOver={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        {getTableCell(tableCells, rowIndex, columnIndex)
+                          .occupied?.avatar && (
+                          <div
+                            className={`calendar-month-table-row-column-content-occupied-image-container`}
+                          >
+                            <img
+                              src={
+                                getTableCell(tableCells, rowIndex, columnIndex)
+                                  .occupied?.avatar
+                              }
+                              alt={`avatar`}
+                            />
+                          </div>
+                        )}
+                        <div
+                          className={`calendar-month-table-row-column-content-occupied-text-container`}
+                        >
+                          <span
+                            className={`calendar-month-table-row-column-content-occupied-text-name`}
+                          >
+                            {
+                              getTableCell(tableCells, rowIndex, columnIndex)
+                                .occupied?.name
+                            }
+                          </span>
+                          <span
+                            className={`calendar-month-table-row-column-content-occupied-text`}
+                          >
+                            {
+                              getTableCell(tableCells, rowIndex, columnIndex)
+                                .occupied?.text
+                            }
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               }}
@@ -211,11 +382,13 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
           )}
         </AutoSizer>
         {props.showReturnToToday && (
-          <div className={`calendar-day-table-return-today-container`}>
+          <div className={`calendar-month-table-return-today-container`}>
             <Button
               type="primary"
-              onClick={() => props.setCustomScrollTop(todayScrollTop.current)}
-              className={`calendar-day-table-return-today-btn`}
+              onClick={() => {
+                props.setCustomScrollTop(props.todayScrollTop.current);
+              }}
+              className={`calendar-month-table-return-today-btn`}
             >
               Return to today
             </Button>

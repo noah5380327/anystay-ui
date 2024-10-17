@@ -3,6 +3,7 @@ import {
   CalendarMonthFillRowCell,
   CalendarMonthOccupiedRowCell,
   CalendarMonthTableCell,
+  CalendarMonthTableOccupiedCell,
   CalendarMonthTableProp,
   CalendarMonthTableSelection,
 } from 'anystay-ui/Calendar/components/CalendarMonthTable/interface';
@@ -83,6 +84,7 @@ export function generateRealCell(
       text: occupiedRowCell.text,
       avatar: occupiedRowCell.avatar,
       extra: occupiedRowCell.extra,
+      color: occupiedRowCell.color,
     };
   }
 
@@ -208,6 +210,7 @@ export function generateOccupiedTableCells(
           text: occupiedRowColumn.text,
           avatar: occupiedRowColumn.avatar,
           extra: occupiedRowColumn.extra,
+          color: occupiedRowColumn.color,
         });
       }
     }
@@ -541,6 +544,8 @@ export function onScrollDate(
   const tableCell = getTableCell(tableCells, number, 0);
   if (tableCell?.virtual && tableCell?.value) {
     props.setMonthTitle(tableCell.value);
+    const dayjsObj = dayjs(tableCell.value, 'MMMM YYYY');
+    props.setMonthlyTitleSelectedDate(dayjsObj);
   } else if (tableCell?.date) {
     const date = new Date(tableCell.date);
     const options: Intl.DateTimeFormatOptions = {
@@ -548,6 +553,8 @@ export function onScrollDate(
       month: 'long',
     };
     const formattedDate: string = date.toLocaleDateString('en-US', options);
+    const dayjsObj = dayjs(formattedDate, 'MMMM YYYY');
+    props.setMonthlyTitleSelectedDate(dayjsObj);
     props.setMonthTitle(formattedDate);
   }
 }
@@ -713,8 +720,13 @@ export function onMouseUp(
         columnEndIndex,
       );
 
-      selectProp.startDate = selectedTableCells[0].date || '';
-      selectProp.endDate = selectedTableCells[1].date || '';
+      if (selectedTableCells.length === 2) {
+        selectProp.startDate = selectedTableCells[0].date || '';
+        selectProp.endDate = selectedTableCells[1].date || '';
+      } else if (selectedTableCells.length === 1) {
+        selectProp.startDate = selectedTableCells[0].date || '';
+        selectProp.endDate = selectedTableCells[0].date || '';
+      }
 
       for (let i = rowStartIndex; i <= rowEndIndex; i++) {
         const cells = getTableColumnCells(
@@ -799,5 +811,150 @@ export function onSectionRenderJumpToToday(
     const year = Number(months[i].split('-')[0]);
     const month = Number(months[i].split('-')[1]) - 1;
     numberOfRow += getRowsUntilThisMonth(year, month) + 1; //title take 1 row
+  }
+}
+
+export function getTableCellStartOccupiedCondition(
+  tableCells: CalendarMonthTableCell[],
+  rowIndex: number,
+  columnIndex: number,
+) {
+  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+  if (tableCell.occupied) {
+    const startDate = moment(tableCell.occupied.startDate);
+    const date = moment(tableCell.date);
+    return startDate.isSame(date, 'day');
+  }
+  return false;
+}
+export function getTableCellEndOccupiedCondition(
+  tableCells: CalendarMonthTableCell[],
+  rowIndex: number,
+  columnIndex: number,
+) {
+  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+  const startDate = tableCell.occupied?.startDate;
+  const endDate = tableCell.occupied?.endDate;
+  function getRowNumber(date: Dayjs) {
+    const startOfMonth = date.startOf('month');
+    const firstDayOfWeek = startOfMonth.day(); // 获取该月第一天是星期几（0表示星期天，6表示星期六）
+    const dayOfMonth = date.date(); // 获取日期是该月的几号
+    // 计算行号：日期加上该月第一天的偏移量，除以7，向上取整
+    const rowNumber = Math.ceil((dayOfMonth + firstDayOfWeek) / 7);
+    return rowNumber;
+  }
+  if (
+    tableCell.occupied &&
+    getRowNumber(dayjs(startDate)) !== getRowNumber(dayjs(endDate))
+  ) {
+    const endDate = moment(tableCell.occupied.endDate);
+    const date = moment(tableCell.date);
+    return endDate.isSame(date, 'day');
+  }
+  return false;
+}
+
+export function getTableCellOccupied(
+  tableCells: CalendarMonthTableCell[],
+  rowIndex: number,
+  columnIndex: number,
+  columnWidth: number,
+): CalendarMonthTableOccupiedCell {
+  function calculateWidthAndPositionStart(
+    startDate: moment.Moment,
+    rowEndDate: moment.Moment,
+    columnWidth: number,
+  ) {
+    const hourColumnWidth = columnWidth / 24;
+    // Calculate hours from startDate to the end of the row (day)
+    const widthHours = moment
+      .duration(moment(endDate).diff(moment(startDate)))
+      .asHours();
+    // Calculate width and left
+    const width = hourColumnWidth * widthHours;
+    const left = hourColumnWidth * startDate.hour(); // assuming `startDate` has the correct hour within the day
+    return { width, left };
+  }
+  function calculateWidthAndPositionEnd(
+    endDate: moment.Moment,
+    rowStartDate: moment.Moment,
+    columnWidth: number,
+  ) {
+    const hourColumnWidth = columnWidth / 24;
+    // Calculate hours from the start of the row (day) to endDate
+    const widthHours = moment
+      .duration(moment(endDate).diff(moment(startDate)))
+      .asHours();
+    // Calculate width and right
+    const width = hourColumnWidth * widthHours;
+    const right = hourColumnWidth * (24 - endDate.hour());
+    return { width, right };
+  }
+  function getRowNumber(date: Dayjs) {
+    const startOfMonth = date.startOf('month');
+    const firstDayOfWeek = startOfMonth.day(); // 获取该月第一天是星期几（0表示星期天，6表示星期六）
+    const dayOfMonth = date.date(); // 获取日期是该月的几号
+    // 计算行号：日期加上该月第一天的偏移量，除以7，向上取整
+    const rowNumber = Math.ceil((dayOfMonth + firstDayOfWeek) / 7);
+    return rowNumber;
+  }
+
+  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+  const startDate = tableCell.occupied?.startDate;
+  const endDate = tableCell.occupied?.endDate;
+  const date = tableCell.date;
+  if (getRowNumber(dayjs(startDate)) !== getRowNumber(dayjs(endDate))) {
+    if (getTableCellStartOccupiedCondition(tableCells, rowIndex, columnIndex)) {
+      const rowStartDate = moment(endDate).startOf('day');
+      const { width, left } = calculateWidthAndPositionStart(
+        moment(startDate),
+        rowStartDate,
+        columnWidth,
+      );
+      return {
+        width,
+        left,
+      };
+    }
+    if (getTableCellEndOccupiedCondition(tableCells, rowIndex, columnIndex)) {
+      const rowEndDate = moment(startDate).endOf('day');
+      const { width, right } = calculateWidthAndPositionEnd(
+        moment(endDate),
+        rowEndDate,
+        columnWidth,
+      );
+      return {
+        width,
+        right,
+      };
+    }
+    //not gonna happen~
+    return { width: 0, right: 0, left: 0 };
+  } else {
+    const widthHours = moment
+      .duration(moment(endDate).diff(moment(startDate)))
+      .asHours();
+    const hourColumnWidth = columnWidth / 24;
+    const width = hourColumnWidth * widthHours;
+    const leftHours = moment
+      .duration(moment(startDate).diff(moment(date)))
+      .asHours();
+    const left = hourColumnWidth * leftHours;
+    return {
+      width,
+      left,
+    };
+  }
+}
+
+export function onOccupiedClick(
+  tableCells: CalendarMonthTableCell[],
+  rowIndex: number,
+  columnIndex: number,
+  props: CalendarMonthTableProp,
+) {
+  const occupied = getTableCell(tableCells, rowIndex, columnIndex).occupied;
+  if (props.onOccupiedClick && occupied) {
+    props.onOccupiedClick(occupied.link);
   }
 }

@@ -16,14 +16,10 @@ export interface CalendarDayTitleProp {
   setCustomScrollLeft: Dispatch<SetStateAction<number>>;
   showReturnToToday: boolean;
   setShowReturnToToday: Dispatch<SetStateAction<boolean>>;
+  type: string;
 }
 
 export interface CalendarDayTitleCell {
   month: string;
   dates: string[];
-}
-
-export interface CalendarDayTitleDate {
-  firstDate: string;
-  lastDate: string;
 }
