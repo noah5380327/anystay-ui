@@ -203,7 +203,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                         <p
                           className={`calendar-month-table-row-column-content-price`}
                         >
-                          {!tableCell?.virtual && `$${tableCell?.value}`}
+                          {!tableCell?.virtual && `${tableCell?.value}`}
                         </p>
                       </div>
                     </div>
