@@ -238,6 +238,17 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                             rowIndex,
                             columnIndex,
                           ).occupied?.color,
+                          ...(getTableCellOccupied(
+                            tableCells,
+                            rowIndex,
+                            columnIndex,
+                            width / 7,
+                          ).borderRadiusCornerNoNeed
+                            ? {
+                                borderBottomRightRadius: '0',
+                                borderTopRightRadius: '0',
+                              }
+                            : {}),
                         }}
                         onClick={() =>
                           onOccupiedClick(
@@ -254,39 +265,44 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                           e.stopPropagation();
                         }}
                       >
-                        {getTableCell(tableCells, rowIndex, columnIndex)
-                          .occupied?.avatar && (
+                        <div className="calendar-month-table-row-column-content-occupied-content-container">
+                          {getTableCell(tableCells, rowIndex, columnIndex)
+                            .occupied?.avatar && (
+                            <div
+                              className={`calendar-month-table-row-column-content-occupied-image-container`}
+                            >
+                              <img
+                                src={
+                                  getTableCell(
+                                    tableCells,
+                                    rowIndex,
+                                    columnIndex,
+                                  ).occupied?.avatar
+                                }
+                                alt={`avatar`}
+                              />
+                            </div>
+                          )}
                           <div
-                            className={`calendar-month-table-row-column-content-occupied-image-container`}
+                            className={`calendar-month-table-row-column-content-occupied-text-container`}
                           >
-                            <img
-                              src={
+                            <span
+                              className={`calendar-month-table-row-column-content-occupied-text-name`}
+                            >
+                              {
                                 getTableCell(tableCells, rowIndex, columnIndex)
-                                  .occupied?.avatar
+                                  .occupied?.name
                               }
-                              alt={`avatar`}
-                            />
+                            </span>
+                            <span
+                              className={`calendar-month-table-row-column-content-occupied-text`}
+                            >
+                              {
+                                getTableCell(tableCells, rowIndex, columnIndex)
+                                  .occupied?.text
+                              }
+                            </span>
                           </div>
-                        )}
-                        <div
-                          className={`calendar-month-table-row-column-content-occupied-text-container`}
-                        >
-                          <span
-                            className={`calendar-month-table-row-column-content-occupied-text-name`}
-                          >
-                            {
-                              getTableCell(tableCells, rowIndex, columnIndex)
-                                .occupied?.name
-                            }
-                          </span>
-                          <span
-                            className={`calendar-month-table-row-column-content-occupied-text`}
-                          >
-                            {
-                              getTableCell(tableCells, rowIndex, columnIndex)
-                                .occupied?.text
-                            }
-                          </span>
                         </div>
                       </div>
                     )}
@@ -339,39 +355,56 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                           e.stopPropagation();
                         }}
                       >
-                        {getTableCell(tableCells, rowIndex, columnIndex)
-                          .occupied?.avatar && (
-                          <div
-                            className={`calendar-month-table-row-column-content-occupied-image-container`}
-                          >
-                            <img
-                              src={
-                                getTableCell(tableCells, rowIndex, columnIndex)
-                                  .occupied?.avatar
-                              }
-                              alt={`avatar`}
-                            />
-                          </div>
-                        )}
                         <div
-                          className={`calendar-month-table-row-column-content-occupied-text-container`}
+                          className={`calendar-month-table-row-column-content-occupied-content-container`}
+                          style={{
+                            transform: `translateX(-${
+                              getTableCellOccupied(
+                                tableCells,
+                                rowIndex,
+                                columnIndex,
+                                width / 7,
+                              ).remainingHourWidth
+                            }px)`,
+                          }}
                         >
-                          <span
-                            className={`calendar-month-table-row-column-content-occupied-text-name`}
+                          {getTableCell(tableCells, rowIndex, columnIndex)
+                            .occupied?.avatar && (
+                            <div
+                              className={`calendar-month-table-row-column-content-occupied-image-container`}
+                            >
+                              <img
+                                src={
+                                  getTableCell(
+                                    tableCells,
+                                    rowIndex,
+                                    columnIndex,
+                                  ).occupied?.avatar
+                                }
+                                alt={`avatar`}
+                              />
+                            </div>
+                          )}
+                          <div
+                            className={`calendar-month-table-row-column-content-occupied-text-container`}
                           >
-                            {
-                              getTableCell(tableCells, rowIndex, columnIndex)
-                                .occupied?.name
-                            }
-                          </span>
-                          <span
-                            className={`calendar-month-table-row-column-content-occupied-text`}
-                          >
-                            {
-                              getTableCell(tableCells, rowIndex, columnIndex)
-                                .occupied?.text
-                            }
-                          </span>
+                            <span
+                              className={`calendar-month-table-row-column-content-occupied-text-name`}
+                            >
+                              {
+                                getTableCell(tableCells, rowIndex, columnIndex)
+                                  .occupied?.name
+                              }
+                            </span>
+                            <span
+                              className={`calendar-month-table-row-column-content-occupied-text`}
+                            >
+                              {
+                                getTableCell(tableCells, rowIndex, columnIndex)
+                                  .occupied?.text
+                              }
+                            </span>
+                          </div>
                         </div>
                       </div>
                     )}

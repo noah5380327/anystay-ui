@@ -109,4 +109,6 @@ export interface CalendarMonthTableOccupiedCell {
   width: number;
   left?: number;
   right?: number;
+  borderRadiusCornerNoNeed?: boolean;
+  remainingHourWidth?: number;
 }
