@@ -862,7 +862,7 @@ export function getTableCellOccupied(
 ): CalendarMonthTableOccupiedCell {
   function calculateWidthAndPositionStart(
     startDate: moment.Moment,
-    rowEndDate: moment.Moment,
+    endDate: moment.Moment,
     columnWidth: number,
   ) {
     const hourColumnWidth = columnWidth / 24;
@@ -871,13 +871,23 @@ export function getTableCellOccupied(
       .duration(moment(endDate).diff(moment(startDate)))
       .asHours();
     // Calculate width and left
-    const width = hourColumnWidth * widthHours;
+    let width = hourColumnWidth * widthHours;
+    //for occupied that span across different month split the occupied
+    let borderRadiusCornerNoNeed = false;
+    if (!startDate.isSame(endDate, 'month')) {
+      const endOfMonth = startDate.clone().endOf('month');
+      const remainingHours = moment
+        .duration(endOfMonth.diff(startDate))
+        .asHours();
+      width = remainingHours * hourColumnWidth;
+      borderRadiusCornerNoNeed = true;
+    }
     const left = hourColumnWidth * startDate.hour(); // assuming `startDate` has the correct hour within the day
-    return { width, left };
+    return { width, left, borderRadiusCornerNoNeed };
   }
   function calculateWidthAndPositionEnd(
+    startDate: moment.Moment,
     endDate: moment.Moment,
-    rowStartDate: moment.Moment,
     columnWidth: number,
   ) {
     const hourColumnWidth = columnWidth / 24;
@@ -886,9 +896,18 @@ export function getTableCellOccupied(
       .duration(moment(endDate).diff(moment(startDate)))
       .asHours();
     // Calculate width and right
-    const width = hourColumnWidth * widthHours;
+    let width = hourColumnWidth * widthHours;
+    let remainingHourWidth = 0;
+    //for occupied that span across different month split the occupied
+    if (!startDate.isSame(endDate, 'month')) {
+      const oldWidth = width;
+      const startOfMonth = endDate.clone().startOf('month');
+      const hoursPassed = moment.duration(endDate.diff(startOfMonth)).asHours();
+      width = hoursPassed * hourColumnWidth;
+      remainingHourWidth = oldWidth - width;
+    }
     const right = hourColumnWidth * (24 - endDate.hour());
-    return { width, right };
+    return { width, right, remainingHourWidth };
   }
   function getRowNumber(date: Dayjs) {
     const startOfMonth = date.startOf('month');
@@ -905,31 +924,33 @@ export function getTableCellOccupied(
   const date = tableCell.date;
   if (getRowNumber(dayjs(startDate)) !== getRowNumber(dayjs(endDate))) {
     if (getTableCellStartOccupiedCondition(tableCells, rowIndex, columnIndex)) {
-      const rowStartDate = moment(endDate).startOf('day');
-      const { width, left } = calculateWidthAndPositionStart(
-        moment(startDate),
-        rowStartDate,
-        columnWidth,
-      );
+      const { width, left, borderRadiusCornerNoNeed } =
+        calculateWidthAndPositionStart(
+          moment(startDate),
+          moment(endDate),
+          columnWidth,
+        );
       return {
         width,
         left,
+        borderRadiusCornerNoNeed,
       };
     }
     if (getTableCellEndOccupiedCondition(tableCells, rowIndex, columnIndex)) {
-      const rowEndDate = moment(startDate).endOf('day');
-      const { width, right } = calculateWidthAndPositionEnd(
+      const { width, right, remainingHourWidth } = calculateWidthAndPositionEnd(
+        moment(startDate),
         moment(endDate),
-        rowEndDate,
         columnWidth,
       );
+
       return {
         width,
         right,
+        remainingHourWidth,
       };
     }
     //not gonna happen~
-    return { width: 0, right: 0, left: 0 };
+    return { width: 0 };
   } else {
     const widthHours = moment
       .duration(moment(endDate).diff(moment(startDate)))
