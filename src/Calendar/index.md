@@ -68,8 +68,8 @@ export default () => (
         rowId: 1,
         columns: [
           {
-            startDate: '2024-10-22 13:00:00',
-            endDate: '2024-10-24 15:00:00',
+            startDate: '2024-10-25 19:00:00',
+            endDate: '2024-10-29 15:00:00',
             name: 'John',
             text: 'Confirmed',
             link: 'https://www.baidu.com',
@@ -77,16 +77,8 @@ export default () => (
             color: '#FFA01D',
           },
           {
-            startDate: '2024-10-31 11:00:00',
-            endDate: '2024-11-01 15:00:00',
-            name: 'John',
-            text: 'Confirmed',
-            link: 'https://www.baidu.com',
-            avatar: 'http://localhost:4000/favicon.ico',
-          },
-          {
-            startDate: '2024-11-09 11:00:00',
-            endDate: '2024-11-10 15:00:00',
+            startDate: '2024-10-31 19:00:00',
+            endDate: '2025-01-04 15:00:00',
             name: 'John',
             text: 'Confirmed',
             link: 'https://www.baidu.com',
