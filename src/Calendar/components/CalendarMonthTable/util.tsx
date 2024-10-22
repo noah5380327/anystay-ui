@@ -829,12 +829,10 @@ export function getTableCellStartOccupiedCondition(
     const occupiedEndDate = dayjs(tableCell.occupied?.endDate);
     dayjs.extend(isBetween);
     const isBetweenRange =
-      tableCellDate
-        .startOf('day')
-        .isBetween(occupiedStartDate, occupiedEndDate, null, '[]') ||
-      tableCellDate
-        .endOf('day')
-        .isBetween(occupiedStartDate, occupiedEndDate, null, '[]');
+      (tableCellDate.isSame(occupiedStartDate, 'day') ||
+        tableCellDate.isAfter(occupiedStartDate, 'day')) &&
+      (tableCellDate.isSame(occupiedEndDate, 'day') ||
+        tableCellDate.isBefore(occupiedEndDate, 'day'));
     if (isBetweenRange) {
       return true;
     }
@@ -852,7 +850,6 @@ function calculateTranslateX(
     tableCellDate.startOf('day'),
     'hour',
   );
-  console.log(hoursDifference * hourColumnWidth);
   return hoursDifference * hourColumnWidth;
 }
 export function getTableCellOccupied(
@@ -870,13 +867,24 @@ export function getTableCellOccupied(
   const isStart = tableCellDate.isSame(occupiedStartDate, 'day');
   const isEnd = tableCellDate.isSame(occupiedEndDate, 'day');
   const isBetweenRange =
-    tableCellDate
-      .startOf('day')
-      .isBetween(occupiedStartDate, occupiedEndDate, null, '[]') ||
-    tableCellDate
-      .endOf('day')
-      .isBetween(occupiedStartDate, occupiedEndDate, null, '[]');
+    (tableCellDate.isSame(occupiedStartDate, 'day') ||
+      tableCellDate.isAfter(occupiedStartDate, 'day')) &&
+    (tableCellDate.isSame(occupiedEndDate, 'day') ||
+      tableCellDate.isBefore(occupiedEndDate, 'day'));
   if (isBetweenRange) {
+    if (isStart && isEnd) {
+      //same day booking
+      const widthHours = moment
+        .duration(moment(occupiedEndDate).diff(moment(occupiedStartDate)))
+        .asHours();
+      let width = hourColumnWidth * widthHours;
+      const left = hourColumnWidth * moment(occupiedStartDate).hour();
+      return {
+        width,
+        left,
+        translateX: 0,
+      };
+    }
     if (isStart) {
       const tableCellEndDate = moment(tableCell.date).endOf('day');
       const widthHours = moment
