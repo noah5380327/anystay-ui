@@ -17,6 +17,8 @@ import {
   CalendarRowProp,
 } from 'anystay-ui/Calendar/interface';
 import dayjs, { Dayjs } from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+
 import moment from 'moment';
 import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
@@ -820,150 +822,135 @@ export function getTableCellStartOccupiedCondition(
   columnIndex: number,
 ) {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+  const tableCellDate = dayjs(tableCell.date);
+
   if (tableCell.occupied) {
-    const startDate = moment(tableCell.occupied.startDate);
-    const date = moment(tableCell.date);
-    return startDate.isSame(date, 'day');
-  }
-  return false;
-}
-export function getTableCellEndOccupiedCondition(
-  tableCells: CalendarMonthTableCell[],
-  rowIndex: number,
-  columnIndex: number,
-) {
-  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-  const startDate = tableCell.occupied?.startDate;
-  const endDate = tableCell.occupied?.endDate;
-  function getRowNumber(date: Dayjs) {
-    const startOfMonth = date.startOf('month');
-    const firstDayOfWeek = startOfMonth.day(); // 获取该月第一天是星期几（0表示星期天，6表示星期六）
-    const dayOfMonth = date.date(); // 获取日期是该月的几号
-    // 计算行号：日期加上该月第一天的偏移量，除以7，向上取整
-    const rowNumber = Math.ceil((dayOfMonth + firstDayOfWeek) / 7);
-    return rowNumber;
-  }
-  if (
-    tableCell.occupied &&
-    getRowNumber(dayjs(startDate)) !== getRowNumber(dayjs(endDate))
-  ) {
-    const endDate = moment(tableCell.occupied.endDate);
-    const date = moment(tableCell.date);
-    return endDate.isSame(date, 'day');
+    const occupiedStartDate = dayjs(tableCell.occupied?.startDate);
+    const occupiedEndDate = dayjs(tableCell.occupied?.endDate);
+    dayjs.extend(isBetween);
+    const isBetweenRange =
+      tableCellDate
+        .startOf('day')
+        .isBetween(occupiedStartDate, occupiedEndDate, null, '[]') ||
+      tableCellDate
+        .endOf('day')
+        .isBetween(occupiedStartDate, occupiedEndDate, null, '[]');
+    if (isBetweenRange) {
+      return true;
+    }
+    return false;
   }
   return false;
 }
 
+function calculateTranslateX(
+  hourColumnWidth: number,
+  occupiedStartDate: dayjs.Dayjs,
+  tableCellDate: dayjs.Dayjs,
+) {
+  const hoursDifference = occupiedStartDate.diff(
+    tableCellDate.startOf('day'),
+    'hour',
+  );
+  console.log(hoursDifference * hourColumnWidth);
+  return hoursDifference * hourColumnWidth;
+}
 export function getTableCellOccupied(
   tableCells: CalendarMonthTableCell[],
   rowIndex: number,
   columnIndex: number,
   columnWidth: number,
 ): CalendarMonthTableOccupiedCell {
-  function calculateWidthAndPositionStart(
-    startDate: moment.Moment,
-    endDate: moment.Moment,
-    columnWidth: number,
-  ) {
-    const hourColumnWidth = columnWidth / 24;
-    // Calculate hours from startDate to the end of the row (day)
-    const widthHours = moment
-      .duration(moment(endDate).diff(moment(startDate)))
-      .asHours();
-    // Calculate width and left
-    let width = hourColumnWidth * widthHours;
-    //for occupied that span across different month split the occupied
-    let borderRadiusCornerNoNeed = false;
-    if (!startDate.isSame(endDate, 'month')) {
-      const endOfMonth = startDate.clone().endOf('month');
-      const remainingHours = moment
-        .duration(endOfMonth.diff(startDate))
-        .asHours();
-      width = remainingHours * hourColumnWidth;
-      borderRadiusCornerNoNeed = true;
-    }
-    const left = hourColumnWidth * startDate.hour(); // assuming `startDate` has the correct hour within the day
-    return { width, left, borderRadiusCornerNoNeed };
-  }
-  function calculateWidthAndPositionEnd(
-    startDate: moment.Moment,
-    endDate: moment.Moment,
-    columnWidth: number,
-  ) {
-    const hourColumnWidth = columnWidth / 24;
-    // Calculate hours from the start of the row (day) to endDate
-    const widthHours = moment
-      .duration(moment(endDate).diff(moment(startDate)))
-      .asHours();
-    // Calculate width and right
-    let width = hourColumnWidth * widthHours;
-    let remainingHourWidth = 0;
-    //for occupied that span across different month split the occupied
-    if (!startDate.isSame(endDate, 'month')) {
-      const oldWidth = width;
-      const startOfMonth = endDate.clone().startOf('month');
-      const hoursPassed = moment.duration(endDate.diff(startOfMonth)).asHours();
-      width = hoursPassed * hourColumnWidth;
-      remainingHourWidth = oldWidth - width;
-    }
-    const right = hourColumnWidth * (24 - endDate.hour());
-    return { width, right, remainingHourWidth };
-  }
-  function getRowNumber(date: Dayjs) {
-    const startOfMonth = date.startOf('month');
-    const firstDayOfWeek = startOfMonth.day(); // 获取该月第一天是星期几（0表示星期天，6表示星期六）
-    const dayOfMonth = date.date(); // 获取日期是该月的几号
-    // 计算行号：日期加上该月第一天的偏移量，除以7，向上取整
-    const rowNumber = Math.ceil((dayOfMonth + firstDayOfWeek) / 7);
-    return rowNumber;
-  }
-
+  const hourColumnWidth = columnWidth / 24;
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-  const startDate = tableCell.occupied?.startDate;
-  const endDate = tableCell.occupied?.endDate;
-  const date = tableCell.date;
-  if (getRowNumber(dayjs(startDate)) !== getRowNumber(dayjs(endDate))) {
-    if (getTableCellStartOccupiedCondition(tableCells, rowIndex, columnIndex)) {
-      const { width, left, borderRadiusCornerNoNeed } =
-        calculateWidthAndPositionStart(
-          moment(startDate),
-          moment(endDate),
-          columnWidth,
-        );
+  const tableCellDate = dayjs(tableCell.date);
+  const occupiedStartDate = tableCell.occupied?.startDate;
+  const occupiedEndDate = tableCell.occupied?.endDate;
+  dayjs.extend(isBetween);
+  const isStart = tableCellDate.isSame(occupiedStartDate, 'day');
+  const isEnd = tableCellDate.isSame(occupiedEndDate, 'day');
+  const isBetweenRange =
+    tableCellDate
+      .startOf('day')
+      .isBetween(occupiedStartDate, occupiedEndDate, null, '[]') ||
+    tableCellDate
+      .endOf('day')
+      .isBetween(occupiedStartDate, occupiedEndDate, null, '[]');
+  if (isBetweenRange) {
+    if (isStart) {
+      const tableCellEndDate = moment(tableCell.date).endOf('day');
+      const widthHours = moment
+        .duration(tableCellEndDate.diff(moment(occupiedStartDate)))
+        .asHours();
+      let width = hourColumnWidth * widthHours;
+      const left = hourColumnWidth * moment(occupiedStartDate).hour();
       return {
         width,
         left,
-        borderRadiusCornerNoNeed,
+        borderRadiusCornerRightNoNeed: true,
+        translateX: 0,
       };
-    }
-    if (getTableCellEndOccupiedCondition(tableCells, rowIndex, columnIndex)) {
-      const { width, right, remainingHourWidth } = calculateWidthAndPositionEnd(
-        moment(startDate),
-        moment(endDate),
-        columnWidth,
-      );
-
+    } else if (isEnd) {
+      const tableCellStartDate = moment(tableCell.date).startOf('day');
+      const widthHours = -moment
+        .duration(tableCellStartDate.diff(moment(occupiedEndDate)))
+        .asHours();
+      let width = hourColumnWidth * widthHours;
+      const right = hourColumnWidth * (24 - moment(occupiedEndDate).hour());
       return {
         width,
         right,
-        remainingHourWidth,
+        borderRadiusCornerLeftNoNeed: true,
+        translateX: calculateTranslateX(
+          hourColumnWidth,
+          dayjs(occupiedStartDate),
+          dayjs(tableCell.date),
+        ),
+      };
+    } else {
+      return {
+        width: columnWidth,
+        borderRadiusCornerBothNoNeed: true,
+        translateX: calculateTranslateX(
+          hourColumnWidth,
+          dayjs(occupiedStartDate),
+          dayjs(tableCell.date),
+        ),
       };
     }
-    //not gonna happen~
-    return { width: 0 };
-  } else {
-    const widthHours = moment
-      .duration(moment(endDate).diff(moment(startDate)))
-      .asHours();
-    const hourColumnWidth = columnWidth / 24;
-    const width = hourColumnWidth * widthHours;
-    const leftHours = moment
-      .duration(moment(startDate).diff(moment(date)))
-      .asHours();
-    const left = hourColumnWidth * leftHours;
+  }
+
+  return { width: 0 };
+}
+
+export function getOccupiedBorderStyling(
+  tableCells: CalendarMonthTableCell[],
+  rowIndex: number,
+  columnIndex: number,
+  columnWidth: number,
+) {
+  const res = getTableCellOccupied(
+    tableCells,
+    rowIndex,
+    columnIndex,
+    columnWidth,
+  );
+  if (res.borderRadiusCornerRightNoNeed) {
     return {
-      width,
-      left,
+      borderBottomRightRadius: '0',
+      borderTopRightRadius: '0',
+    };
+  } else if (res.borderRadiusCornerLeftNoNeed) {
+    return {
+      borderBottomLeftRadius: '0',
+      borderTopLeftRadius: '0',
+    };
+  } else if (res.borderRadiusCornerBothNoNeed) {
+    return {
+      borderBottomRightRadius: '0',
+      borderTopRightRadius: '0',
+      borderBottomLeftRadius: '0',
+      borderTopLeftRadius: '0',
     };
   }
 }
