@@ -5,6 +5,7 @@ import CalendarDayTitle from 'anystay-ui/Calendar/components/CalendarDayTitle';
 import CalendarMonthTable from 'anystay-ui/Calendar/components/CalendarMonthTable';
 import CalendarMonthTitle from 'anystay-ui/Calendar/components/CalendarMonthTitle';
 import {
+  DEFAULT_CELL_HEIGHT_MONTHLY,
   DEFAULT_COLUMN_WIDTH,
   DEFAULT_DATE_ROW_HEIGHT,
   DEFAULT_STEP_DAY_NUMBER,
@@ -48,6 +49,8 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
     props.subtractMonthNumber || DEFAULT_SUBTRACT_MONTH_NUMBER;
   const stepDayNumber = props.stepDayNumber || DEFAULT_STEP_DAY_NUMBER;
   const columnWidth = props.columnWidth || DEFAULT_COLUMN_WIDTH;
+  const cellHeightMonthly =
+    props.cellHeightMonthly || DEFAULT_CELL_HEIGHT_MONTHLY;
   const titleRowHeight = props.titleRowHeight || DEFAULT_TITLE_ROW_HEIGHT;
   const dateRowHeight = props.dateRowHeight || DEFAULT_DATE_ROW_HEIGHT;
   const type = props.type || DEFAULT_TYPE;
@@ -223,6 +226,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                 />
                 <CalendarMonthTable
                   todayScrollTop={todayScrollTop}
+                  cellHeightMonthly={cellHeightMonthly}
                   ref={tableRef}
                   monthDate={monthDateForMonthly}
                   rows={props.rows}

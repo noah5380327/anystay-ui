@@ -767,9 +767,8 @@ export function onSectionRenderJumpToToday(
   todayScrollTop: React.MutableRefObject<number>,
   monthDate: CalendarMonthDate,
   setCustomScrollTop: Dispatch<SetStateAction<number>>,
-  width: number,
+  cellHeight: number,
 ) {
-  //width / 7 = row height
   if (init.current) return;
   function getRowsUntilThisMonth(year: number, month: number) {
     // 获取该月的第一天
@@ -803,7 +802,7 @@ export function onSectionRenderJumpToToday(
     for (let j = 0; j < monthDate[months[i]].length; j++) {
       if (monthDate[months[i]][j] === dayjs().format('YYYY-MM-DD')) {
         numberOfRow += getRowsUntilToday();
-        let scrollTop = numberOfRow * (width / 7);
+        let scrollTop = numberOfRow * cellHeight;
         setCustomScrollTop(scrollTop);
         todayScrollTop.current = scrollTop;
         init.current = true;

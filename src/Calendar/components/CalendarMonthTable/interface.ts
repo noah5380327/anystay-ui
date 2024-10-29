@@ -37,6 +37,7 @@ export interface CalendarMonthTableProp {
     React.SetStateAction<dayjs.Dayjs>
   >;
   onOccupiedClick?: (prop: string) => void;
+  cellHeightMonthly?: number;
 }
 
 export interface CalendarMonthTableSelection {
