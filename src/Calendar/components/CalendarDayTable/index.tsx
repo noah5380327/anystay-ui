@@ -118,6 +118,7 @@ const CalendarDayTable = forwardRef<HTMLInputElement, CalendarDayTableProp>(
                       columnIndex,
                       selectionVisible,
                       setSelectionVisible,
+
                       setSelection,
                       props.subtractDayNumber,
                     )
