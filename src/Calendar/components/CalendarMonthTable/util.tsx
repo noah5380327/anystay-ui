@@ -582,16 +582,18 @@ export function onMouseDown(
   selectionVisible: boolean,
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   setSelection: Dispatch<SetStateAction<CalendarMonthTableSelection>>,
+  selection: CalendarMonthTableSelection,
   tableCells: CalendarMonthTableCell[],
   firstSelection: React.MutableRefObject<CalendarMonthTableSelection>,
 ) {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-
   if (
     tableCell &&
     !tableCell.virtual &&
     dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
   ) {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    console.log(isMobile);
     if (!selectionVisible) {
       setSelectionVisible(true);
       setSelection({
@@ -613,6 +615,17 @@ export function onMouseDown(
       timer = setTimeout(() => {
         clearSelection(setSelectionVisible);
       }, longPressThreshold);
+    } else if (isMobile) {
+      //if mobile, second click is select the end cell, same logic as the onmouseover
+      onMouseOver(
+        rowIndex,
+        columnIndex,
+        selectionVisible,
+        selection,
+        setSelection,
+        tableCells,
+        firstSelection,
+      );
     } else {
       clearTimeout(timer);
       clearSelection(setSelectionVisible);

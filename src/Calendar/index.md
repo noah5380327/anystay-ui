@@ -29,7 +29,6 @@ import { Calendar, CalendarSelectProp, CalendarType } from 'anystay-ui';
 export default () => (
   <Calendar
     type={CalendarType.Month}
-    cellHeightMonthly={200}
     subtractDayNumber={48}
     subtractMonthNumber={10}
     totalDayNumber={100}

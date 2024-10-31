@@ -163,6 +163,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                           selectionVisible,
                           setSelectionVisible,
                           setSelection,
+                          selection,
                           tableCells,
                           firstSelection,
                         )
