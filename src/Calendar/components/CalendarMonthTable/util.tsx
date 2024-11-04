@@ -590,8 +590,6 @@ export function onMouseDown(
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (isMobile) return;
 
-  console.log('ONmoUSEDOWN');
-
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   if (
     tableCell &&
@@ -639,7 +637,6 @@ export function onTouchStart(
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (!isMobile) return;
 
-  console.log('onTouchSTART');
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   if (
     tableCell &&
