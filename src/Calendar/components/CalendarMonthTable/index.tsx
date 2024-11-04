@@ -22,6 +22,7 @@ import {
   onMouseUp,
   onScrollDate,
   onSectionRenderJumpToToday,
+  onTouchStart,
   showReturnToToday,
 } from 'anystay-ui/Calendar/components/CalendarMonthTable/util';
 import React, {
@@ -179,6 +180,18 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                           firstSelection,
                         )
                       }
+                      onTouchStart={() => {
+                        onTouchStart(
+                          rowIndex,
+                          columnIndex,
+                          selectionVisible,
+                          setSelectionVisible,
+                          setSelection,
+                          selection,
+                          tableCells,
+                          firstSelection,
+                        );
+                      }}
                     >
                       <div
                         className={`calendar-month-table-row-column-content-container`}

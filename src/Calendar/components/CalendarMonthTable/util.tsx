@@ -586,14 +586,18 @@ export function onMouseDown(
   tableCells: CalendarMonthTableCell[],
   firstSelection: React.MutableRefObject<CalendarMonthTableSelection>,
 ) {
+  //if desktop user
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) return;
+
+  console.log('ONmoUSEDOWN');
+
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   if (
     tableCell &&
     !tableCell.virtual &&
     dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
   ) {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    console.log(isMobile);
     if (!selectionVisible) {
       setSelectionVisible(true);
       setSelection({
@@ -615,7 +619,52 @@ export function onMouseDown(
       timer = setTimeout(() => {
         clearSelection(setSelectionVisible);
       }, longPressThreshold);
-    } else if (isMobile) {
+    } else {
+      clearTimeout(timer);
+      clearSelection(setSelectionVisible);
+    }
+  }
+}
+export function onTouchStart(
+  rowIndex: number,
+  columnIndex: number,
+  selectionVisible: boolean,
+  setSelectionVisible: Dispatch<SetStateAction<boolean>>,
+  setSelection: Dispatch<SetStateAction<CalendarMonthTableSelection>>,
+  selection: CalendarMonthTableSelection,
+  tableCells: CalendarMonthTableCell[],
+  firstSelection: React.MutableRefObject<CalendarMonthTableSelection>,
+) {
+  //for mobile touch screen user
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (!isMobile) return;
+
+  console.log('onTouchSTART');
+  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+  if (
+    tableCell &&
+    !tableCell.virtual &&
+    dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
+  ) {
+    if (!selectionVisible) {
+      setSelectionVisible(true);
+      setSelection({
+        rowStartIndex: rowIndex,
+        rowEndIndex: rowIndex,
+        rowCurrentIndex: rowIndex,
+        columnStartIndex: columnIndex,
+        columnEndIndex: columnIndex,
+        columnCurrentIndex: columnIndex,
+      });
+      firstSelection.current = {
+        rowStartIndex: rowIndex,
+        rowEndIndex: rowIndex,
+        rowCurrentIndex: rowIndex,
+        columnStartIndex: columnIndex,
+        columnEndIndex: columnIndex,
+        columnCurrentIndex: columnIndex,
+      };
+    } else {
       //if mobile, second click is select the end cell, same logic as the onmouseover
       onMouseOver(
         rowIndex,
@@ -626,9 +675,7 @@ export function onMouseDown(
         tableCells,
         firstSelection,
       );
-    } else {
-      clearTimeout(timer);
-      clearSelection(setSelectionVisible);
+      setSelectionVisible(false);
     }
   }
 }
