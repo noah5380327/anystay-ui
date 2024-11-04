@@ -6,9 +6,9 @@ export interface CalendarMonthTitleProp {
   setCustomScrollTop: React.Dispatch<React.SetStateAction<number>>;
   todayScrollTop: React.MutableRefObject<number>;
   monthDate: CalendarMonthDate;
-  scrollWidth: number;
   monthlyTitleSelectedDate: dayjs.Dayjs;
   setMonthlyTitleSelectedDate: React.Dispatch<
     React.SetStateAction<dayjs.Dayjs>
   >;
+  cellHeightMonthly: number;
 }
