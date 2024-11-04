@@ -218,7 +218,11 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                   type={type}
                   setCustomScrollTop={setCustomScrollTop}
                   todayScrollTop={todayScrollTop}
-                  scrollWidth={scrollWidth}
+                  cellHeightMonthly={
+                    props.cellHeightMonthly
+                      ? Math.max(props.cellHeightMonthly, scrollWidth / 7)
+                      : scrollWidth / 7
+                  }
                   monthlyTitleSelectedDate={monthlyTitleSelectedDate}
                   setMonthlyTitleSelectedDate={setMonthlyTitleSelectedDate}
                 />

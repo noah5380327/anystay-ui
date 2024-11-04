@@ -33,6 +33,7 @@ export default () => (
     subtractMonthNumber={10}
     totalDayNumber={100}
     totalMonthNumber={20}
+    cellHeightMonthly={80}
     rows={[{ rowId: 1, value: 200 }]}
     fillRows={[
       {

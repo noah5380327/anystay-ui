@@ -26,7 +26,7 @@ const CalendarMonthTitle: FC<CalendarMonthTitleProp> = (props) => {
         calendarTitleProp={props}
         todayScrollTop={props.todayScrollTop}
         monthDate={props.monthDate}
-        scrollWidth={props.scrollWidth}
+        cellHeightMonthly={props.cellHeightMonthly}
       />
     </div>
   );

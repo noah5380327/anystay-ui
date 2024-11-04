@@ -20,7 +20,7 @@ export function reSetScrollTop(
   props: CalendarMonthTitleProp,
   selectedDate: dayjs.Dayjs,
   monthDate: CalendarMonthDate,
-  scrollWidth: number,
+  cellHeightMonthly: number,
 ) {
   function getRowsUntilThisMonth(year: number, month: number) {
     // 获取该月的第一天
@@ -39,7 +39,7 @@ export function reSetScrollTop(
   let numberOfRow = 0;
   for (let i = 0; i < months.length; i++) {
     if (selectedDate.format('YYYY-MM') === months[i]) {
-      let scrollTop = numberOfRow * (scrollWidth / 7);
+      let scrollTop = numberOfRow * cellHeightMonthly;
       props.setCustomScrollTop(scrollTop);
     }
     const year = Number(months[i].split('-')[0]);

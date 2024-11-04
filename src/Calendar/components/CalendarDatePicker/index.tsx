@@ -22,7 +22,7 @@ interface CalendarDatePickerProps {
   todayScrollTop?: React.MutableRefObject<number>;
   type: string;
   monthDate: CalendarMonthDate;
-  scrollWidth?: number;
+  cellHeightMonthly?: number;
 }
 
 const CalendarDatePicker: FC<CalendarDatePickerProps> = (props) => {
@@ -62,12 +62,11 @@ const CalendarDatePicker: FC<CalendarDatePickerProps> = (props) => {
               props.titleDate!,
             );
           } else if (props.type === 'Month') {
-            //有了！
             reSetScrollTop(
               props.calendarTitleProp as CalendarMonthTitleProp,
               date,
               props.monthDate as CalendarMonthDate,
-              props.scrollWidth as number,
+              props.cellHeightMonthly as number,
             );
           }
         }}
