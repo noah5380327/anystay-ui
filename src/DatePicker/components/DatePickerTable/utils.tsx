@@ -1,23 +1,16 @@
 import {
   CalendarMonthBlockRowCell,
   CalendarMonthFillRowCell,
-  CalendarMonthOccupiedRowCell,
-  CalendarMonthTableOccupiedCell,
   DatePickerTableCell,
   DatePickerTableProp,
   DatePickerTableSelection,
 } from 'anystay-ui/DatePicker/components/DatePickerTable/interface';
 import {
-  CalendarBlockRowProp,
   CalendarCellStatusProp,
-  CalendarFillRowProp,
-  CalendarOccupiedRowProp,
-  CalendarRowProp,
   DatePickerMonthDate,
   DatePickerSelectProp,
 } from 'anystay-ui/DatePicker/interface';
 import dayjs, { Dayjs } from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
 
 import moment from 'moment';
 import { Dispatch, SetStateAction } from 'react';
@@ -30,13 +23,11 @@ export function generateVirtualCell(
   tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
-  rowId: string,
   value: string,
 ) {
   tableCells.push({
     rowIndex,
     columnIndex,
-    rowId,
     value,
     virtual: true,
   });
@@ -46,62 +37,26 @@ export function generateRealCell(
   tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
-  rowId: string,
   value: string,
   dMonth: Dayjs,
   day: number,
-  fillRowCells: CalendarMonthFillRowCell[],
   blockRowCells: CalendarMonthBlockRowCell[],
-  occupiedRowCells: CalendarMonthOccupiedRowCell[],
 ) {
   const date = dMonth.add(day - 1, 'day').format('YYYY-MM-DD');
   let status = CalendarCellStatusProp.Normal;
-  let startDate = date;
-  let endDate = date;
-  let extra;
-  let occupied;
-  const fillRowCell = getFillRowCell(fillRowCells, rowId, date);
-  const blockRowCell = getBlockRowCell(blockRowCells, rowId, date);
-  const occupiedRowCell = getOccupiedRowCell(occupiedRowCells, rowId, date);
-  if (fillRowCell) {
-    value = fillRowCell.value;
-    status = CalendarCellStatusProp.Normal;
-    startDate = fillRowCell.startDate;
-    endDate = fillRowCell.endDate;
-    extra = fillRowCell.extra;
-  }
+  const blockRowCell = getBlockRowCell(blockRowCells, date);
+
   if (blockRowCell) {
-    value = blockRowCell.value;
     status = CalendarCellStatusProp.Block;
-    startDate = blockRowCell.startDate;
-    endDate = blockRowCell.endDate;
-    extra = blockRowCell.extra;
-  }
-  if (occupiedRowCell) {
-    occupied = {
-      startDate: occupiedRowCell.startDate,
-      endDate: occupiedRowCell.endDate,
-      link: occupiedRowCell.link,
-      name: occupiedRowCell.name,
-      text: occupiedRowCell.text,
-      avatar: occupiedRowCell.avatar,
-      extra: occupiedRowCell.extra,
-      color: occupiedRowCell.color,
-    };
   }
 
   tableCells.push({
     rowIndex,
     columnIndex,
-    rowId,
     date,
-    startDate,
-    endDate,
     value,
     status,
     day,
-    extra,
-    occupied,
     virtual: false,
   });
 }
@@ -122,54 +77,15 @@ export function generateDatesFromStartAndEnd(
   return dateArray;
 }
 
-export function generateFillTableCells(
-  fillRows: CalendarFillRowProp[],
-): CalendarMonthFillRowCell[] {
-  const fillRowCells: CalendarMonthFillRowCell[] = [];
-  for (let i = 0; i < fillRows.length; i++) {
-    const fillRow = fillRows[i];
-    for (let j = 0; j < fillRow.columns.length; j++) {
-      const fillRowColumn = fillRow.columns[j];
-      const startDate = fillRowColumn.startDate;
-      const endDate = fillRowColumn.endDate;
-      const dates = generateDatesFromStartAndEnd(startDate, endDate);
-      for (let k = 0; k < dates.length; k++) {
-        fillRowCells.push({
-          rowId: fillRow.rowId,
-          date: dates[k],
-          startDate,
-          endDate,
-          value: fillRowColumn.value,
-          extra: fillRowColumn.extra,
-        });
-      }
-    }
-  }
-  return fillRowCells;
-}
-
 export function generateBlockTableCells(
-  blockRows: CalendarBlockRowProp[],
+  blockRows: string[],
 ): CalendarMonthBlockRowCell[] {
   const blockRowCells: CalendarMonthBlockRowCell[] = [];
-  for (let i = 0; i < blockRows.length; i++) {
-    const blockRow = blockRows[i];
-    for (let j = 0; j < blockRow.columns.length; j++) {
-      const blockRowColumn = blockRow.columns[j];
-      const startDate = blockRowColumn.startDate;
-      const endDate = blockRowColumn.endDate;
-      const dates = generateDatesFromStartAndEnd(startDate, endDate);
-      for (let k = 0; k < dates.length; k++) {
-        blockRowCells.push({
-          rowId: blockRow.rowId,
-          date: dates[k],
-          startDate,
-          endDate,
-          value: blockRowColumn.value,
-          extra: blockRowColumn.extra,
-        });
-      }
-    }
+  for (let k = 0; k < blockRows.length; k++) {
+    blockRowCells.push({
+      date: blockRows[k],
+      value: blockRows[k],
+    });
   }
   return blockRowCells;
 }
@@ -184,157 +100,86 @@ export function getFillRowCell(
 
 export function getBlockRowCell(
   blockRowCells: CalendarMonthBlockRowCell[],
-  rowId: string,
   date: string,
 ): CalendarMonthBlockRowCell {
-  return blockRowCells.filter((i) => i.rowId === rowId && i.date === date)?.[0];
-}
-
-export function generateOccupiedTableCells(
-  occupiedRows: CalendarOccupiedRowProp[],
-): CalendarMonthOccupiedRowCell[] {
-  const occupiedRowCells: CalendarMonthOccupiedRowCell[] = [];
-  for (let i = 0; i < occupiedRows.length; i++) {
-    const occupiedRow = occupiedRows[i];
-    for (let j = 0; j < occupiedRow.columns.length; j++) {
-      const occupiedRowColumn = occupiedRow.columns[j];
-      const startDate = occupiedRowColumn.startDate;
-      const endDate = occupiedRowColumn.endDate;
-      const dates = generateDatesFromStartAndEnd(startDate, endDate);
-      for (let k = 0; k < dates.length; k++) {
-        occupiedRowCells.push({
-          rowId: occupiedRow.rowId,
-          date: dates[k],
-          startDate,
-          endDate,
-          link: occupiedRowColumn.link,
-          name: occupiedRowColumn.name,
-          text: occupiedRowColumn.text,
-          avatar: occupiedRowColumn.avatar,
-          extra: occupiedRowColumn.extra,
-          color: occupiedRowColumn.color,
-        });
-      }
-    }
-  }
-  return occupiedRowCells;
-}
-
-export function getOccupiedRowCell(
-  occupiedRowCells: CalendarMonthOccupiedRowCell[],
-  rowId: string,
-  date: string,
-): CalendarMonthOccupiedRowCell {
-  const matches = occupiedRowCells.filter(
-    (i) => i.rowId === rowId && i.date === date,
-  );
-  return matches?.[matches?.length - 1];
+  return blockRowCells.filter((i) => i.date === date)?.[0];
 }
 
 export function generateTableCells(
   monthDate: DatePickerMonthDate,
-  rows: CalendarRowProp[],
-  fillRows: CalendarFillRowProp[],
-  blockRows: CalendarBlockRowProp[],
-  occupiedRows: CalendarOccupiedRowProp[],
+  blockRows: string[],
 ): DatePickerTableCell[] {
   const tableCells: DatePickerTableCell[] = [];
   const allMonths = Object.keys(monthDate);
 
-  if (rows.length > 0) {
-    const row = rows[0];
-    const rowId = row.rowId;
-    const value = row.value;
-    let rowIndex = -1;
-    const fillRowCells = generateFillTableCells(
-      fillRows.filter((i) => i.rowId === rowId),
-    );
-    const blockRowCells = generateBlockTableCells(
-      blockRows.filter((i) => i.rowId === rowId),
-    );
-    const occupiedRowCells = generateOccupiedTableCells(
-      occupiedRows.filter((i) => i.rowId === rowId),
-    );
-    for (let i = 0; i < allMonths.length; i++) {
-      rowIndex = rowIndex + 1;
-      const month = allMonths[i];
-      const dMonth = dayjs(month);
+  let rowIndex = -1;
 
-      // first row
-      generateVirtualCell(
+  const blockRowCells = generateBlockTableCells(blockRows);
+
+  for (let i = 0; i < allMonths.length; i++) {
+    rowIndex = rowIndex + 1;
+    const month = allMonths[i];
+    const dMonth = dayjs(month);
+
+    // first row
+    generateVirtualCell(tableCells, rowIndex, 0, dMonth.format('MMMM YYYY'));
+
+    for (let j = 1; j < 7; j++) {
+      generateVirtualCell(tableCells, rowIndex, j, '');
+    }
+
+    // rest row
+    const daysInMonth = dMonth.daysInMonth();
+    const startDay = dMonth.startOf('month').day();
+    rowIndex = rowIndex + 1;
+
+    for (let j = 0; j < startDay; j++) {
+      generateVirtualCell(tableCells, rowIndex, j, '');
+    }
+    for (let j = startDay; j < 7; j++) {
+      generateRealCell(
         tableCells,
         rowIndex,
-        0,
-        rowId,
-        dMonth.format('MMMM YYYY'),
+        j,
+        '',
+        dMonth,
+        j - startDay + 1,
+        blockRowCells,
       );
+    }
 
-      for (let j = 1; j < 7; j++) {
-        generateVirtualCell(tableCells, rowIndex, j, rowId, '');
-      }
+    const rowNumber = Math.ceil((daysInMonth - (7 - startDay)) / 7);
 
-      // rest row
-      const daysInMonth = dMonth.daysInMonth();
-      const startDay = dMonth.startOf('month').day();
+    for (let j = 1; j <= rowNumber; j++) {
       rowIndex = rowIndex + 1;
 
-      for (let j = 0; j < startDay; j++) {
-        generateVirtualCell(tableCells, rowIndex, j, rowId, '');
-      }
-      for (let j = startDay; j < 7; j++) {
-        generateRealCell(
-          tableCells,
-          rowIndex,
-          j,
-          rowId,
-          value,
-          dMonth,
-          j - startDay + 1,
-          fillRowCells,
-          blockRowCells,
-          occupiedRowCells,
-        );
-      }
-
-      const rowNumber = Math.ceil((daysInMonth - (7 - startDay)) / 7);
-
-      for (let j = 1; j <= rowNumber; j++) {
-        rowIndex = rowIndex + 1;
-
-        if (j !== rowNumber) {
-          for (let k = 0; k < 7; k++) {
+      if (j !== rowNumber) {
+        for (let k = 0; k < 7; k++) {
+          generateRealCell(
+            tableCells,
+            rowIndex,
+            k,
+            '',
+            dMonth,
+            7 - startDay + 1 + k + (j - 1) * 7,
+            blockRowCells,
+          );
+        }
+      } else {
+        for (let k = 0; k < 7; k++) {
+          const day = 7 - startDay + 1 + k + (j - 1) * 7;
+          if (day > daysInMonth) {
+            generateVirtualCell(tableCells, rowIndex, k, '');
+          } else {
             generateRealCell(
               tableCells,
               rowIndex,
               k,
-              rowId,
-              value,
+              '',
               dMonth,
-              7 - startDay + 1 + k + (j - 1) * 7,
-              fillRowCells,
+              day,
               blockRowCells,
-              occupiedRowCells,
             );
-          }
-        } else {
-          for (let k = 0; k < 7; k++) {
-            const day = 7 - startDay + 1 + k + (j - 1) * 7;
-            if (day > daysInMonth) {
-              generateVirtualCell(tableCells, rowIndex, k, rowId, '');
-            } else {
-              generateRealCell(
-                tableCells,
-                rowIndex,
-                k,
-                rowId,
-                value,
-                dMonth,
-                day,
-                fillRowCells,
-                blockRowCells,
-                occupiedRowCells,
-              );
-            }
           }
         }
       }
@@ -753,7 +598,6 @@ export function onMouseUp(
       const selectProp: DatePickerSelectProp = {
         startDate: '',
         endDate: '',
-        cells: [],
       };
 
       const selectedTableCells = getSelectedTableStartEndCell(
@@ -770,34 +614,6 @@ export function onMouseUp(
       } else if (selectedTableCells.length === 1) {
         selectProp.startDate = selectedTableCells[0].date || '';
         selectProp.endDate = selectedTableCells[0].date || '';
-      }
-
-      for (let i = rowStartIndex; i <= rowEndIndex; i++) {
-        const cells = getTableColumnCells(
-          tableCells,
-          rowStartIndex,
-          rowEndIndex,
-          columnStartIndex,
-          columnEndIndex,
-          i,
-        );
-        for (let j = 0; j < cells.length; j++) {
-          const cell = cells[j];
-          if (!cell.virtual) {
-            selectProp.cells.push({
-              status: cell.status || CalendarCellStatusProp.Normal,
-              value: cell.value,
-              extra: cell.extra || '',
-              occupied: {
-                link: cell.occupied?.link || '',
-                name: cell.occupied?.name || '',
-                text: cell.occupied?.text || '',
-                avatar: cell.occupied?.avatar || '',
-                extra: cell.occupied?.extra || '',
-              },
-            });
-          }
-        }
       }
       onSelect(selectProp);
     }
@@ -854,152 +670,5 @@ export function onSectionRenderJumpToToday(
     const year = Number(months[i].split('-')[0]);
     const month = Number(months[i].split('-')[1]) - 1;
     numberOfRow += getRowsUntilThisMonth(year, month) + 1; //title take 1 row
-  }
-}
-
-export function getTableCellStartOccupiedCondition(
-  tableCells: DatePickerTableCell[],
-  rowIndex: number,
-  columnIndex: number,
-) {
-  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-  const tableCellDate = dayjs(tableCell.date);
-
-  if (tableCell.occupied) {
-    const occupiedStartDate = dayjs(tableCell.occupied?.startDate);
-    const occupiedEndDate = dayjs(tableCell.occupied?.endDate);
-    dayjs.extend(isBetween);
-    const isBetweenRange =
-      (tableCellDate.isSame(occupiedStartDate, 'day') ||
-        tableCellDate.isAfter(occupiedStartDate, 'day')) &&
-      (tableCellDate.isSame(occupiedEndDate, 'day') ||
-        tableCellDate.isBefore(occupiedEndDate, 'day'));
-    if (isBetweenRange) {
-      return true;
-    }
-    return false;
-  }
-  return false;
-}
-
-function calculateTranslateX(
-  hourColumnWidth: number,
-  occupiedStartDate: dayjs.Dayjs,
-  tableCellDate: dayjs.Dayjs,
-) {
-  const hoursDifference = occupiedStartDate.diff(
-    tableCellDate.startOf('day'),
-    'hour',
-  );
-  return hoursDifference * hourColumnWidth;
-}
-export function getTableCellOccupied(
-  tableCells: DatePickerTableCell[],
-  rowIndex: number,
-  columnIndex: number,
-  columnWidth: number,
-): CalendarMonthTableOccupiedCell {
-  const hourColumnWidth = columnWidth / 24;
-  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-  const tableCellDate = dayjs(tableCell.date);
-  const occupiedStartDate = tableCell.occupied?.startDate;
-  const occupiedEndDate = tableCell.occupied?.endDate;
-  dayjs.extend(isBetween);
-  const isStart = tableCellDate.isSame(occupiedStartDate, 'day');
-  const isEnd = tableCellDate.isSame(occupiedEndDate, 'day');
-  const isBetweenRange =
-    (tableCellDate.isSame(occupiedStartDate, 'day') ||
-      tableCellDate.isAfter(occupiedStartDate, 'day')) &&
-    (tableCellDate.isSame(occupiedEndDate, 'day') ||
-      tableCellDate.isBefore(occupiedEndDate, 'day'));
-  if (isBetweenRange) {
-    if (isStart && isEnd) {
-      //same day booking
-      const widthHours = moment
-        .duration(moment(occupiedEndDate).diff(moment(occupiedStartDate)))
-        .asHours();
-      let width = hourColumnWidth * widthHours;
-      const left = hourColumnWidth * moment(occupiedStartDate).hour();
-      return {
-        width,
-        left,
-        translateX: 0,
-      };
-    }
-    if (isStart) {
-      const tableCellEndDate = moment(tableCell.date).endOf('day');
-      const widthHours = moment
-        .duration(tableCellEndDate.diff(moment(occupiedStartDate)))
-        .asHours();
-      let width = hourColumnWidth * widthHours;
-      const left = hourColumnWidth * moment(occupiedStartDate).hour();
-      return {
-        width,
-        left,
-        borderRadiusCornerRightNoNeed: true,
-        translateX: 0,
-      };
-    } else if (isEnd) {
-      const tableCellStartDate = moment(tableCell.date).startOf('day');
-      const widthHours = -moment
-        .duration(tableCellStartDate.diff(moment(occupiedEndDate)))
-        .asHours();
-      let width = hourColumnWidth * widthHours;
-      const right = hourColumnWidth * (24 - moment(occupiedEndDate).hour());
-      return {
-        width,
-        right,
-        borderRadiusCornerLeftNoNeed: true,
-        translateX: calculateTranslateX(
-          hourColumnWidth,
-          dayjs(occupiedStartDate),
-          dayjs(tableCell.date),
-        ),
-      };
-    } else {
-      return {
-        width: columnWidth,
-        borderRadiusCornerBothNoNeed: true,
-        translateX: calculateTranslateX(
-          hourColumnWidth,
-          dayjs(occupiedStartDate),
-          dayjs(tableCell.date),
-        ),
-      };
-    }
-  }
-
-  return { width: 0 };
-}
-
-export function getOccupiedBorderStyling(
-  tableCells: DatePickerTableCell[],
-  rowIndex: number,
-  columnIndex: number,
-  columnWidth: number,
-) {
-  const res = getTableCellOccupied(
-    tableCells,
-    rowIndex,
-    columnIndex,
-    columnWidth,
-  );
-  if (res.borderRadiusCornerRightNoNeed) {
-    return {
-      borderBottomRightRadius: '0',
-      borderTopRightRadius: '0',
-    };
-  } else if (res.borderRadiusCornerLeftNoNeed) {
-    return {
-      borderBottomLeftRadius: '0',
-      borderTopLeftRadius: '0',
-    };
-  } else if (res.borderRadiusCornerBothNoNeed) {
-    return {
-      borderBottomRightRadius: '0',
-      borderTopRightRadius: '0',
-      borderBottomLeftRadius: '0',
-      borderTopLeftRadius: '0',
-    };
   }
 }

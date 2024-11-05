@@ -1,5 +1,4 @@
 import {
-  CalendarBlockRowProp,
   CalendarCellStatusProp,
   DatePickerMonthDate,
   DatePickerSelectProp,
@@ -13,7 +12,7 @@ export interface DatePickerTableProp {
   cellHeightMonthly?: number;
   monthDate: DatePickerMonthDate;
   tableHeight: number;
-  blockRows?: CalendarBlockRowProp[];
+  blockRows?: string[];
   onSelect?: (prop: DatePickerSelectProp) => void;
   monthTitle: string;
   setMonthTitle: Dispatch<SetStateAction<string>>;
@@ -43,16 +42,11 @@ export interface DatePickerTableSelection {
 export interface DatePickerTableCell {
   rowIndex: number;
   columnIndex: number;
-  rowId: string;
   value: string;
   virtual: boolean;
   day?: number;
   date?: string;
-  startDate?: string;
-  endDate?: string;
   status?: CalendarCellStatusProp;
-  extra?: any;
-  occupied?: CalendarMonthTableCellOccupied;
 }
 
 export interface CalendarMonthTableCellOccupied {
@@ -76,25 +70,8 @@ export interface CalendarMonthFillRowCell {
 }
 
 export interface CalendarMonthBlockRowCell {
-  rowId: string;
   date: string;
-  startDate: string;
-  endDate: string;
   value: string;
-  extra?: any;
-}
-
-export interface CalendarMonthOccupiedRowCell {
-  rowId: string;
-  date: string;
-  startDate: string;
-  endDate: string;
-  link: string;
-  name: string;
-  text: string;
-  avatar?: string;
-  extra?: any;
-  color?: string;
 }
 
 export interface CalendarMonthTableOccupiedCell {

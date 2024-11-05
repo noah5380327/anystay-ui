@@ -52,10 +52,8 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
 
     const tableCells = generateTableCells(
       props.monthDate,
-      props.rows,
-      props.fillRows || [],
+
       props.blockRows || [],
-      props.occupiedRows || [],
     );
 
     const init = useRef(false);

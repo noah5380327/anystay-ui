@@ -5,9 +5,7 @@ export interface DatePickerProp {
   subtractMonthNumber?: number;
   stepDayNumber?: number;
   onSelect?: (prop: DatePickerSelectProp) => void;
-  fillRows?: CalendarFillRowProp[];
-  blockRows?: CalendarBlockRowProp[];
-  occupiedRows?: CalendarOccupiedRowProp[];
+  blockRows?: string[];
   onOccupiedClick?: (prop: string) => void;
   columnWidth?: number;
   titleRowHeight?: number;
@@ -25,7 +23,6 @@ export interface CalendarRowProp {
 export interface DatePickerSelectProp {
   startDate: string;
   endDate: string;
-  cells: CalendarSelectRowCellProp[];
 }
 
 export interface CalenderSelectRowProp {
@@ -51,21 +48,6 @@ export interface CalendarSelectRowCellOccupiedProp {
 export enum CalendarCellStatusProp {
   Normal = 'Normal',
   Block = 'Block',
-}
-
-export interface CalendarFillRowProp {
-  rowId: string;
-  columns: CalendarFillColumnProp[];
-}
-
-export interface CalendarBlockRowProp {
-  rowId: string;
-  columns: CalendarBlockColumnProp[];
-}
-
-export interface CalendarOccupiedRowProp {
-  rowId: string;
-  columns: CalendarOccupiedColumnProp[];
 }
 
 export interface CalendarFillColumnProp {
