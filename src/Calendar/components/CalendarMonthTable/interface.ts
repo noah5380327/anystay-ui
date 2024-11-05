@@ -1,34 +1,43 @@
 import {
   CalendarBlockRowProp,
   CalendarCellStatusProp,
+  CalendarFillRowProp,
   CalendarMonthDate,
   CalendarMonthlySelectProp,
+  CalendarOccupiedRowProp,
+  CalendarRowProp,
 } from 'anystay-ui/Calendar/interface';
 import dayjs from 'dayjs';
 import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
 export interface CalendarMonthTableProp {
-  todayScrollTop: React.MutableRefObject<number>;
-  cellHeightMonthly?: number;
   monthDate: CalendarMonthDate;
+  rows: CalendarRowProp[];
   tableHeight: number;
-  blockRows?: CalendarBlockRowProp[];
   onSelect?: (prop: CalendarMonthlySelectProp) => void;
+  fillRows?: CalendarFillRowProp[];
+  blockRows?: CalendarBlockRowProp[];
+  occupiedRows?: CalendarOccupiedRowProp[];
   monthTitle: string;
   setMonthTitle: Dispatch<SetStateAction<string>>;
   clientHeight: number;
   clientWidth: number;
-  setMonthlyTitleSelectedDate: React.Dispatch<
-    React.SetStateAction<dayjs.Dayjs>
-  >;
   onScroll: (params: OnScrollParams) => void;
-  setCustomScrollTop: Dispatch<SetStateAction<number>>;
-  customScrollTop: number;
   scrollHeight: number;
   scrollLeft: number;
   scrollTop: number;
   scrollWidth: number;
+  setCustomScrollTop: Dispatch<SetStateAction<number>>;
+  customScrollTop: number;
+  setShowReturnToToday: Dispatch<SetStateAction<boolean>>;
+  showReturnToToday: boolean;
+  todayScrollTop: React.MutableRefObject<number>;
+  setMonthlyTitleSelectedDate: React.Dispatch<
+    React.SetStateAction<dayjs.Dayjs>
+  >;
+  onOccupiedClick?: (prop: string) => void;
+  cellHeightMonthly?: number;
 }
 
 export interface CalendarMonthTableSelection {

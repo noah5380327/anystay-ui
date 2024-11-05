@@ -1,9 +1,7 @@
-import { Button } from 'antd';
 import {
-  CalendarMonthTableProp,
-  CalendarMonthTableSelection,
+  DatePickerTableProp,
+  DatePickerTableSelection,
 } from 'anystay-ui/DatePicker/components/DatePickerTable/interface';
-import { onOccupiedClick } from './utils';
 
 import {
   generateTableCells,
@@ -12,10 +10,7 @@ import {
   getColumnDisabledStyle,
   getColumnVirtualStyle,
   getCurrentColumnBorderSelectedStyle,
-  getOccupiedBorderStyling,
   getTableCell,
-  getTableCellOccupied,
-  getTableCellStartOccupiedCondition,
   getTableCellVirtualCondition,
   onMouseDown,
   onMouseOver,
@@ -23,8 +18,7 @@ import {
   onScrollDate,
   onSectionRenderJumpToToday,
   onTouchStart,
-  showReturnToToday,
-} from 'anystay-ui/Calendar/components/CalendarMonthTable/util';
+} from 'anystay-ui/DatePicker/components/DatePickerTable/utils';
 import React, {
   forwardRef,
   useEffect,
@@ -36,10 +30,10 @@ import { AutoSizer, Grid } from 'react-virtualized';
 
 import './style.less';
 
-const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
+const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
   (props, ref) => {
     const [selectionVisible, setSelectionVisible] = useState<boolean>(false);
-    const [selection, setSelection] = useState<CalendarMonthTableSelection>({
+    const [selection, setSelection] = useState<DatePickerTableSelection>({
       rowStartIndex: -1,
       rowEndIndex: -1,
       rowCurrentIndex: -1,
@@ -47,7 +41,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
       columnEndIndex: -1,
       columnCurrentIndex: -1,
     });
-    const firstSelection = useRef<CalendarMonthTableSelection>({
+    const firstSelection = useRef<DatePickerTableSelection>({
       rowStartIndex: -1,
       rowEndIndex: -1,
       rowCurrentIndex: -1,
@@ -121,12 +115,6 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                 }}
                 onScroll={(params) => {
                   onScrollDate(params, cellHeight, tableCells, props);
-                  showReturnToToday(
-                    cellHeight,
-                    props.customScrollTop,
-                    props.todayScrollTop.current,
-                    props.setShowReturnToToday,
-                  );
                   props.onScroll(params);
                 }}
                 scrollHeight={props.scrollHeight}
@@ -227,118 +215,6 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                           </p>
                         </div>
                       </div>
-                      {getTableCellStartOccupiedCondition(
-                        tableCells,
-                        rowIndex,
-                        columnIndex,
-                      ) && (
-                        <div
-                          className={`calendar-month-table-row-column-content-occupied-wrapper`}
-                          style={{
-                            width: getTableCellOccupied(
-                              tableCells,
-                              rowIndex,
-                              columnIndex,
-                              cellWidth,
-                            ).width,
-                            minWidth: getTableCellOccupied(
-                              tableCells,
-                              rowIndex,
-                              columnIndex,
-                              cellWidth,
-                            ).width,
-                            left: getTableCellOccupied(
-                              tableCells,
-                              rowIndex,
-                              columnIndex,
-                              cellWidth,
-                            ).left,
-                            background: getTableCell(
-                              tableCells,
-                              rowIndex,
-                              columnIndex,
-                            ).occupied?.color,
-                            ...getOccupiedBorderStyling(
-                              tableCells,
-                              rowIndex,
-                              columnIndex,
-                              cellWidth,
-                            ),
-                          }}
-                          onClick={() =>
-                            onOccupiedClick(
-                              tableCells,
-                              rowIndex,
-                              columnIndex,
-                              props,
-                            )
-                          }
-                          onMouseDown={(e) => {
-                            e.stopPropagation();
-                          }}
-                          onMouseOver={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          <div
-                            className="calendar-month-table-row-column-content-occupied-content-container"
-                            style={{
-                              transform: `translateX(${
-                                getTableCellOccupied(
-                                  tableCells,
-                                  rowIndex,
-                                  columnIndex,
-                                  cellWidth,
-                                ).translateX
-                              }px)`,
-                            }}
-                          >
-                            {getTableCell(tableCells, rowIndex, columnIndex)
-                              .occupied?.avatar && (
-                              <div
-                                className={`calendar-month-table-row-column-content-occupied-image-container`}
-                              >
-                                <img
-                                  src={
-                                    getTableCell(
-                                      tableCells,
-                                      rowIndex,
-                                      columnIndex,
-                                    ).occupied?.avatar
-                                  }
-                                  alt={`avatar`}
-                                />
-                              </div>
-                            )}
-                            <div
-                              className={`calendar-month-table-row-column-content-occupied-text-container`}
-                            >
-                              <span
-                                className={`calendar-month-table-row-column-content-occupied-text-name`}
-                              >
-                                {
-                                  getTableCell(
-                                    tableCells,
-                                    rowIndex,
-                                    columnIndex,
-                                  ).occupied?.name
-                                }
-                              </span>
-                              <span
-                                className={`calendar-month-table-row-column-content-occupied-text`}
-                              >
-                                {
-                                  getTableCell(
-                                    tableCells,
-                                    rowIndex,
-                                    columnIndex,
-                                  ).occupied?.text
-                                }
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   );
                 }}
@@ -346,22 +222,9 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
             );
           }}
         </AutoSizer>
-        {props.showReturnToToday && (
-          <div className={`calendar-month-table-return-today-container`}>
-            <Button
-              type="primary"
-              onClick={() => {
-                props.setCustomScrollTop(props.todayScrollTop.current);
-              }}
-              className={`calendar-month-table-return-today-btn`}
-            >
-              Return to today
-            </Button>
-          </div>
-        )}
       </div>
     );
   },
 );
 
-export default CalendarMonthTable;
+export default DatePickerTable;

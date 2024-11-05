@@ -4,7 +4,7 @@ export interface DatePickerProp {
   subtractDayNumber?: number;
   subtractMonthNumber?: number;
   stepDayNumber?: number;
-  onSelect?: (prop: DatePickerSelectProp | CalendarMonthlySelectProp) => void;
+  onSelect?: (prop: DatePickerSelectProp) => void;
   fillRows?: CalendarFillRowProp[];
   blockRows?: CalendarBlockRowProp[];
   occupiedRows?: CalendarOccupiedRowProp[];
@@ -23,11 +23,6 @@ export interface CalendarRowProp {
 }
 
 export interface DatePickerSelectProp {
-  startDate: string;
-  endDate: string;
-  rows: CalenderSelectRowProp[];
-}
-export interface CalendarMonthlySelectProp {
   startDate: string;
   endDate: string;
   cells: CalendarSelectRowCellProp[];

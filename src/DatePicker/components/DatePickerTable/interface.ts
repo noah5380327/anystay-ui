@@ -1,46 +1,37 @@
 import {
   CalendarBlockRowProp,
   CalendarCellStatusProp,
-  CalendarFillRowProp,
-  CalendarMonthlySelectProp,
-  CalendarOccupiedRowProp,
-  CalendarRowProp,
   DatePickerMonthDate,
+  DatePickerSelectProp,
 } from 'anystay-ui/DatePicker/interface';
 import dayjs from 'dayjs';
 import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
-export interface CalendarMonthTableProp {
+export interface DatePickerTableProp {
+  todayScrollTop: React.MutableRefObject<number>;
+  cellHeightMonthly?: number;
   monthDate: DatePickerMonthDate;
-  rows: CalendarRowProp[];
   tableHeight: number;
-  onSelect?: (prop: CalendarMonthlySelectProp) => void;
-  fillRows?: CalendarFillRowProp[];
   blockRows?: CalendarBlockRowProp[];
-  occupiedRows?: CalendarOccupiedRowProp[];
+  onSelect?: (prop: DatePickerSelectProp) => void;
   monthTitle: string;
   setMonthTitle: Dispatch<SetStateAction<string>>;
   clientHeight: number;
   clientWidth: number;
+  setMonthlyTitleSelectedDate: React.Dispatch<
+    React.SetStateAction<dayjs.Dayjs>
+  >;
   onScroll: (params: OnScrollParams) => void;
+  setCustomScrollTop: Dispatch<SetStateAction<number>>;
+  customScrollTop: number;
   scrollHeight: number;
   scrollLeft: number;
   scrollTop: number;
   scrollWidth: number;
-  setCustomScrollTop: Dispatch<SetStateAction<number>>;
-  customScrollTop: number;
-  setShowReturnToToday: Dispatch<SetStateAction<boolean>>;
-  showReturnToToday: boolean;
-  todayScrollTop: React.MutableRefObject<number>;
-  setMonthlyTitleSelectedDate: React.Dispatch<
-    React.SetStateAction<dayjs.Dayjs>
-  >;
-  onOccupiedClick?: (prop: string) => void;
-  cellHeightMonthly?: number;
 }
 
-export interface CalendarMonthTableSelection {
+export interface DatePickerTableSelection {
   rowStartIndex: number;
   rowEndIndex: number;
   rowCurrentIndex: number;
@@ -49,7 +40,7 @@ export interface CalendarMonthTableSelection {
   columnCurrentIndex: number;
 }
 
-export interface CalendarMonthTableCell {
+export interface DatePickerTableCell {
   rowIndex: number;
   columnIndex: number;
   rowId: string;

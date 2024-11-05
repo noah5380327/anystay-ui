@@ -2,19 +2,19 @@ import {
   CalendarMonthBlockRowCell,
   CalendarMonthFillRowCell,
   CalendarMonthOccupiedRowCell,
-  CalendarMonthTableCell,
   CalendarMonthTableOccupiedCell,
-  CalendarMonthTableProp,
-  CalendarMonthTableSelection,
+  DatePickerTableCell,
+  DatePickerTableProp,
+  DatePickerTableSelection,
 } from 'anystay-ui/DatePicker/components/DatePickerTable/interface';
 import {
   CalendarBlockRowProp,
   CalendarCellStatusProp,
   CalendarFillRowProp,
-  CalendarMonthlySelectProp,
   CalendarOccupiedRowProp,
   CalendarRowProp,
   DatePickerMonthDate,
+  DatePickerSelectProp,
 } from 'anystay-ui/DatePicker/interface';
 import dayjs, { Dayjs } from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
@@ -27,7 +27,7 @@ let timer: NodeJS.Timeout;
 const longPressThreshold = 500;
 
 export function generateVirtualCell(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
   rowId: string,
@@ -43,7 +43,7 @@ export function generateVirtualCell(
 }
 
 export function generateRealCell(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
   rowId: string,
@@ -237,8 +237,8 @@ export function generateTableCells(
   fillRows: CalendarFillRowProp[],
   blockRows: CalendarBlockRowProp[],
   occupiedRows: CalendarOccupiedRowProp[],
-): CalendarMonthTableCell[] {
-  const tableCells: CalendarMonthTableCell[] = [];
+): DatePickerTableCell[] {
+  const tableCells: DatePickerTableCell[] = [];
   const allMonths = Object.keys(monthDate);
 
   if (rows.length > 0) {
@@ -345,10 +345,10 @@ export function generateTableCells(
 }
 
 export function getTableCell(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
-): CalendarMonthTableCell {
+): DatePickerTableCell {
   return tableCells.filter(
     (i) => i.rowIndex === rowIndex && i.columnIndex === columnIndex,
   )?.[0];
@@ -357,7 +357,7 @@ export function getTableCell(
 export function getColumnBackgroundSelectedStyle(
   rowIndex: number,
   columnIndex: number,
-  selection: CalendarMonthTableSelection,
+  selection: DatePickerTableSelection,
 ): string {
   const { rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex } =
     selection;
@@ -396,7 +396,7 @@ export function getColumnBackgroundSelectedStyle(
 }
 
 export function getCurrentColumnBorderSelectedStyle(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
 ) {
@@ -408,7 +408,7 @@ export function getCurrentColumnBorderSelectedStyle(
 }
 
 export function getColumnDisabledStyle(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
 ): string {
@@ -426,7 +426,7 @@ export function getColumnDisabledStyle(
 }
 
 export function getColumBlockStyle(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
 ): string {
@@ -439,7 +439,7 @@ export function getColumBlockStyle(
 }
 
 export function getColumnVirtualStyle(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
 ): string {
@@ -453,7 +453,7 @@ export function getColumnVirtualStyle(
 }
 
 export function getTableCellVirtualCondition(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
 ) {
@@ -462,12 +462,12 @@ export function getTableCellVirtualCondition(
 }
 
 export function getSelectedTableStartEndCell(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowStartIndex: number,
   rowEndIndex: number,
   columnStartIndex: number,
   columnEndIndex: number,
-): CalendarMonthTableCell[] {
+): DatePickerTableCell[] {
   // const numberOfColumns = 7; // hard coded 7
 
   return tableCells.filter((i) => {
@@ -480,12 +480,12 @@ export function getSelectedTableStartEndCell(
 }
 
 export function getTableColumnCellsByStartAndEnd(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   columnStartIndex: number,
   columnEndIndex: number,
   rowStartIndex: number,
   rowEndIndex: number,
-): CalendarMonthTableCell[] {
+): DatePickerTableCell[] {
   return tableCells.filter(
     (i) =>
       i.columnIndex >= columnStartIndex &&
@@ -496,13 +496,13 @@ export function getTableColumnCellsByStartAndEnd(
 }
 
 export function getTableColumnCells(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowStartIndex: number,
   rowEndIndex: number,
   columnStartIndex: number,
   columnEndIndex: number,
   rowIndex: number,
-): CalendarMonthTableCell[] {
+): DatePickerTableCell[] {
   if (rowStartIndex !== rowEndIndex) {
     if (rowIndex === rowStartIndex) {
       return tableCells.filter(
@@ -539,8 +539,8 @@ export function getTableColumnCells(
 export function onScrollDate(
   params: OnScrollParams,
   rowHeight: number,
-  tableCells: CalendarMonthTableCell[],
-  props: CalendarMonthTableProp,
+  tableCells: DatePickerTableCell[],
+  props: DatePickerTableProp,
 ) {
   const number = Math.round(params.scrollTop / rowHeight);
   const tableCell = getTableCell(tableCells, number, 0);
@@ -560,31 +560,16 @@ export function onScrollDate(
     props.setMonthTitle(formattedDate);
   }
 }
-export function showReturnToToday(
-  cellHeight: number,
-  customScrollTop: number,
-  todayScrollTop: number,
-  setShowReturnToday: Dispatch<SetStateAction<boolean>>,
-) {
-  if (
-    customScrollTop > todayScrollTop + cellHeight ||
-    customScrollTop < todayScrollTop - cellHeight * 2
-  ) {
-    setShowReturnToday(true);
-  } else {
-    setShowReturnToday(false);
-  }
-}
 
 export function onMouseDown(
   rowIndex: number,
   columnIndex: number,
   selectionVisible: boolean,
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
-  setSelection: Dispatch<SetStateAction<CalendarMonthTableSelection>>,
-  selection: CalendarMonthTableSelection,
-  tableCells: CalendarMonthTableCell[],
-  firstSelection: React.MutableRefObject<CalendarMonthTableSelection>,
+  setSelection: Dispatch<SetStateAction<DatePickerTableSelection>>,
+  selection: DatePickerTableSelection,
+  tableCells: DatePickerTableCell[],
+  firstSelection: React.MutableRefObject<DatePickerTableSelection>,
 ) {
   //if desktop user
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -628,10 +613,10 @@ export function onTouchStart(
   columnIndex: number,
   selectionVisible: boolean,
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
-  setSelection: Dispatch<SetStateAction<CalendarMonthTableSelection>>,
-  selection: CalendarMonthTableSelection,
-  tableCells: CalendarMonthTableCell[],
-  firstSelection: React.MutableRefObject<CalendarMonthTableSelection>,
+  setSelection: Dispatch<SetStateAction<DatePickerTableSelection>>,
+  selection: DatePickerTableSelection,
+  tableCells: DatePickerTableCell[],
+  firstSelection: React.MutableRefObject<DatePickerTableSelection>,
 ) {
   //for mobile touch screen user
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -691,10 +676,10 @@ export function onMouseOver(
   rowIndex: number,
   columnIndex: number,
   selectionVisible: boolean,
-  selection: CalendarMonthTableSelection,
-  setSelection: Dispatch<SetStateAction<CalendarMonthTableSelection>>,
-  tableCells: CalendarMonthTableCell[],
-  firstSelection: React.MutableRefObject<CalendarMonthTableSelection>,
+  selection: DatePickerTableSelection,
+  setSelection: Dispatch<SetStateAction<DatePickerTableSelection>>,
+  tableCells: DatePickerTableCell[],
+  firstSelection: React.MutableRefObject<DatePickerTableSelection>,
 ) {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   if (
@@ -751,9 +736,9 @@ export function onMouseOver(
 }
 
 export function onMouseUp(
-  selection: CalendarMonthTableSelection,
-  tableCells: CalendarMonthTableCell[],
-  onSelect?: (prop: CalendarMonthlySelectProp) => void,
+  selection: DatePickerTableSelection,
+  tableCells: DatePickerTableCell[],
+  onSelect?: (prop: DatePickerSelectProp) => void,
 ) {
   const { rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex } =
     selection;
@@ -765,7 +750,7 @@ export function onMouseUp(
     columnEndIndex > -1
   ) {
     if (onSelect) {
-      const selectProp: CalendarMonthlySelectProp = {
+      const selectProp: DatePickerSelectProp = {
         startDate: '',
         endDate: '',
         cells: [],
@@ -873,7 +858,7 @@ export function onSectionRenderJumpToToday(
 }
 
 export function getTableCellStartOccupiedCondition(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
 ) {
@@ -909,7 +894,7 @@ function calculateTranslateX(
   return hoursDifference * hourColumnWidth;
 }
 export function getTableCellOccupied(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
   columnWidth: number,
@@ -988,7 +973,7 @@ export function getTableCellOccupied(
 }
 
 export function getOccupiedBorderStyling(
-  tableCells: CalendarMonthTableCell[],
+  tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
   columnWidth: number,
@@ -1016,17 +1001,5 @@ export function getOccupiedBorderStyling(
       borderBottomLeftRadius: '0',
       borderTopLeftRadius: '0',
     };
-  }
-}
-
-export function onOccupiedClick(
-  tableCells: CalendarMonthTableCell[],
-  rowIndex: number,
-  columnIndex: number,
-  props: CalendarMonthTableProp,
-) {
-  const occupied = getTableCell(tableCells, rowIndex, columnIndex).occupied;
-  if (props.onOccupiedClick && occupied) {
-    props.onOccupiedClick(occupied.link);
   }
 }
