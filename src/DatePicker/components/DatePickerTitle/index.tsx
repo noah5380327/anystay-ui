@@ -1,10 +1,10 @@
 // @ts-ignore
-import { CalendarMonthTitleProp } from 'anystay-ui/Calendar/components/CalendarMonthTitle/interface';
+import { AntdDatePickerProp } from 'anystay-ui/DatePicker/components/DatePickerTitle/interface';
 import React, { type FC } from 'react';
-import CalendarDatePicker from '../AntdDatePicker/index';
+import AntdDatePicker from '../AntdDatePicker/index';
 import './style.less';
 
-const CalendarMonthTitle: FC<CalendarMonthTitleProp> = (props) => {
+const CalendarMonthTitle: FC<AntdDatePickerProp> = (props) => {
   return (
     <div>
       <div className={`calendar-month-title-container`}>
@@ -19,10 +19,9 @@ const CalendarMonthTitle: FC<CalendarMonthTitleProp> = (props) => {
           <span className={`calendar-month-title-date-text`}>Sat</span>
         </div>
       </div>
-      <CalendarDatePicker
+      <AntdDatePicker
         selectedDate={props.monthlyTitleSelectedDate}
         setSelectedDate={props.setMonthlyTitleSelectedDate}
-        type={props.type}
         calendarTitleProp={props}
         todayScrollTop={props.todayScrollTop}
         monthDate={props.monthDate}

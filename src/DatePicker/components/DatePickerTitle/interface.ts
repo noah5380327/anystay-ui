@@ -1,8 +1,7 @@
 import { DatePickerMonthDate } from 'anystay-ui/DatePicker/interface';
 import dayjs from 'dayjs';
-export interface CalendarMonthTitleProp {
+export interface DatePickerTitleProp {
   monthTitle: string;
-  type: string;
   setCustomScrollTop: React.Dispatch<React.SetStateAction<number>>;
   todayScrollTop: React.MutableRefObject<number>;
   monthDate: DatePickerMonthDate;

@@ -1,23 +1,9 @@
-import { CalendarDayTitleDate } from 'anystay-ui/Calendar/components/CalendarDatePicker/interface';
-import { CalendarDayTitleProp } from 'anystay-ui/Calendar/components/CalendarDayTitle/interface';
-import { CalendarMonthTitleProp } from 'anystay-ui/Calendar/components/CalendarMonthTitle/interface';
+import { DatePickerTitleProp } from 'anystay-ui/DatePicker/components/DatePickerTitle/interface';
 import { DatePickerMonthDate } from 'anystay-ui/DatePicker/interface';
 import dayjs from 'dayjs';
-export function reSetScrollLeft(
-  date: string,
-  props: CalendarDayTitleProp,
-  titleDate: CalendarDayTitleDate,
-) {
-  const selectedDate = dayjs(date).startOf('month');
-  const firstDate = dayjs(titleDate.firstDate);
-  const diffDays = selectedDate.diff(firstDate, 'days');
-  const scrollLeft = diffDays * props.columnWidth;
-  props.setCustomScrollLeft(scrollLeft > 0 ? scrollLeft : 0);
-  props.setShowReturnToToday(false);
-}
 
 export function reSetScrollTop(
-  props: CalendarMonthTitleProp,
+  props: DatePickerTitleProp,
   selectedDate: dayjs.Dayjs,
   monthDate: DatePickerMonthDate,
   cellHeightMonthly: number,

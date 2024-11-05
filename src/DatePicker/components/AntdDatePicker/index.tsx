@@ -1,31 +1,26 @@
 import { DatePicker } from 'antd';
 // @ts-ignore
 import CalendarLeftPng from 'anystay-ui/Calendar/assets/left.png';
-import { CalendarDayTitleDate } from 'anystay-ui/Calendar/components/CalendarDatePicker/interface';
-import {
-  reSetScrollLeft,
-  reSetScrollTop,
-} from 'anystay-ui/Calendar/components/CalendarDatePicker/utils';
-import { CalendarDayTitleProp } from 'anystay-ui/Calendar/components/CalendarDayTitle/interface';
-import { CalendarMonthTitleProp } from 'anystay-ui/Calendar/components/CalendarMonthTitle/interface';
+import { DatePickerDayTitleDate } from 'anystay-ui/DatePicker/components/AntdDatePicker/interface';
+import { reSetScrollTop } from 'anystay-ui/DatePicker/components/AntdDatePicker/utils';
+import { DatePickerTitleProp } from 'anystay-ui/DatePicker/components/DatePickerTitle/interface';
 import { DatePickerMonthDate } from 'anystay-ui/DatePicker/interface';
 
 import dayjs from 'dayjs';
 import React, { useMemo, type FC } from 'react';
 import './style.less';
 
-interface CalendarDatePickerProps {
+interface AntdDatePickerProps {
   selectedDate: dayjs.Dayjs;
   setSelectedDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>;
-  titleDate?: CalendarDayTitleDate;
-  calendarTitleProp: CalendarDayTitleProp | CalendarMonthTitleProp;
+  titleDate?: DatePickerDayTitleDate;
+  calendarTitleProp: DatePickerTitleProp;
   todayScrollTop?: React.MutableRefObject<number>;
-  type: string;
   monthDate: DatePickerMonthDate;
   cellHeightMonthly?: number;
 }
 
-const CalendarDatePicker: FC<CalendarDatePickerProps> = (props) => {
+const AntdDatePicker: FC<AntdDatePickerProps> = (props) => {
   const minDate = useMemo(() => {
     const monthDateKeys = Object.keys(props.monthDate);
     return dayjs(monthDateKeys[0]);
@@ -55,23 +50,15 @@ const CalendarDatePicker: FC<CalendarDatePickerProps> = (props) => {
         }
         onChange={(date) => {
           props.setSelectedDate(date);
-          if (props.type === 'Day') {
-            reSetScrollLeft(
-              date.format('YYYY-MM-DD'),
-              props.calendarTitleProp as CalendarDayTitleProp,
-              props.titleDate!,
-            );
-          } else if (props.type === 'Month') {
-            reSetScrollTop(
-              props.calendarTitleProp as CalendarMonthTitleProp,
-              date,
-              props.monthDate as DatePickerMonthDate,
-              props.cellHeightMonthly as number,
-            );
-          }
+          reSetScrollTop(
+            props.calendarTitleProp as DatePickerTitleProp,
+            date,
+            props.monthDate as DatePickerMonthDate,
+            props.cellHeightMonthly as number,
+          );
         }}
       />
     </div>
   );
 };
-export default CalendarDatePicker;
+export default AntdDatePicker;

@@ -2,7 +2,7 @@ import { Button } from 'antd';
 import {
   CalendarMonthTableProp,
   CalendarMonthTableSelection,
-} from 'anystay-ui/Calendar/components/CalendarMonthTable/interface';
+} from 'anystay-ui/DatePicker/components/DatePickerTable/interface';
 import { onOccupiedClick } from './utils';
 
 import {
