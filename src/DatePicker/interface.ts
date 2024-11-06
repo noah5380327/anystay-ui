@@ -1,23 +1,15 @@
 export interface DatePickerProp {
-  rows: CalendarRowProp[];
-  totalDayNumber?: number;
-  subtractDayNumber?: number;
+  totalMonthNumber?: number;
   subtractMonthNumber?: number;
-  stepDayNumber?: number;
   onSelect?: (prop: DatePickerSelectProp) => void;
-  blockRows?: string[];
-  onOccupiedClick?: (prop: string) => void;
+  blockCells?: string[];
   columnWidth?: number;
   titleRowHeight?: number;
   dateRowHeight?: number;
   tableHeight?: number;
-  totalMonthNumber?: number;
   cellHeightMonthly?: number;
-}
-
-export interface CalendarRowProp {
-  value: string;
-  rowId: string;
+  minRange?: number;
+  maxRange?: number;
 }
 
 export interface DatePickerSelectProp {
@@ -25,54 +17,9 @@ export interface DatePickerSelectProp {
   endDate: string;
 }
 
-export interface CalenderSelectRowProp {
-  id: string;
-  cells: CalendarSelectRowCellProp[];
-}
-
-export interface CalendarSelectRowCellProp {
-  status: CalendarCellStatusProp;
-  value: string;
-  extra?: any;
-  occupied?: CalendarSelectRowCellOccupiedProp;
-}
-
-export interface CalendarSelectRowCellOccupiedProp {
-  link: string;
-  name: string;
-  text: string;
-  avatar?: string;
-  extra?: any;
-}
-
-export enum CalendarCellStatusProp {
+export enum DatePickerCellStatusProp {
   Normal = 'Normal',
   Block = 'Block',
-}
-
-export interface CalendarFillColumnProp {
-  startDate: string;
-  endDate: string;
-  value: string;
-  extra?: any;
-}
-
-export interface CalendarBlockColumnProp {
-  startDate: string;
-  endDate: string;
-  value: string;
-  extra?: any;
-}
-
-export interface CalendarOccupiedColumnProp {
-  startDate: string;
-  endDate: string;
-  link: string;
-  name: string;
-  text: string;
-  avatar?: string;
-  color?: string;
-  extra?: any;
 }
 
 export interface DatePickerMonthDate {

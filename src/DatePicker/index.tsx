@@ -2,6 +2,8 @@ import { ConfigProvider } from 'antd';
 import DatePickerTable from 'anystay-ui/DatePicker/components/DatePickerTable';
 import DatePickerTitle from 'anystay-ui/DatePicker/components/DatePickerTitle';
 import {
+  DEFAULT_MAX_RANGE,
+  DEFAULT_MIN_RANGE,
   DEFAULT_SUBTRACT_MONTH_NUMBER,
   DEFAULT_TABLE_HEIGHT,
   DEFAULT_TOTAL_MONTH_NUMBER,
@@ -32,6 +34,8 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProp>(
       props.totalMonthNumber || DEFAULT_TOTAL_MONTH_NUMBER;
     const subtractMonthNumber =
       props.subtractMonthNumber || DEFAULT_SUBTRACT_MONTH_NUMBER;
+    const minRange = props.minRange || DEFAULT_MIN_RANGE;
+    const maxRange = props.maxRange || DEFAULT_MAX_RANGE;
 
     const tableHeight = props.tableHeight || DEFAULT_TABLE_HEIGHT;
 
@@ -92,12 +96,14 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProp>(
                 setMonthlyTitleSelectedDate={setMonthlyTitleSelectedDate}
               />
               <DatePickerTable
+                minRange={minRange}
+                maxRange={maxRange}
                 todayScrollTop={todayScrollTop}
                 cellHeightMonthly={props.cellHeightMonthly}
                 ref={tableRef}
                 monthDate={monthDateForMonthly}
                 tableHeight={tableHeight}
-                blockRows={props.blockRows}
+                blockCells={props.blockCells}
                 onSelect={props.onSelect}
                 monthTitle={monthTitle}
                 setMonthTitle={setMonthTitle}

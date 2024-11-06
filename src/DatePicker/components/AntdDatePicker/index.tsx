@@ -31,9 +31,9 @@ const AntdDatePicker: FC<AntdDatePickerProps> = (props) => {
   }, [props.monthDate]);
 
   return (
-    <div className={`calendar-date-picker-title-action-container`}>
+    <div className={`date-picker-antd-title-action-container`}>
       <DatePicker
-        className={'calendar-date-picker'}
+        className={'date-picker-antd'}
         inputReadOnly
         picker="month"
         value={props.selectedDate}
@@ -45,7 +45,7 @@ const AntdDatePicker: FC<AntdDatePickerProps> = (props) => {
           <img
             alt={`left`}
             src={CalendarLeftPng}
-            className={`calendar-date-picker-title-action-operation-image`}
+            className={`date-picker-antd-title-action-operation-image`}
           />
         }
         onChange={(date) => {

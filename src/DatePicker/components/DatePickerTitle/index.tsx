@@ -7,16 +7,16 @@ import './style.less';
 const CalendarMonthTitle: FC<AntdDatePickerProp> = (props) => {
   return (
     <div>
-      <div className={`calendar-month-title-container`}>
-        <span className={`calendar-month-title-text`}>{props.monthTitle}</span>
-        <div className={`calendar-month-title-date-container`}>
-          <span className={`calendar-month-title-date-text`}>Sun</span>
-          <span className={`calendar-month-title-date-text`}>Mon</span>
-          <span className={`calendar-month-title-date-text`}>Tue</span>
-          <span className={`calendar-month-title-date-text`}>Wed</span>
-          <span className={`calendar-month-title-date-text`}>Thu</span>
-          <span className={`calendar-month-title-date-text`}>Fri</span>
-          <span className={`calendar-month-title-date-text`}>Sat</span>
+      <div className={`date-picker-title-container`}>
+        <span className={`date-picker-title-text`}>{props.monthTitle}</span>
+        <div className={`date-picker-title-date-container`}>
+          <span className={`date-picker-title-date-text`}>Su</span>
+          <span className={`date-picker-title-date-text`}>Mo</span>
+          <span className={`date-picker-title-date-text`}>Tu</span>
+          <span className={`date-picker-title-date-text`}>We</span>
+          <span className={`date-picker-title-date-text`}>Th</span>
+          <span className={`date-picker-title-date-text`}>Fr</span>
+          <span className={`date-picker-title-date-text`}>Sa</span>
         </div>
       </div>
       <AntdDatePicker

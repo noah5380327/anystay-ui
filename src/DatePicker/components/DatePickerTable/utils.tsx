@@ -1,23 +1,21 @@
 import {
   CalendarMonthBlockRowCell,
-  CalendarMonthFillRowCell,
   DatePickerTableCell,
   DatePickerTableProp,
   DatePickerTableSelection,
 } from 'anystay-ui/DatePicker/components/DatePickerTable/interface';
 import {
-  CalendarCellStatusProp,
+  DatePickerCellStatusProp,
   DatePickerMonthDate,
   DatePickerSelectProp,
 } from 'anystay-ui/DatePicker/interface';
 import dayjs, { Dayjs } from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+dayjs.extend(isSameOrBefore);
 
 import moment from 'moment';
 import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
-
-let timer: NodeJS.Timeout;
-const longPressThreshold = 500;
 
 export function generateVirtualCell(
   tableCells: DatePickerTableCell[],
@@ -43,11 +41,11 @@ export function generateRealCell(
   blockRowCells: CalendarMonthBlockRowCell[],
 ) {
   const date = dMonth.add(day - 1, 'day').format('YYYY-MM-DD');
-  let status = CalendarCellStatusProp.Normal;
+  let status = DatePickerCellStatusProp.Normal;
   const blockRowCell = getBlockRowCell(blockRowCells, date);
 
   if (blockRowCell) {
-    status = CalendarCellStatusProp.Block;
+    status = DatePickerCellStatusProp.Block;
   }
 
   tableCells.push({
@@ -88,14 +86,6 @@ export function generateBlockTableCells(
     });
   }
   return blockRowCells;
-}
-
-export function getFillRowCell(
-  fillRowCells: CalendarMonthFillRowCell[],
-  rowId: string,
-  date: string,
-): CalendarMonthFillRowCell {
-  return fillRowCells.filter((i) => i.rowId === rowId && i.date === date)?.[0];
 }
 
 export function getBlockRowCell(
@@ -222,7 +212,7 @@ export function getColumnBackgroundSelectedStyle(
           columnIndex >= 0 &&
           columnIndex <= columnEndIndex))
     ) {
-      return 'calendar-month-table-row-column-selected-background-container';
+      return 'date-picker-table-row-column-selected-background-container';
     }
   } else {
     if (
@@ -233,7 +223,7 @@ export function getColumnBackgroundSelectedStyle(
       rowIndex >= rowStartIndex &&
       rowIndex <= rowEndIndex
     ) {
-      return 'calendar-month-table-row-column-selected-background-container';
+      return 'date-picker-table-row-column-selected-background-container';
     }
   }
 
@@ -247,24 +237,121 @@ export function getCurrentColumnBorderSelectedStyle(
 ) {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   if (tableCell.date === dayjs().format('YYYY-MM-DD')) {
-    return `calendar-month-table-row-column-current-selected-border-container`;
+    return `date-picker-table-row-column-current-selected-border-container`;
   }
   return '';
+}
+
+function checkIsCellDisabledAfterFirstSelection(
+  tableCell: DatePickerTableCell,
+  firstSelection: React.MutableRefObject<DatePickerTableSelection>,
+  secondSelection: React.MutableRefObject<DatePickerTableSelection> | null,
+  minRange: number,
+  maxRange: number,
+  tableCells: DatePickerTableCell[],
+  blockCells: string[],
+) {
+  //if virtual cell, no need to disable
+  if (tableCell.virtual || !tableCell.date) return false;
+
+  //if blockCells list includes this cell, need to disable
+  if (blockCells.includes(tableCell.date)) return true;
+
+  //if no firstSelection, no need to disable cells after first selection
+  if (firstSelection.current.rowCurrentIndex === -1) return false;
+
+  // if both selection is made, no need to disable cells after selection
+  if (secondSelection) {
+    if (
+      firstSelection.current.rowCurrentIndex !== -1 &&
+      secondSelection.current.rowCurrentIndex !== -1
+    ) {
+      return false;
+    }
+  }
+
+  // check disable after first selection
+  const firstSelectionCell = getTableCell(
+    tableCells,
+    firstSelection.current.rowCurrentIndex,
+    firstSelection.current.columnCurrentIndex,
+  );
+
+  const { date: cellDate } = tableCell;
+  const { date: startDate } = firstSelectionCell;
+
+  // Parse dates using dayjs
+  const startDayjs = dayjs(startDate);
+  const cellDayjs = dayjs(cellDate);
+
+  // Only consider cells after the start cell
+  if (cellDayjs.isSameOrBefore(startDayjs, 'day')) return true;
+
+  // Determine the minimum and maximum range dates
+  const minRangeEndDate = startDayjs.add(minRange - 1, 'day');
+  let maxRangeEndDate = startDayjs.add(maxRange, 'day');
+  // Find the closest blocked date after startDayjs
+  const closestBlockedDateAfterStart = blockCells
+    .map((dateStr) => dayjs(dateStr)) // Convert strings to dayjs objects
+    .filter((blockedDate) => blockedDate.isAfter(startDayjs, 'day')) // Keep only dates after startDayjs
+    .sort((a, b) => a.diff(b)) // Sort to find the closest date
+    .shift(); // Get the first (closest) date in the sorted array
+
+  // If a closer blocked date exists, update maxRangeEndDate
+  if (
+    closestBlockedDateAfterStart &&
+    closestBlockedDateAfterStart.isBefore(maxRangeEndDate, 'day')
+  ) {
+    maxRangeEndDate = closestBlockedDateAfterStart;
+  }
+
+  // Disable cells if they fall outside the allowed range after the start cell
+  return (
+    cellDayjs.isSameOrBefore(minRangeEndDate, 'day') ||
+    cellDayjs.isAfter(maxRangeEndDate, 'day')
+  );
 }
 
 export function getColumnDisabledStyle(
   tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
+  firstSelection: React.MutableRefObject<DatePickerTableSelection>,
+  secondSelection: React.MutableRefObject<DatePickerTableSelection>,
+  minRange: number,
+  maxRange: number,
+  blockCells: string[],
 ): string {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
 
   if (
     tableCell &&
     !tableCell.virtual &&
+    dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
+  ) {
+    if (
+      checkIsCellDisabledAfterFirstSelection(
+        tableCell,
+        firstSelection,
+        secondSelection,
+        minRange,
+        maxRange,
+        tableCells,
+        blockCells,
+      )
+    ) {
+      return 'date-picker-table-row-column-disabled-container';
+    } else {
+      return '';
+    }
+  }
+
+  if (
+    tableCell &&
+    !tableCell.virtual &&
     dayjs(tableCell.date).isBefore(dayjs().subtract(1, 'day'))
   ) {
-    return 'calendar-month-table-row-column-disabled-container';
+    return 'date-picker-table-row-column-disabled-container';
   }
 
   return '';
@@ -276,8 +363,8 @@ export function getColumBlockStyle(
   columnIndex: number,
 ): string {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-  if (tableCell?.status === CalendarCellStatusProp.Block) {
-    return 'calendar-month-table-row-column-block-container';
+  if (tableCell?.status === DatePickerCellStatusProp.Block) {
+    return 'date-picker-table-row-column-block-container';
   }
 
   return '';
@@ -291,7 +378,7 @@ export function getColumnVirtualStyle(
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
 
   if (tableCell && tableCell.virtual) {
-    return 'calendar-month-table-row-column-virtual-container';
+    return 'date-picker-table-row-column-virtual-container';
   }
 
   return '';
@@ -406,26 +493,78 @@ export function onScrollDate(
   }
 }
 
+//clear both first and second selection
+function clearBothSelection(
+  firstSelection: React.MutableRefObject<DatePickerTableSelection>,
+  secondSelection: React.MutableRefObject<DatePickerTableSelection>,
+) {
+  const defaultValue = {
+    rowStartIndex: -1,
+    rowEndIndex: -1,
+    rowCurrentIndex: -1,
+    columnStartIndex: -1,
+    columnEndIndex: -1,
+    columnCurrentIndex: -1,
+  };
+  firstSelection.current = defaultValue;
+  secondSelection.current = defaultValue;
+}
+
 export function onMouseDown(
   rowIndex: number,
   columnIndex: number,
   selectionVisible: boolean,
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   setSelection: Dispatch<SetStateAction<DatePickerTableSelection>>,
-  selection: DatePickerTableSelection,
   tableCells: DatePickerTableCell[],
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
+  secondSelection: React.MutableRefObject<DatePickerTableSelection>,
+  minRange: number,
+  maxRange: number,
+  blockCells: string[],
 ) {
   //if desktop user
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (isMobile) return;
 
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+
+  if (
+    firstSelection.current.rowCurrentIndex !== -1 &&
+    secondSelection.current.rowCurrentIndex !== -1
+  ) {
+    clearBothSelection(firstSelection, secondSelection);
+  }
+
   if (
     tableCell &&
     !tableCell.virtual &&
     dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
   ) {
+    //if clicked disabled cell
+    const isCellDisabled = checkIsCellDisabledAfterFirstSelection(
+      tableCell,
+      firstSelection,
+      secondSelection,
+      minRange,
+      maxRange,
+      tableCells,
+      blockCells,
+    );
+    if (isCellDisabled) {
+      return;
+    }
+
+    //if click the same cell or click the cell before
+    if (firstSelection.current.rowCurrentIndex !== -1) {
+      const firstSelectionCellDimension =
+        firstSelection.current.rowCurrentIndex * 7 +
+        firstSelection.current.columnCurrentIndex;
+      const tableCellDimension = tableCell.rowIndex * 7 + tableCell.columnIndex;
+      if (tableCellDimension <= firstSelectionCellDimension) {
+        return;
+      }
+    }
     if (!selectionVisible) {
       setSelectionVisible(true);
       setSelection({
@@ -444,11 +583,15 @@ export function onMouseDown(
         columnEndIndex: columnIndex,
         columnCurrentIndex: columnIndex,
       };
-      timer = setTimeout(() => {
-        clearSelection(setSelectionVisible);
-      }, longPressThreshold);
     } else {
-      clearTimeout(timer);
+      secondSelection.current = {
+        rowStartIndex: rowIndex,
+        rowEndIndex: rowIndex,
+        rowCurrentIndex: rowIndex,
+        columnStartIndex: columnIndex,
+        columnEndIndex: columnIndex,
+        columnCurrentIndex: columnIndex,
+      };
       clearSelection(setSelectionVisible);
     }
   }
@@ -462,17 +605,52 @@ export function onTouchStart(
   selection: DatePickerTableSelection,
   tableCells: DatePickerTableCell[],
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
+  secondSelection: React.MutableRefObject<DatePickerTableSelection>,
+  minRange: number,
+  maxRange: number,
+  blockCells: string[],
 ) {
   //for mobile touch screen user
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (!isMobile) return;
 
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+
+  if (
+    firstSelection.current.rowCurrentIndex !== -1 &&
+    secondSelection.current.rowCurrentIndex !== -1
+  ) {
+    clearBothSelection(firstSelection, secondSelection);
+  }
+
   if (
     tableCell &&
     !tableCell.virtual &&
     dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
   ) {
+    //if click disabled cell
+    const isCellDisabled = checkIsCellDisabledAfterFirstSelection(
+      tableCell,
+      firstSelection,
+      secondSelection,
+      minRange,
+      maxRange,
+      tableCells,
+      blockCells,
+    );
+    if (isCellDisabled) {
+      return;
+    }
+    //if click the same cell or click the cell before
+    if (firstSelection.current.rowCurrentIndex !== -1) {
+      const firstSelectionCellDimension =
+        firstSelection.current.rowCurrentIndex * 7 +
+        firstSelection.current.columnCurrentIndex;
+      const tableCellDimension = tableCell.rowIndex * 7 + tableCell.columnIndex;
+      if (tableCellDimension <= firstSelectionCellDimension) {
+        return;
+      }
+    }
     if (!selectionVisible) {
       setSelectionVisible(true);
       setSelection({
@@ -501,7 +679,18 @@ export function onTouchStart(
         setSelection,
         tableCells,
         firstSelection,
+        minRange,
+        maxRange,
+        blockCells,
       );
+      secondSelection.current = {
+        rowStartIndex: rowIndex,
+        rowEndIndex: rowIndex,
+        rowCurrentIndex: rowIndex,
+        columnStartIndex: columnIndex,
+        columnEndIndex: columnIndex,
+        columnCurrentIndex: columnIndex,
+      };
       setSelectionVisible(false);
     }
   }
@@ -525,14 +714,40 @@ export function onMouseOver(
   setSelection: Dispatch<SetStateAction<DatePickerTableSelection>>,
   tableCells: DatePickerTableCell[],
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
+  minRange: number,
+  maxRange: number,
+  blockCells: string[],
 ) {
-  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-  if (
-    tableCell &&
-    !tableCell.virtual &&
-    dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
-  ) {
-    if (selectionVisible) {
+  //check if first clicked
+  if (selectionVisible) {
+    const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+    const firstSelectionTableCell = getTableCell(
+      tableCells,
+      firstSelection.current.rowCurrentIndex,
+      firstSelection.current.columnCurrentIndex,
+    );
+    //check if the mouse overed cell is valid
+    if (
+      tableCell &&
+      !tableCell.virtual &&
+      dayjs(tableCell.date).isAfter(
+        dayjs(firstSelectionTableCell.date).subtract(1, 'day'),
+      )
+    ) {
+      //check if the mouse overed cell is disabled
+      const isCellDisabled = checkIsCellDisabledAfterFirstSelection(
+        tableCell,
+        firstSelection,
+        null,
+        minRange,
+        maxRange,
+        tableCells,
+        blockCells,
+      );
+      if (isCellDisabled) {
+        return;
+      }
+
       const currentRow = selection.rowCurrentIndex;
       const rowStart = rowIndex >= currentRow ? currentRow : rowIndex;
       const rowEnd = !(rowIndex >= currentRow) ? currentRow : rowIndex;

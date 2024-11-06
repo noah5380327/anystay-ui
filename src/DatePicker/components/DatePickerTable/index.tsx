@@ -5,7 +5,6 @@ import {
 
 import {
   generateTableCells,
-  getColumBlockStyle,
   getColumnBackgroundSelectedStyle,
   getColumnDisabledStyle,
   getColumnVirtualStyle,
@@ -49,12 +48,17 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
       columnEndIndex: -1,
       columnCurrentIndex: -1,
     });
+    const secondSelection = useRef<DatePickerTableSelection>({
+      rowStartIndex: -1,
+      rowEndIndex: -1,
+      rowCurrentIndex: -1,
+      columnStartIndex: -1,
+      columnEndIndex: -1,
+      columnCurrentIndex: -1,
+    });
 
-    const tableCells = generateTableCells(
-      props.monthDate,
-
-      props.blockRows || [],
-    );
+    const blockCells = props.blockCells || [];
+    const tableCells = generateTableCells(props.monthDate, blockCells);
 
     const init = useRef(false);
 
@@ -81,7 +85,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
     return (
       <div
         ref={ref}
-        className={`calendar-month-table-container`}
+        className={`date-picker-table-container`}
         style={{ height: props.tableHeight }}
       >
         <AutoSizer>
@@ -93,7 +97,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
             const cellWidth = width / 7;
             return (
               <Grid
-                className={`calendar-month-date-value-container`}
+                className={`date-picker-date-value-container`}
                 width={width}
                 height={height}
                 columnCount={7}
@@ -128,7 +132,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                   return (
                     <div
                       key={key}
-                      className={`calendar-month-table-row-column-container
+                      className={`date-picker-table-row-column-container
                   ${getColumnBackgroundSelectedStyle(
                     rowIndex,
                     columnIndex,
@@ -139,8 +143,16 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                     rowIndex,
                     columnIndex,
                   )}
-                  ${getColumnDisabledStyle(tableCells, rowIndex, columnIndex)}
-                  ${getColumBlockStyle(tableCells, rowIndex, columnIndex)}
+                  ${getColumnDisabledStyle(
+                    tableCells,
+                    rowIndex,
+                    columnIndex,
+                    firstSelection,
+                    secondSelection,
+                    props.minRange,
+                    props.maxRange,
+                    blockCells,
+                  )}
                   ${getColumnVirtualStyle(tableCells, rowIndex, columnIndex)}`}
                       style={style}
                       onMouseDown={() =>
@@ -150,9 +162,12 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           selectionVisible,
                           setSelectionVisible,
                           setSelection,
-                          selection,
                           tableCells,
                           firstSelection,
+                          secondSelection,
+                          props.minRange,
+                          props.maxRange,
+                          blockCells,
                         )
                       }
                       onMouseOver={() =>
@@ -164,6 +179,9 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           setSelection,
                           tableCells,
                           firstSelection,
+                          props.minRange,
+                          props.maxRange,
+                          blockCells,
                         )
                       }
                       onTouchStart={() => {
@@ -176,14 +194,18 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           selection,
                           tableCells,
                           firstSelection,
+                          secondSelection,
+                          props.minRange,
+                          props.maxRange,
+                          blockCells,
                         );
                       }}
                     >
                       <div
-                        className={`calendar-month-table-row-column-content-container`}
+                        className={`date-picker-table-row-column-content-container`}
                       >
                         <div
-                          className={`calendar-month-table-row-column-content-wrapper`}
+                          className={`date-picker-table-row-column-content-wrapper`}
                         >
                           {getTableCellVirtualCondition(
                             tableCells,
@@ -191,10 +213,10 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                             columnIndex,
                           ) && (
                             <div
-                              className={`calendar-month-table-row-column-content-virtual-wrapper`}
+                              className={`date-picker-table-row-column-content-virtual-wrapper`}
                             >
                               <span
-                                className={`calendar-month-table-row-column-content-virtual-text`}
+                                className={`date-picker-table-row-column-content-virtual-text`}
                               >
                                 {tableCell?.value}
                               </span>
@@ -202,14 +224,9 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           )}
 
                           <p
-                            className={`calendar-month-table-row-column-content-day`}
+                            className={`date-picker-table-row-column-content-day`}
                           >
                             {tableCell?.day}
-                          </p>
-                          <p
-                            className={`calendar-month-table-row-column-content-price`}
-                          >
-                            {!tableCell?.virtual && `${tableCell?.value}`}
                           </p>
                         </div>
                       </div>

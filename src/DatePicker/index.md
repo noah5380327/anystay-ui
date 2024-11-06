@@ -1,9 +1,9 @@
-# Calendar
+# DatePicker
 
 This is an example component.
 
 ```tsx
-import { CalendarSelectProp, DatePicker } from 'anystay-ui';
+import { DatePickerSelectProp, DatePicker } from 'anystay-ui';
 
 //monthly use totalMonthNumber
 //day use totalDayNUmber
@@ -27,14 +27,12 @@ export default () => (
   <DatePicker
     subtractMonthNumber={10}
     totalMonthNumber={20}
-    cellHeightMonthly={80}
-    blockRows={['2024-10-18', '2024-10-20']}
-    onSelect={(prop: CalendarSelectProp | CalendarMonthlySelectprop) => {
+    blockCells={['2024-10-18', '2024-11-20']}
+    onSelect={(prop: DatePickerSelectProp) => {
       console.log(prop);
     }}
-    onOccupiedClick={(prop: string) => {
-      console.log(prop);
-    }}
+    minRange={4}
+    maxRange={15}
   />
 );
 ```

@@ -1,5 +1,5 @@
 import {
-  CalendarCellStatusProp,
+  DatePickerCellStatusProp,
   DatePickerMonthDate,
   DatePickerSelectProp,
 } from 'anystay-ui/DatePicker/interface';
@@ -8,11 +8,13 @@ import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
 export interface DatePickerTableProp {
+  minRange: number;
+  maxRange: number;
   todayScrollTop: React.MutableRefObject<number>;
   cellHeightMonthly?: number;
   monthDate: DatePickerMonthDate;
   tableHeight: number;
-  blockRows?: string[];
+  blockCells?: string[];
   onSelect?: (prop: DatePickerSelectProp) => void;
   monthTitle: string;
   setMonthTitle: Dispatch<SetStateAction<string>>;
@@ -46,40 +48,10 @@ export interface DatePickerTableCell {
   virtual: boolean;
   day?: number;
   date?: string;
-  status?: CalendarCellStatusProp;
-}
-
-export interface CalendarMonthTableCellOccupied {
-  startDate: string;
-  endDate: string;
-  link: string;
-  name: string;
-  text: string;
-  avatar?: string;
-  extra?: any;
-  color?: string;
-}
-
-export interface CalendarMonthFillRowCell {
-  rowId: string;
-  date: string;
-  startDate: string;
-  endDate: string;
-  value: string;
-  extra?: any;
+  status?: DatePickerCellStatusProp;
 }
 
 export interface CalendarMonthBlockRowCell {
   date: string;
   value: string;
-}
-
-export interface CalendarMonthTableOccupiedCell {
-  width: number;
-  left?: number;
-  right?: number;
-  borderRadiusCornerBothNoNeed?: boolean;
-  borderRadiusCornerLeftNoNeed?: boolean;
-  borderRadiusCornerRightNoNeed?: boolean;
-  translateX?: number;
 }
