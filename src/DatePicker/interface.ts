@@ -23,6 +23,7 @@ export enum DatePickerCellStatusProp {
   Normal = 'Normal',
   Block = 'Block',
   CheckoutOnly = 'CheckoutOnly',
+  UnavailableDueToMinimumStay = 'UnavailableDueToMinimumStay',
 }
 
 export interface DatePickerMonthDate {

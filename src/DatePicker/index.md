@@ -29,6 +29,7 @@ export default () => (
     totalMonthNumber={20}
     blockCells={['2024-11-18', '2024-11-19', '2024-11-20']}
     checkoutOnlyCells={['2024-11-17']}
+    unavailableDueToMinimumStayCells={['2024-11-16']}
     onSelect={(prop: DatePickerSelectProp) => {
       console.log(prop);
     }}

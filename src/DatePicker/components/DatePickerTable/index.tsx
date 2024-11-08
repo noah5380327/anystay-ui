@@ -22,6 +22,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -32,10 +33,10 @@ import './style.less';
 const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
   (props, ref) => {
     const [selectionVisible, setSelectionVisible] = useState<boolean>(false);
-    const [
-      checkoutOnlyCellToolTipActiveCell,
-      setCheckoutOnlyCellToolTipActiveCell,
-    ] = useState<string>('');
+    const [arrivalUnavailableCell, setArrivalUnavailableCell] = useState<{
+      key: string;
+      status: string;
+    }>({ key: '', status: '' });
     const [selection, setSelection] = useState<DatePickerTableSelection>({
       rowStartIndex: -1,
       rowEndIndex: -1,
@@ -63,10 +64,17 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
 
     const blockCells = props.blockCells || [];
     const checkoutOnlyCells = props.checkoutOnlyCells || [];
-    const tableCells = generateTableCells(
-      props.monthDate,
-      blockCells,
-      checkoutOnlyCells,
+    const unavailableDueToMinimumStayCells =
+      props.unavailableDueToMinimumStayCells || [];
+    const tableCells = useMemo(
+      () =>
+        generateTableCells(
+          props.monthDate,
+          blockCells,
+          checkoutOnlyCells,
+          unavailableDueToMinimumStayCells,
+        ),
+      [props.monthDate],
     );
 
     const init = useRef(false);
@@ -177,7 +185,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           props.maxRange,
                           blockCells,
                           checkoutOnlyCells,
-                          setCheckoutOnlyCellToolTipActiveCell,
+                          setArrivalUnavailableCell,
                         )
                       }
                       onMouseOver={() =>
@@ -210,17 +218,27 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           props.maxRange,
                           blockCells,
                           checkoutOnlyCells,
-                          setCheckoutOnlyCellToolTipActiveCell,
+                          setArrivalUnavailableCell,
                         );
                       }}
                     >
-                      {checkoutOnlyCellToolTipActiveCell === key && (
-                        <div
-                          className={`date-picker-table-row-column-checkoutonly-tooltip`}
-                        >
-                          <p>Checkout only</p>
-                        </div>
-                      )}
+                      {arrivalUnavailableCell.key === key &&
+                        arrivalUnavailableCell.status === 'CheckoutOnly' && (
+                          <div
+                            className={`date-picker-table-row-column-arrival-unavailable-tooltip`}
+                          >
+                            <p>Checkout only</p>
+                          </div>
+                        )}
+                      {arrivalUnavailableCell.key === key &&
+                        arrivalUnavailableCell.status ===
+                          'UnavailableDueToMinimumStay' && (
+                          <div
+                            className={`date-picker-table-row-column-arrival-unavailable-tooltip`}
+                          >
+                            <p>{`${props.minRange} nights minimum`}</p>
+                          </div>
+                        )}
 
                       <div
                         className={`date-picker-table-row-column-content-container`}

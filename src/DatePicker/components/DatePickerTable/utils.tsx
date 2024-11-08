@@ -4,6 +4,7 @@ import {
   DatePickerTableCell,
   DatePickerTableProp,
   DatePickerTableSelection,
+  DatePickerUnavailableDueToMinimumStayCell,
 } from 'anystay-ui/DatePicker/components/DatePickerTable/interface';
 import {
   DatePickerCellStatusProp,
@@ -42,17 +43,25 @@ export function generateRealCell(
   day: number,
   blockCells: DatePickerBlockCell[],
   checkoutOnlyCells: DatePickerCheckoutOnlyCell[],
+  unavailableDueToMinimumStayCells: DatePickerUnavailableDueToMinimumStayCell[],
 ) {
   const date = dMonth.add(day - 1, 'day').format('YYYY-MM-DD');
   let status = DatePickerCellStatusProp.Normal;
   const blockCell = getBlockCell(blockCells, date);
   const checkoutOnlyCell = getCheckoutOnlyCell(checkoutOnlyCells, date);
+  const unavailableDueToMinimumStayCell = getUnavailableDueToMinimumStayCells(
+    unavailableDueToMinimumStayCells,
+    date,
+  );
 
   if (blockCell) {
     status = DatePickerCellStatusProp.Block;
   }
   if (checkoutOnlyCell) {
     status = DatePickerCellStatusProp.CheckoutOnly;
+  }
+  if (unavailableDueToMinimumStayCell) {
+    status = DatePickerCellStatusProp.UnavailableDueToMinimumStay;
   }
 
   tableCells.push({
@@ -106,6 +115,18 @@ export function generateCheckoutOnlyTableCells(
   }
   return checkoutOnlyCells;
 }
+export function generateUnavailableDueToMinimumStayCells(
+  unavailableDueToMinimumStayCells: string[],
+): DatePickerUnavailableDueToMinimumStayCell[] {
+  const checkoutOnlyCells: DatePickerBlockCell[] = [];
+  for (let k = 0; k < unavailableDueToMinimumStayCells.length; k++) {
+    checkoutOnlyCells.push({
+      date: unavailableDueToMinimumStayCells[k],
+      value: unavailableDueToMinimumStayCells[k],
+    });
+  }
+  return checkoutOnlyCells;
+}
 
 export function getBlockCell(
   blockCells: DatePickerBlockCell[],
@@ -119,11 +140,18 @@ export function getCheckoutOnlyCell(
 ): DatePickerCheckoutOnlyCell {
   return checkoutOnlyCells.filter((i) => i.date === date)?.[0];
 }
+export function getUnavailableDueToMinimumStayCells(
+  unavailableDueToMinimumStayCells: DatePickerCheckoutOnlyCell[],
+  date: string,
+): DatePickerUnavailableDueToMinimumStayCell {
+  return unavailableDueToMinimumStayCells.filter((i) => i.date === date)?.[0];
+}
 
 export function generateTableCells(
   monthDate: DatePickerMonthDate,
   blockDates: string[],
   checkoutOnlyDates: string[],
+  unavailableDueToMinimumStayDates: string[],
 ): DatePickerTableCell[] {
   const tableCells: DatePickerTableCell[] = [];
   const allMonths = Object.keys(monthDate);
@@ -132,6 +160,8 @@ export function generateTableCells(
 
   const blockCells = generateBlockTableCells(blockDates);
   const checkoutOnlyCells = generateCheckoutOnlyTableCells(checkoutOnlyDates);
+  const unavailableDueToMinimumStayCells =
+    generateUnavailableDueToMinimumStayCells(unavailableDueToMinimumStayDates);
 
   for (let i = 0; i < allMonths.length; i++) {
     rowIndex = rowIndex + 1;
@@ -163,6 +193,7 @@ export function generateTableCells(
         j - startDay + 1,
         blockCells,
         checkoutOnlyCells,
+        unavailableDueToMinimumStayCells,
       );
     }
 
@@ -182,6 +213,7 @@ export function generateTableCells(
             7 - startDay + 1 + k + (j - 1) * 7,
             blockCells,
             checkoutOnlyCells,
+            unavailableDueToMinimumStayCells,
           );
         }
       } else {
@@ -199,6 +231,7 @@ export function generateTableCells(
               day,
               blockCells,
               checkoutOnlyCells,
+              unavailableDueToMinimumStayCells,
             );
           }
         }
@@ -376,8 +409,11 @@ export function getColumnStatusStyle(
       if (tableCell.status === 'Block') {
         return 'date-picker-table-row-column-disabled-container';
       }
-      if (tableCell.status === 'CheckoutOnly') {
-        return 'date-picker-table-row-column-checkoutOnly-container';
+      if (
+        tableCell.status === 'CheckoutOnly' ||
+        tableCell.status === 'UnavailableDueToMinimumStay'
+      ) {
+        return 'date-picker-table-row-column-arrival-unavailable-tooltip';
       }
       if (
         checkIsCellDisabledAfterFirstSelection(
@@ -552,8 +588,8 @@ export function onMouseDown(
   maxRange: number,
   blockCells: string[],
   checkoutOnlyCells: string[],
-  setCheckoutOnlyCellToolTipActiveCell: React.Dispatch<
-    React.SetStateAction<string>
+  setArrivalUnavailableCell: React.Dispatch<
+    React.SetStateAction<{ key: string; status: string }>
   >,
 ) {
   //for desktop user
@@ -574,14 +610,16 @@ export function onMouseDown(
   //handle tooltip, if this is the first selection, do not allow selection action, display tooltip
   if (
     firstSelection.current.rowCurrentIndex === -1 &&
-    tableCell.status === 'CheckoutOnly'
+    (tableCell.status === 'CheckoutOnly' ||
+      tableCell.status === 'UnavailableDueToMinimumStay')
   ) {
-    setCheckoutOnlyCellToolTipActiveCell(
-      `${tableCell.rowIndex}-${tableCell.columnIndex}`,
-    );
+    setArrivalUnavailableCell({
+      key: `${tableCell.rowIndex}-${tableCell.columnIndex}`,
+      status: tableCell.status,
+    });
     return;
   } else {
-    setCheckoutOnlyCellToolTipActiveCell('');
+    setArrivalUnavailableCell({ key: '', status: '' });
   }
 
   if (
@@ -653,8 +691,8 @@ export function onTouchStart(
   maxRange: number,
   blockCells: string[],
   checkoutOnlyCells: string[],
-  setCheckoutOnlyCellToolTipActiveCell: React.Dispatch<
-    React.SetStateAction<string>
+  setArrivalUnavailableCell: React.Dispatch<
+    React.SetStateAction<{ key: string; status: string }>
   >,
 ) {
   //for mobile touch screen user
@@ -674,14 +712,16 @@ export function onTouchStart(
   //handle tooltip, if this is the first selection, do not allow selection action, display tooltip
   if (
     firstSelection.current.rowCurrentIndex === -1 &&
-    tableCell.status === 'CheckoutOnly'
+    (tableCell.status === 'CheckoutOnly' ||
+      tableCell.status === 'UnavailableDueToMinimumStay')
   ) {
-    setCheckoutOnlyCellToolTipActiveCell(
-      `${tableCell.rowIndex}-${tableCell.columnIndex}`,
-    );
+    setArrivalUnavailableCell({
+      key: `${tableCell.rowIndex}-${tableCell.columnIndex}`,
+      status: tableCell.status,
+    });
     return;
   } else {
-    setCheckoutOnlyCellToolTipActiveCell('');
+    setArrivalUnavailableCell({ key: '', status: '' });
   }
 
   if (

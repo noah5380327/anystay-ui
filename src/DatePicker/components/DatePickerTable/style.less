@@ -75,7 +75,7 @@
     box-sizing: border-box;
     position: relative;
     cursor: pointer;
-    .date-picker-table-row-column-checkoutonly-tooltip {
+    .date-picker-table-row-column-arrival-unavailable-tooltip {
       padding: 5px;
       background-color: @as-background-color-3;
       position: absolute;
@@ -84,11 +84,12 @@
       transform: translateX(-50%);
       border: 1px solid black;
       border-radius: 5px;
-      width: 80px;
+      width: fit-content;
       z-index: 10;
       p {
-        font-size: 12px;
+        font-size: 8px;
         margin: 0;
+        white-space: nowrap;
       }
     }
     .date-picker-table-row-column-content-container {
@@ -147,7 +148,7 @@
       text-decoration: line-through;
     }
   }
-  .date-picker-table-row-column-checkoutOnly-container {
+  .date-picker-table-row-column-arrival-unavailable-tooltip {
     .date-picker-table-row-column-content-day {
       color: @as-text-color-3;
     }

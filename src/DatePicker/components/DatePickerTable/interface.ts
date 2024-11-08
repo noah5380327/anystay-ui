@@ -61,3 +61,7 @@ export interface DatePickerCheckoutOnlyCell {
   date: string;
   value: string;
 }
+export interface DatePickerUnavailableDueToMinimumStayCell {
+  date: string;
+  value: string;
+}
