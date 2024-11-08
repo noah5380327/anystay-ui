@@ -15,6 +15,8 @@ export interface DatePickerTableProp {
   monthDate: DatePickerMonthDate;
   tableHeight: number;
   blockCells?: string[];
+  checkoutOnlyCells?: string[];
+  unavailableDueToMinimumStayCells?: string[];
   onSelect?: (prop: DatePickerSelectProp) => void;
   monthTitle: string;
   setMonthTitle: Dispatch<SetStateAction<string>>;
@@ -51,7 +53,11 @@ export interface DatePickerTableCell {
   status?: DatePickerCellStatusProp;
 }
 
-export interface CalendarMonthBlockRowCell {
+export interface DatePickerBlockCell {
+  date: string;
+  value: string;
+}
+export interface DatePickerCheckoutOnlyCell {
   date: string;
   value: string;
 }

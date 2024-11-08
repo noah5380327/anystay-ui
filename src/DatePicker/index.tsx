@@ -104,6 +104,10 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProp>(
                 monthDate={monthDateForMonthly}
                 tableHeight={tableHeight}
                 blockCells={props.blockCells}
+                checkoutOnlyCells={props.checkoutOnlyCells}
+                unavailableDueToMinimumStayCells={
+                  props.unavailableDueToMinimumStayCells
+                }
                 onSelect={props.onSelect}
                 monthTitle={monthTitle}
                 setMonthTitle={setMonthTitle}

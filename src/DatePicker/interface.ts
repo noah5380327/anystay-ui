@@ -3,6 +3,8 @@ export interface DatePickerProp {
   subtractMonthNumber?: number;
   onSelect?: (prop: DatePickerSelectProp) => void;
   blockCells?: string[];
+  checkoutOnlyCells?: string[];
+  unavailableDueToMinimumStayCells?: string[];
   columnWidth?: number;
   titleRowHeight?: number;
   dateRowHeight?: number;
@@ -20,6 +22,7 @@ export interface DatePickerSelectProp {
 export enum DatePickerCellStatusProp {
   Normal = 'Normal',
   Block = 'Block',
+  CheckoutOnly = 'CheckoutOnly',
 }
 
 export interface DatePickerMonthDate {

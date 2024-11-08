@@ -1,5 +1,6 @@
 import {
-  CalendarMonthBlockRowCell,
+  DatePickerBlockCell,
+  DatePickerCheckoutOnlyCell,
   DatePickerTableCell,
   DatePickerTableProp,
   DatePickerTableSelection,
@@ -11,6 +12,7 @@ import {
 } from 'anystay-ui/DatePicker/interface';
 import dayjs, { Dayjs } from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
 dayjs.extend(isSameOrBefore);
 
 import moment from 'moment';
@@ -38,14 +40,19 @@ export function generateRealCell(
   value: string,
   dMonth: Dayjs,
   day: number,
-  blockRowCells: CalendarMonthBlockRowCell[],
+  blockCells: DatePickerBlockCell[],
+  checkoutOnlyCells: DatePickerCheckoutOnlyCell[],
 ) {
   const date = dMonth.add(day - 1, 'day').format('YYYY-MM-DD');
   let status = DatePickerCellStatusProp.Normal;
-  const blockRowCell = getBlockRowCell(blockRowCells, date);
+  const blockCell = getBlockCell(blockCells, date);
+  const checkoutOnlyCell = getCheckoutOnlyCell(checkoutOnlyCells, date);
 
-  if (blockRowCell) {
+  if (blockCell) {
     status = DatePickerCellStatusProp.Block;
+  }
+  if (checkoutOnlyCell) {
+    status = DatePickerCellStatusProp.CheckoutOnly;
   }
 
   tableCells.push({
@@ -76,35 +83,55 @@ export function generateDatesFromStartAndEnd(
 }
 
 export function generateBlockTableCells(
-  blockRows: string[],
-): CalendarMonthBlockRowCell[] {
-  const blockRowCells: CalendarMonthBlockRowCell[] = [];
-  for (let k = 0; k < blockRows.length; k++) {
-    blockRowCells.push({
-      date: blockRows[k],
-      value: blockRows[k],
+  blockDates: string[],
+): DatePickerBlockCell[] {
+  const blockCells: DatePickerBlockCell[] = [];
+  for (let k = 0; k < blockDates.length; k++) {
+    blockCells.push({
+      date: blockDates[k],
+      value: blockDates[k],
     });
   }
-  return blockRowCells;
+  return blockCells;
+}
+export function generateCheckoutOnlyTableCells(
+  checkoutOnlyDates: string[],
+): DatePickerCheckoutOnlyCell[] {
+  const checkoutOnlyCells: DatePickerBlockCell[] = [];
+  for (let k = 0; k < checkoutOnlyDates.length; k++) {
+    checkoutOnlyCells.push({
+      date: checkoutOnlyDates[k],
+      value: checkoutOnlyDates[k],
+    });
+  }
+  return checkoutOnlyCells;
 }
 
-export function getBlockRowCell(
-  blockRowCells: CalendarMonthBlockRowCell[],
+export function getBlockCell(
+  blockCells: DatePickerBlockCell[],
   date: string,
-): CalendarMonthBlockRowCell {
-  return blockRowCells.filter((i) => i.date === date)?.[0];
+): DatePickerBlockCell {
+  return blockCells.filter((i) => i.date === date)?.[0];
+}
+export function getCheckoutOnlyCell(
+  checkoutOnlyCells: DatePickerCheckoutOnlyCell[],
+  date: string,
+): DatePickerCheckoutOnlyCell {
+  return checkoutOnlyCells.filter((i) => i.date === date)?.[0];
 }
 
 export function generateTableCells(
   monthDate: DatePickerMonthDate,
-  blockRows: string[],
+  blockDates: string[],
+  checkoutOnlyDates: string[],
 ): DatePickerTableCell[] {
   const tableCells: DatePickerTableCell[] = [];
   const allMonths = Object.keys(monthDate);
 
   let rowIndex = -1;
 
-  const blockRowCells = generateBlockTableCells(blockRows);
+  const blockCells = generateBlockTableCells(blockDates);
+  const checkoutOnlyCells = generateCheckoutOnlyTableCells(checkoutOnlyDates);
 
   for (let i = 0; i < allMonths.length; i++) {
     rowIndex = rowIndex + 1;
@@ -134,7 +161,8 @@ export function generateTableCells(
         '',
         dMonth,
         j - startDay + 1,
-        blockRowCells,
+        blockCells,
+        checkoutOnlyCells,
       );
     }
 
@@ -152,7 +180,8 @@ export function generateTableCells(
             '',
             dMonth,
             7 - startDay + 1 + k + (j - 1) * 7,
-            blockRowCells,
+            blockCells,
+            checkoutOnlyCells,
           );
         }
       } else {
@@ -168,7 +197,8 @@ export function generateTableCells(
               '',
               dMonth,
               day,
-              blockRowCells,
+              blockCells,
+              checkoutOnlyCells,
             );
           }
         }
@@ -250,12 +280,10 @@ function checkIsCellDisabledAfterFirstSelection(
   maxRange: number,
   tableCells: DatePickerTableCell[],
   blockCells: string[],
+  checkoutOnlyCells: string[],
 ) {
   //if virtual cell, no need to disable
   if (tableCell.virtual || !tableCell.date) return false;
-
-  //if blockCells list includes this cell, need to disable
-  if (blockCells.includes(tableCell.date)) return true;
 
   //if no firstSelection, no need to disable cells after first selection
   if (firstSelection.current.rowCurrentIndex === -1) return false;
@@ -296,13 +324,29 @@ function checkIsCellDisabledAfterFirstSelection(
     .filter((blockedDate) => blockedDate.isAfter(startDayjs, 'day')) // Keep only dates after startDayjs
     .sort((a, b) => a.diff(b)) // Sort to find the closest date
     .shift(); // Get the first (closest) date in the sorted array
+  const closestCheckoutDateAfterStart = checkoutOnlyCells
+    .map((dateStr) => dayjs(dateStr)) // Convert strings to dayjs objects
+    .filter((blockedDate) => blockedDate.isAfter(startDayjs, 'day')) // Keep only dates after startDayjs
+    .sort((a, b) => a.diff(b)) // Sort to find the closest date
+    .shift(); // Get the first (closest) date in the sorted array
 
-  // If a closer blocked date exists, update maxRangeEndDate
+  // Determine which of the closestBlockedDate or closestCheckoutDate is closer to startDayjs
+  const closestDateAfterStart =
+    closestBlockedDateAfterStart && closestCheckoutDateAfterStart
+      ? closestBlockedDateAfterStart.isBefore(
+          closestCheckoutDateAfterStart,
+          'day',
+        )
+        ? closestBlockedDateAfterStart
+        : closestCheckoutDateAfterStart
+      : closestBlockedDateAfterStart || closestCheckoutDateAfterStart;
+
+  // Update maxRangeEndDate to the closest date if it’s within the range
   if (
-    closestBlockedDateAfterStart &&
-    closestBlockedDateAfterStart.isBefore(maxRangeEndDate, 'day')
+    closestDateAfterStart &&
+    closestDateAfterStart.isBefore(maxRangeEndDate, 'day')
   ) {
-    maxRangeEndDate = closestBlockedDateAfterStart;
+    maxRangeEndDate = closestDateAfterStart;
   }
 
   // Disable cells if they fall outside the allowed range after the start cell
@@ -312,7 +356,7 @@ function checkIsCellDisabledAfterFirstSelection(
   );
 }
 
-export function getColumnDisabledStyle(
+export function getColumnStatusStyle(
   tableCells: DatePickerTableCell[],
   rowIndex: number,
   columnIndex: number,
@@ -321,50 +365,35 @@ export function getColumnDisabledStyle(
   minRange: number,
   maxRange: number,
   blockCells: string[],
+  checkoutOnlyCells: string[],
 ): string {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
 
-  if (
-    tableCell &&
-    !tableCell.virtual &&
-    dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
-  ) {
-    if (
-      checkIsCellDisabledAfterFirstSelection(
-        tableCell,
-        firstSelection,
-        secondSelection,
-        minRange,
-        maxRange,
-        tableCells,
-        blockCells,
-      )
-    ) {
+  if (tableCell && !tableCell.virtual) {
+    if (dayjs(tableCell.date).isBefore(dayjs().subtract(1, 'day'))) {
       return 'date-picker-table-row-column-disabled-container';
-    } else {
-      return '';
+    } else if (dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))) {
+      if (tableCell.status === 'Block') {
+        return 'date-picker-table-row-column-disabled-container';
+      }
+      if (tableCell.status === 'CheckoutOnly') {
+        return 'date-picker-table-row-column-checkoutOnly-container';
+      }
+      if (
+        checkIsCellDisabledAfterFirstSelection(
+          tableCell,
+          firstSelection,
+          secondSelection,
+          minRange,
+          maxRange,
+          tableCells,
+          blockCells,
+          checkoutOnlyCells,
+        )
+      ) {
+        return 'date-picker-table-row-column-disabled-container';
+      }
     }
-  }
-
-  if (
-    tableCell &&
-    !tableCell.virtual &&
-    dayjs(tableCell.date).isBefore(dayjs().subtract(1, 'day'))
-  ) {
-    return 'date-picker-table-row-column-disabled-container';
-  }
-
-  return '';
-}
-
-export function getColumBlockStyle(
-  tableCells: DatePickerTableCell[],
-  rowIndex: number,
-  columnIndex: number,
-): string {
-  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-  if (tableCell?.status === DatePickerCellStatusProp.Block) {
-    return 'date-picker-table-row-column-block-container';
   }
 
   return '';
@@ -522,18 +551,37 @@ export function onMouseDown(
   minRange: number,
   maxRange: number,
   blockCells: string[],
+  checkoutOnlyCells: string[],
+  setCheckoutOnlyCellToolTipActiveCell: React.Dispatch<
+    React.SetStateAction<string>
+  >,
 ) {
-  //if desktop user
+  //for desktop user
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (isMobile) return;
 
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+  if (tableCell.status === 'Block') return;
 
   if (
     firstSelection.current.rowCurrentIndex !== -1 &&
     secondSelection.current.rowCurrentIndex !== -1
   ) {
+    console.log('clear');
     clearBothSelection(firstSelection, secondSelection);
+  }
+
+  //handle tooltip, if this is the first selection, do not allow selection action, display tooltip
+  if (
+    firstSelection.current.rowCurrentIndex === -1 &&
+    tableCell.status === 'CheckoutOnly'
+  ) {
+    setCheckoutOnlyCellToolTipActiveCell(
+      `${tableCell.rowIndex}-${tableCell.columnIndex}`,
+    );
+    return;
+  } else {
+    setCheckoutOnlyCellToolTipActiveCell('');
   }
 
   if (
@@ -550,6 +598,7 @@ export function onMouseDown(
       maxRange,
       tableCells,
       blockCells,
+      checkoutOnlyCells,
     );
     if (isCellDisabled) {
       return;
@@ -567,15 +616,7 @@ export function onMouseDown(
     }
     if (!selectionVisible) {
       setSelectionVisible(true);
-      setSelection({
-        rowStartIndex: rowIndex,
-        rowEndIndex: rowIndex,
-        rowCurrentIndex: rowIndex,
-        columnStartIndex: columnIndex,
-        columnEndIndex: columnIndex,
-        columnCurrentIndex: columnIndex,
-      });
-      firstSelection.current = {
+      const currentSelection = {
         rowStartIndex: rowIndex,
         rowEndIndex: rowIndex,
         rowCurrentIndex: rowIndex,
@@ -583,6 +624,8 @@ export function onMouseDown(
         columnEndIndex: columnIndex,
         columnCurrentIndex: columnIndex,
       };
+      setSelection(currentSelection);
+      firstSelection.current = currentSelection;
     } else {
       secondSelection.current = {
         rowStartIndex: rowIndex,
@@ -592,7 +635,7 @@ export function onMouseDown(
         columnEndIndex: columnIndex,
         columnCurrentIndex: columnIndex,
       };
-      clearSelection(setSelectionVisible);
+      setSelectionVisible(false);
     }
   }
 }
@@ -609,12 +652,17 @@ export function onTouchStart(
   minRange: number,
   maxRange: number,
   blockCells: string[],
+  checkoutOnlyCells: string[],
+  setCheckoutOnlyCellToolTipActiveCell: React.Dispatch<
+    React.SetStateAction<string>
+  >,
 ) {
   //for mobile touch screen user
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (!isMobile) return;
 
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+  if (tableCell.status === 'Block') return;
 
   if (
     firstSelection.current.rowCurrentIndex !== -1 &&
@@ -623,12 +671,25 @@ export function onTouchStart(
     clearBothSelection(firstSelection, secondSelection);
   }
 
+  //handle tooltip, if this is the first selection, do not allow selection action, display tooltip
+  if (
+    firstSelection.current.rowCurrentIndex === -1 &&
+    tableCell.status === 'CheckoutOnly'
+  ) {
+    setCheckoutOnlyCellToolTipActiveCell(
+      `${tableCell.rowIndex}-${tableCell.columnIndex}`,
+    );
+    return;
+  } else {
+    setCheckoutOnlyCellToolTipActiveCell('');
+  }
+
   if (
     tableCell &&
     !tableCell.virtual &&
     dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
   ) {
-    //if click disabled cell
+    //if click disabled cell do nothing
     const isCellDisabled = checkIsCellDisabledAfterFirstSelection(
       tableCell,
       firstSelection,
@@ -637,6 +698,7 @@ export function onTouchStart(
       maxRange,
       tableCells,
       blockCells,
+      checkoutOnlyCells,
     );
     if (isCellDisabled) {
       return;
@@ -651,17 +713,8 @@ export function onTouchStart(
         return;
       }
     }
-    if (!selectionVisible) {
-      setSelectionVisible(true);
-      setSelection({
-        rowStartIndex: rowIndex,
-        rowEndIndex: rowIndex,
-        rowCurrentIndex: rowIndex,
-        columnStartIndex: columnIndex,
-        columnEndIndex: columnIndex,
-        columnCurrentIndex: columnIndex,
-      });
-      firstSelection.current = {
+    if (firstSelection.current.rowCurrentIndex === -1) {
+      const currentSelection = {
         rowStartIndex: rowIndex,
         rowEndIndex: rowIndex,
         rowCurrentIndex: rowIndex,
@@ -669,6 +722,8 @@ export function onTouchStart(
         columnEndIndex: columnIndex,
         columnCurrentIndex: columnIndex,
       };
+      setSelection(currentSelection);
+      firstSelection.current = currentSelection;
     } else {
       //if mobile, second click is select the end cell, same logic as the onmouseover
       onMouseOver(
@@ -682,6 +737,7 @@ export function onTouchStart(
         minRange,
         maxRange,
         blockCells,
+        checkoutOnlyCells,
       );
       secondSelection.current = {
         rowStartIndex: rowIndex,
@@ -696,16 +752,6 @@ export function onTouchStart(
   }
 }
 
-export function clearSelection(
-  setSelectionVisible: Dispatch<SetStateAction<boolean>>,
-) {
-  const hideSelection = () => {
-    setSelectionVisible(false);
-    document.removeEventListener('mouseup', hideSelection);
-  };
-  document.addEventListener('mouseup', hideSelection);
-}
-
 export function onMouseOver(
   rowIndex: number,
   columnIndex: number,
@@ -717,6 +763,7 @@ export function onMouseOver(
   minRange: number,
   maxRange: number,
   blockCells: string[],
+  checkoutOnlyCells: string[],
 ) {
   //check if first clicked
   if (selectionVisible) {
@@ -726,6 +773,7 @@ export function onMouseOver(
       firstSelection.current.rowCurrentIndex,
       firstSelection.current.columnCurrentIndex,
     );
+
     //check if the mouse overed cell is valid
     if (
       tableCell &&
@@ -735,6 +783,7 @@ export function onMouseOver(
       )
     ) {
       //check if the mouse overed cell is disabled
+      if (tableCell.status === 'Block') return;
       const isCellDisabled = checkIsCellDisabledAfterFirstSelection(
         tableCell,
         firstSelection,
@@ -743,6 +792,7 @@ export function onMouseOver(
         maxRange,
         tableCells,
         blockCells,
+        checkoutOnlyCells,
       );
       if (isCellDisabled) {
         return;
@@ -828,7 +878,7 @@ export function onMouseUp(
         selectProp.endDate = selectedTableCells[1].date || '';
       } else if (selectedTableCells.length === 1) {
         selectProp.startDate = selectedTableCells[0].date || '';
-        selectProp.endDate = selectedTableCells[0].date || '';
+        selectProp.endDate = '';
       }
       onSelect(selectProp);
     }

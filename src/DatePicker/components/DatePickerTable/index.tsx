@@ -6,7 +6,7 @@ import {
 import {
   generateTableCells,
   getColumnBackgroundSelectedStyle,
-  getColumnDisabledStyle,
+  getColumnStatusStyle,
   getColumnVirtualStyle,
   getCurrentColumnBorderSelectedStyle,
   getTableCell,
@@ -32,6 +32,10 @@ import './style.less';
 const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
   (props, ref) => {
     const [selectionVisible, setSelectionVisible] = useState<boolean>(false);
+    const [
+      checkoutOnlyCellToolTipActiveCell,
+      setCheckoutOnlyCellToolTipActiveCell,
+    ] = useState<string>('');
     const [selection, setSelection] = useState<DatePickerTableSelection>({
       rowStartIndex: -1,
       rowEndIndex: -1,
@@ -58,14 +62,17 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
     });
 
     const blockCells = props.blockCells || [];
-    const tableCells = generateTableCells(props.monthDate, blockCells);
+    const checkoutOnlyCells = props.checkoutOnlyCells || [];
+    const tableCells = generateTableCells(
+      props.monthDate,
+      blockCells,
+      checkoutOnlyCells,
+    );
 
     const init = useRef(false);
 
     useEffect(() => {
-      if (!selectionVisible) {
-        onMouseUp(selection, tableCells, props.onSelect);
-      }
+      onMouseUp(selection, tableCells, props.onSelect);
     }, [selectionVisible]);
 
     // @ts-ignore
@@ -143,7 +150,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                     rowIndex,
                     columnIndex,
                   )}
-                  ${getColumnDisabledStyle(
+                  ${getColumnStatusStyle(
                     tableCells,
                     rowIndex,
                     columnIndex,
@@ -152,6 +159,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                     props.minRange,
                     props.maxRange,
                     blockCells,
+                    checkoutOnlyCells,
                   )}
                   ${getColumnVirtualStyle(tableCells, rowIndex, columnIndex)}`}
                       style={style}
@@ -168,6 +176,8 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           props.minRange,
                           props.maxRange,
                           blockCells,
+                          checkoutOnlyCells,
+                          setCheckoutOnlyCellToolTipActiveCell,
                         )
                       }
                       onMouseOver={() =>
@@ -182,6 +192,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           props.minRange,
                           props.maxRange,
                           blockCells,
+                          checkoutOnlyCells,
                         )
                       }
                       onTouchStart={() => {
@@ -198,9 +209,19 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           props.minRange,
                           props.maxRange,
                           blockCells,
+                          checkoutOnlyCells,
+                          setCheckoutOnlyCellToolTipActiveCell,
                         );
                       }}
                     >
+                      {checkoutOnlyCellToolTipActiveCell === key && (
+                        <div
+                          className={`date-picker-table-row-column-checkoutonly-tooltip`}
+                        >
+                          <p>Checkout only</p>
+                        </div>
+                      )}
+
                       <div
                         className={`date-picker-table-row-column-content-container`}
                       >

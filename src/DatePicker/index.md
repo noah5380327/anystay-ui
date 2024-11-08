@@ -27,12 +27,12 @@ export default () => (
   <DatePicker
     subtractMonthNumber={10}
     totalMonthNumber={20}
-    blockCells={['2024-10-18', '2024-11-20']}
+    blockCells={['2024-11-18', '2024-11-19', '2024-11-20']}
+    checkoutOnlyCells={['2024-11-17']}
     onSelect={(prop: DatePickerSelectProp) => {
       console.log(prop);
     }}
-    minRange={4}
-    maxRange={15}
+    minRange={2}
   />
 );
 ```
