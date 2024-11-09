@@ -153,7 +153,6 @@ export function generateTableCells(
   checkoutOnlyDates: string[],
   unavailableDueToMinimumStayDates: string[],
 ): DatePickerTableCell[] {
-  console.log('generate run');
   const tableCells: DatePickerTableCell[] = [];
   const allMonths = Object.keys(monthDate);
 
@@ -598,7 +597,6 @@ export function onMouseDown(
     firstSelection.current.rowCurrentIndex !== -1 &&
     secondSelection.current.rowCurrentIndex !== -1
   ) {
-    console.log('clear');
     clearBothSelection(firstSelection, secondSelection);
   }
 
@@ -983,7 +981,6 @@ export function getBlockCheckoutOnlyMinimumNightCells(
   unavailableDueToMinimumStayCells: string[];
   updatedBlockCells: string[];
 } {
-  console.log('get blcoked run');
   const checkoutOnlyCells: string[] = [];
   const unavailableDueToMinimumStayCells: string[] = [];
   const blockedDatesSet = new Set(blockedDates);
@@ -1014,9 +1011,7 @@ export function getBlockCheckoutOnlyMinimumNightCells(
       checkedDate.forEach((date) => blockedDatesSet.add(date));
     }
   }
-  console.log(checkoutOnlyCells);
-  console.log(unavailableDueToMinimumStayCells);
-  console.log(Array.from(blockedDatesSet));
+
   return {
     checkoutOnlyCells,
     unavailableDueToMinimumStayCells,
