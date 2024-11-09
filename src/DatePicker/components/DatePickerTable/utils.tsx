@@ -153,6 +153,7 @@ export function generateTableCells(
   checkoutOnlyDates: string[],
   unavailableDueToMinimumStayDates: string[],
 ): DatePickerTableCell[] {
+  console.log('generate run');
   const tableCells: DatePickerTableCell[] = [];
   const allMonths = Object.keys(monthDate);
 
@@ -294,11 +295,8 @@ export function getColumnBackgroundSelectedStyle(
 }
 
 export function getCurrentColumnBorderSelectedStyle(
-  tableCells: DatePickerTableCell[],
-  rowIndex: number,
-  columnIndex: number,
+  tableCell: DatePickerTableCell,
 ) {
-  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   if (tableCell.date === dayjs().format('YYYY-MM-DD')) {
     return `date-picker-table-row-column-current-selected-border-container`;
   }
@@ -391,8 +389,7 @@ function checkIsCellDisabledAfterFirstSelection(
 
 export function getColumnStatusStyle(
   tableCells: DatePickerTableCell[],
-  rowIndex: number,
-  columnIndex: number,
+  tableCell: DatePickerTableCell,
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
   secondSelection: React.MutableRefObject<DatePickerTableSelection>,
   minRange: number,
@@ -400,8 +397,6 @@ export function getColumnStatusStyle(
   blockCells: string[],
   checkoutOnlyCells: string[],
 ): string {
-  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
-
   if (tableCell && !tableCell.virtual) {
     if (dayjs(tableCell.date).isBefore(dayjs().subtract(1, 'day'))) {
       return 'date-picker-table-row-column-disabled-container';
@@ -582,6 +577,7 @@ export function onMouseDown(
   setSelectionVisible: Dispatch<SetStateAction<boolean>>,
   setSelection: Dispatch<SetStateAction<DatePickerTableSelection>>,
   tableCells: DatePickerTableCell[],
+  tableCell: DatePickerTableCell,
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
   secondSelection: React.MutableRefObject<DatePickerTableSelection>,
   minRange: number,
@@ -596,7 +592,6 @@ export function onMouseDown(
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (isMobile) return;
 
-  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   if (tableCell.status === 'Block') return;
 
   if (
@@ -653,7 +648,6 @@ export function onMouseDown(
       }
     }
     if (!selectionVisible) {
-      setSelectionVisible(true);
       const currentSelection = {
         rowStartIndex: rowIndex,
         rowEndIndex: rowIndex,
@@ -664,6 +658,7 @@ export function onMouseDown(
       };
       setSelection(currentSelection);
       firstSelection.current = currentSelection;
+      setSelectionVisible(true);
     } else {
       secondSelection.current = {
         rowStartIndex: rowIndex,
@@ -685,6 +680,7 @@ export function onTouchStart(
   setSelection: Dispatch<SetStateAction<DatePickerTableSelection>>,
   selection: DatePickerTableSelection,
   tableCells: DatePickerTableCell[],
+  tableCell: DatePickerTableCell,
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
   secondSelection: React.MutableRefObject<DatePickerTableSelection>,
   minRange: number,
@@ -699,7 +695,6 @@ export function onTouchStart(
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (!isMobile) return;
 
-  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   if (tableCell.status === 'Block') return;
 
   if (
@@ -753,7 +748,7 @@ export function onTouchStart(
         return;
       }
     }
-    if (firstSelection.current.rowCurrentIndex === -1) {
+    if (!selectionVisible) {
       const currentSelection = {
         rowStartIndex: rowIndex,
         rowEndIndex: rowIndex,
@@ -764,6 +759,7 @@ export function onTouchStart(
       };
       setSelection(currentSelection);
       firstSelection.current = currentSelection;
+      setSelectionVisible(true);
     } else {
       //if mobile, second click is select the end cell, same logic as the onmouseover
       onMouseOver(
@@ -773,6 +769,7 @@ export function onTouchStart(
         selection,
         setSelection,
         tableCells,
+        tableCell,
         firstSelection,
         minRange,
         maxRange,
@@ -799,6 +796,7 @@ export function onMouseOver(
   selection: DatePickerTableSelection,
   setSelection: Dispatch<SetStateAction<DatePickerTableSelection>>,
   tableCells: DatePickerTableCell[],
+  tableCell: DatePickerTableCell,
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
   minRange: number,
   maxRange: number,
@@ -807,7 +805,6 @@ export function onMouseOver(
 ) {
   //check if first clicked
   if (selectionVisible) {
-    const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
     const firstSelectionTableCell = getTableCell(
       tableCells,
       firstSelection.current.rowCurrentIndex,
@@ -975,5 +972,64 @@ export function onSectionRenderJumpToToday(
     const year = Number(months[i].split('-')[0]);
     const month = Number(months[i].split('-')[1]) - 1;
     numberOfRow += getRowsUntilThisMonth(year, month) + 1; //title take 1 row
+  }
+}
+
+export function getBlockCheckoutOnlyMinimumNightCells(
+  minRange: number,
+  blockedDates: string[],
+): {
+  checkoutOnlyCells: string[];
+  unavailableDueToMinimumStayCells: string[];
+  updatedBlockCells: string[];
+} {
+  console.log('get blcoked run');
+  const checkoutOnlyCells: string[] = [];
+  const unavailableDueToMinimumStayCells: string[] = [];
+  const blockedDatesSet = new Set(blockedDates);
+
+  for (let i = 0; i < blockedDates.length; i++) {
+    const blockedDate = dayjs(blockedDates[i]);
+    const checkedDate = [];
+    let canMeetMinDate = true;
+    for (let j = 1; j <= minRange; j++) {
+      const previousDateString = blockedDate
+        .subtract(j, 'day')
+        .format('YYYY-MM-DD');
+      checkedDate.push(previousDateString);
+      if (blockedDates.includes(previousDateString)) {
+        canMeetMinDate = false;
+        break;
+      }
+    }
+    if (canMeetMinDate) {
+      checkedDate.forEach((date, index) => {
+        if (index === 0) {
+          checkoutOnlyCells.push(date);
+        } else {
+          unavailableDueToMinimumStayCells.push(date);
+        }
+      });
+    } else {
+      checkedDate.forEach((date) => blockedDatesSet.add(date));
+    }
+  }
+  console.log(checkoutOnlyCells);
+  console.log(unavailableDueToMinimumStayCells);
+  console.log(Array.from(blockedDatesSet));
+  return {
+    checkoutOnlyCells,
+    unavailableDueToMinimumStayCells,
+    updatedBlockCells: Array.from(blockedDatesSet),
+  };
+}
+
+export function getToolTipPosition(tableCell: DatePickerTableCell): string {
+  if (tableCell.columnIndex === 6) {
+    return 'date-picker-table-row-column-arrival-unavailable-tooltip-right';
+  } else if (tableCell.columnIndex === 0) {
+    return 'date-picker-table-row-column-arrival-unavailable-tooltip-left';
+  } else {
+    return 'date-picker-table-row-column-arrival-unavailable-tooltip-middle';
   }
 }

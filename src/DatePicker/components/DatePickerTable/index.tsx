@@ -5,12 +5,14 @@ import {
 
 import {
   generateTableCells,
+  getBlockCheckoutOnlyMinimumNightCells,
   getColumnBackgroundSelectedStyle,
   getColumnStatusStyle,
   getColumnVirtualStyle,
   getCurrentColumnBorderSelectedStyle,
   getTableCell,
   getTableCellVirtualCondition,
+  getToolTipPosition,
   onMouseDown,
   onMouseOver,
   onMouseUp,
@@ -63,19 +65,41 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
     });
 
     const blockCells = props.blockCells || [];
-    const checkoutOnlyCells = props.checkoutOnlyCells || [];
-    const unavailableDueToMinimumStayCells =
-      props.unavailableDueToMinimumStayCells || [];
-    const tableCells = useMemo(
-      () =>
-        generateTableCells(
-          props.monthDate,
+
+    const {
+      checkoutOnlyCells,
+      unavailableDueToMinimumStayCells,
+      updatedBlockCells,
+    } = useMemo(() => {
+      if (blockCells.length > 1 && props.minRange > 1) {
+        return getBlockCheckoutOnlyMinimumNightCells(
+          props.minRange,
           blockCells,
+        );
+      }
+      return {
+        checkoutOnlyCells: [],
+        unavailableDueToMinimumStayCells: [],
+        updatedBlockCells: [],
+      };
+    }, [props.blockCells, props.minRange]);
+    const tableCells = useMemo(() => {
+      if (Object.keys(props.monthDate).length !== 0) {
+        return generateTableCells(
+          props.monthDate,
+          updatedBlockCells,
           checkoutOnlyCells,
           unavailableDueToMinimumStayCells,
-        ),
-      [props.monthDate],
-    );
+        );
+      } else {
+        return [];
+      }
+    }, [
+      props.monthDate,
+      updatedBlockCells,
+      checkoutOnlyCells,
+      unavailableDueToMinimumStayCells,
+    ]);
 
     const init = useRef(false);
 
@@ -153,15 +177,10 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                     columnIndex,
                     selection,
                   )}
-                  ${getCurrentColumnBorderSelectedStyle(
-                    tableCells,
-                    rowIndex,
-                    columnIndex,
-                  )}
+                  ${getCurrentColumnBorderSelectedStyle(tableCell)}
                   ${getColumnStatusStyle(
                     tableCells,
-                    rowIndex,
-                    columnIndex,
+                    tableCell,
                     firstSelection,
                     secondSelection,
                     props.minRange,
@@ -179,6 +198,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           setSelectionVisible,
                           setSelection,
                           tableCells,
+                          tableCell,
                           firstSelection,
                           secondSelection,
                           props.minRange,
@@ -196,6 +216,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           selection,
                           setSelection,
                           tableCells,
+                          tableCell,
                           firstSelection,
                           props.minRange,
                           props.maxRange,
@@ -212,6 +233,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           setSelection,
                           selection,
                           tableCells,
+                          tableCell,
                           firstSelection,
                           secondSelection,
                           props.minRange,
@@ -225,7 +247,9 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                       {arrivalUnavailableCell.key === key &&
                         arrivalUnavailableCell.status === 'CheckoutOnly' && (
                           <div
-                            className={`date-picker-table-row-column-arrival-unavailable-tooltip`}
+                            className={`date-picker-table-row-column-arrival-unavailable-tooltip ${getToolTipPosition(
+                              tableCell,
+                            )}`}
                           >
                             <p>Checkout only</p>
                           </div>
@@ -234,7 +258,9 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                         arrivalUnavailableCell.status ===
                           'UnavailableDueToMinimumStay' && (
                           <div
-                            className={`date-picker-table-row-column-arrival-unavailable-tooltip`}
+                            className={`date-picker-table-row-column-arrival-unavailable-tooltip ${getToolTipPosition(
+                              tableCell,
+                            )}`}
                           >
                             <p>{`${props.minRange} nights minimum`}</p>
                           </div>

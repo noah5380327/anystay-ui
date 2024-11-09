@@ -27,7 +27,14 @@ export default () => (
   <DatePicker
     subtractMonthNumber={10}
     totalMonthNumber={20}
-    blockCells={['2024-11-18', '2024-11-19', '2024-11-20']}
+    blockCells={[
+      '2024-11-18',
+      '2024-11-19',
+      '2024-11-20',
+      '2024-11-22',
+      '2024-11-23',
+      '2024-11-28',
+    ]}
     checkoutOnlyCells={['2024-11-17']}
     unavailableDueToMinimumStayCells={['2024-11-16']}
     onSelect={(prop: DatePickerSelectProp) => {
