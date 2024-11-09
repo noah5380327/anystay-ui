@@ -1,14 +1,13 @@
-import { CalendarMonthDate } from 'anystay-ui/Calendar/interface';
+import { DatePickerMonthDate } from 'anystay-ui/DatePicker/interface';
 import dayjs from 'dayjs';
-export interface CalendarMonthTitleProp {
+export interface DatePickerTitleProp {
   monthTitle: string;
-  type: string;
   setCustomScrollTop: React.Dispatch<React.SetStateAction<number>>;
   todayScrollTop: React.MutableRefObject<number>;
-  monthDate: CalendarMonthDate;
+  monthDate: DatePickerMonthDate;
   monthlyTitleSelectedDate: dayjs.Dayjs;
   setMonthlyTitleSelectedDate: React.Dispatch<
     React.SetStateAction<dayjs.Dayjs>
   >;
-  cellHeightMonthly?: number;
+  cellHeightMonthly: number;
 }
