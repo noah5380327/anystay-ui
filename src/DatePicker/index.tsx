@@ -96,6 +96,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProp>(
                 setMonthlyTitleSelectedDate={setMonthlyTitleSelectedDate}
               />
               <DatePickerTable
+                value={props.value}
                 minRange={minRange}
                 maxRange={maxRange}
                 todayScrollTop={todayScrollTop}

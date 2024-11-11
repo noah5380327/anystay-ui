@@ -1015,3 +1015,51 @@ export function getToolTipPosition(tableCell: DatePickerTableCell): string {
     return 'date-picker-table-row-column-arrival-unavailable-tooltip-middle';
   }
 }
+
+function getTableCellByDate(
+  tableCells: DatePickerTableCell[],
+  date: string,
+): DatePickerTableCell {
+  return tableCells.filter((i) => i.date === date)?.[0];
+}
+
+export function setSelectionByValue(
+  tableCells: DatePickerTableCell[],
+  value: string[],
+  setSelection: Dispatch<SetStateAction<DatePickerTableSelection>>,
+  firstSelection: React.MutableRefObject<DatePickerTableSelection>,
+) {
+  if (value.length === 2) {
+    const startCell = getTableCellByDate(tableCells, value[0]);
+    const endCell = getTableCellByDate(tableCells, value[1]);
+    const startCellDimension = {
+      rowStartIndex: startCell.rowIndex,
+      rowEndIndex: startCell.rowIndex,
+      rowCurrentIndex: startCell.rowIndex,
+      columnStartIndex: startCell.columnIndex,
+      columnEndIndex: startCell.columnIndex,
+      columnCurrentIndex: startCell.columnIndex,
+    };
+    firstSelection.current = startCellDimension;
+    setSelection({
+      rowStartIndex: startCell.rowIndex,
+      rowEndIndex: endCell.rowIndex,
+      rowCurrentIndex: endCell.rowIndex,
+      columnStartIndex: startCell.columnIndex,
+      columnEndIndex: endCell.columnIndex,
+      columnCurrentIndex: endCell.columnIndex,
+    });
+  } else if (value.length === 1) {
+    const startCell = getTableCellByDate(tableCells, value[0]);
+    const startCellDimension = {
+      rowStartIndex: startCell.rowIndex,
+      rowEndIndex: startCell.rowIndex,
+      rowCurrentIndex: startCell.rowIndex,
+      columnStartIndex: startCell.columnIndex,
+      columnEndIndex: startCell.columnIndex,
+      columnCurrentIndex: startCell.columnIndex,
+    };
+    setSelection(startCellDimension);
+    firstSelection.current = startCellDimension;
+  }
+}

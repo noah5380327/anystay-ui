@@ -1,4 +1,5 @@
 export interface DatePickerProp {
+  value: string[];
   totalMonthNumber?: number;
   subtractMonthNumber?: number;
   onSelect?: (prop: DatePickerSelectProp) => void;
