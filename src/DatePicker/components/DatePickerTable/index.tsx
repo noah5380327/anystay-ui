@@ -55,14 +55,6 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
       columnEndIndex: -1,
       columnCurrentIndex: -1,
     });
-    const secondSelection = useRef<DatePickerTableSelection>({
-      rowStartIndex: -1,
-      rowEndIndex: -1,
-      rowCurrentIndex: -1,
-      columnStartIndex: -1,
-      columnEndIndex: -1,
-      columnCurrentIndex: -1,
-    });
 
     const blockCells = props.blockCells || [];
 
@@ -71,7 +63,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
       unavailableDueToMinimumStayCells,
       updatedBlockCells,
     } = useMemo(() => {
-      if (blockCells.length > 1 && props.minRange > 1) {
+      if (blockCells.length > 1) {
         return getBlockCheckoutOnlyMinimumNightCells(
           props.minRange,
           blockCells,
@@ -182,7 +174,6 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                     tableCells,
                     tableCell,
                     firstSelection,
-                    secondSelection,
                     props.minRange,
                     props.maxRange,
                     blockCells,
@@ -200,7 +191,6 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           tableCells,
                           tableCell,
                           firstSelection,
-                          secondSelection,
                           props.minRange,
                           props.maxRange,
                           blockCells,
@@ -222,6 +212,7 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           props.maxRange,
                           blockCells,
                           checkoutOnlyCells,
+                          setArrivalUnavailableCell,
                         )
                       }
                       onTouchStart={() => {
@@ -235,7 +226,6 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           tableCells,
                           tableCell,
                           firstSelection,
-                          secondSelection,
                           props.minRange,
                           props.maxRange,
                           blockCells,
