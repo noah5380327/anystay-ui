@@ -8,6 +8,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
 export interface DatePickerTableProp {
+  value: string[];
   minRange: number;
   maxRange: number;
   todayScrollTop: React.MutableRefObject<number>;
