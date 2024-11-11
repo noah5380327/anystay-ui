@@ -305,28 +305,28 @@ export function getCurrentColumnBorderSelectedStyle(
 function checkIsCellDisabledAfterFirstSelection(
   tableCell: DatePickerTableCell,
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
-  secondSelection: React.MutableRefObject<DatePickerTableSelection> | null,
   minRange: number,
   maxRange: number,
   tableCells: DatePickerTableCell[],
   blockCells: string[],
   checkoutOnlyCells: string[],
-) {
+): {
+  disableIfSameOrBefore: boolean;
+  disableIfAfter: boolean;
+} {
   //if virtual cell, no need to disable
-  if (tableCell.virtual || !tableCell.date) return false;
+  if (tableCell.virtual || !tableCell.date)
+    return {
+      disableIfSameOrBefore: false,
+      disableIfAfter: false,
+    };
 
-  //if no firstSelection, no need to disable cells after first selection
-  if (firstSelection.current.rowCurrentIndex === -1) return false;
-
-  // if both selection is made, no need to disable cells after selection
-  if (secondSelection) {
-    if (
-      firstSelection.current.rowCurrentIndex !== -1 &&
-      secondSelection.current.rowCurrentIndex !== -1
-    ) {
-      return false;
-    }
-  }
+  //if no firstSelection, no need to disable cells
+  if (firstSelection.current.rowCurrentIndex === -1)
+    return {
+      disableIfSameOrBefore: false,
+      disableIfAfter: false,
+    };
 
   // check disable after first selection
   const firstSelectionCell = getTableCell(
@@ -343,7 +343,11 @@ function checkIsCellDisabledAfterFirstSelection(
   const cellDayjs = dayjs(cellDate);
 
   // Only consider cells after the start cell
-  if (cellDayjs.isSameOrBefore(startDayjs, 'day')) return true;
+  if (cellDayjs.isSameOrBefore(startDayjs, 'day'))
+    return {
+      disableIfSameOrBefore: false,
+      disableIfAfter: true,
+    };
 
   // Determine the minimum and maximum range dates
   const minRangeEndDate = startDayjs.add(minRange - 1, 'day');
@@ -380,17 +384,16 @@ function checkIsCellDisabledAfterFirstSelection(
   }
 
   // Disable cells if they fall outside the allowed range after the start cell
-  return (
-    cellDayjs.isSameOrBefore(minRangeEndDate, 'day') ||
-    cellDayjs.isAfter(maxRangeEndDate, 'day')
-  );
+  return {
+    disableIfSameOrBefore: cellDayjs.isSameOrBefore(minRangeEndDate, 'day'),
+    disableIfAfter: cellDayjs.isAfter(maxRangeEndDate, 'day'),
+  };
 }
 
 export function getColumnStatusStyle(
   tableCells: DatePickerTableCell[],
   tableCell: DatePickerTableCell,
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
-  secondSelection: React.MutableRefObject<DatePickerTableSelection>,
   minRange: number,
   maxRange: number,
   blockCells: string[],
@@ -400,6 +403,26 @@ export function getColumnStatusStyle(
     if (dayjs(tableCell.date).isBefore(dayjs().subtract(1, 'day'))) {
       return 'date-picker-table-row-column-disabled-container';
     } else if (dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))) {
+      if (firstSelection.current.rowCurrentIndex !== -1) {
+        const { disableIfSameOrBefore, disableIfAfter } =
+          checkIsCellDisabledAfterFirstSelection(
+            tableCell,
+            firstSelection,
+            minRange,
+            maxRange,
+            tableCells,
+            blockCells,
+            checkoutOnlyCells,
+          );
+        if (disableIfSameOrBefore) {
+          return 'date-picker-table-row-column-arrival-unavailable-tooltip';
+        } else if (disableIfAfter) {
+          return 'date-picker-table-row-column-disabled-container';
+        } else {
+          return '';
+        }
+      }
+
       if (tableCell.status === 'Block') {
         return 'date-picker-table-row-column-disabled-container';
       }
@@ -408,20 +431,6 @@ export function getColumnStatusStyle(
         tableCell.status === 'UnavailableDueToMinimumStay'
       ) {
         return 'date-picker-table-row-column-arrival-unavailable-tooltip';
-      }
-      if (
-        checkIsCellDisabledAfterFirstSelection(
-          tableCell,
-          firstSelection,
-          secondSelection,
-          minRange,
-          maxRange,
-          tableCells,
-          blockCells,
-          checkoutOnlyCells,
-        )
-      ) {
-        return 'date-picker-table-row-column-disabled-container';
       }
     }
   }
@@ -553,9 +562,8 @@ export function onScrollDate(
 }
 
 //clear both first and second selection
-function clearBothSelection(
+function clearSelection(
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
-  secondSelection: React.MutableRefObject<DatePickerTableSelection>,
 ) {
   const defaultValue = {
     rowStartIndex: -1,
@@ -566,7 +574,6 @@ function clearBothSelection(
     columnCurrentIndex: -1,
   };
   firstSelection.current = defaultValue;
-  secondSelection.current = defaultValue;
 }
 
 export function onMouseDown(
@@ -578,7 +585,6 @@ export function onMouseDown(
   tableCells: DatePickerTableCell[],
   tableCell: DatePickerTableCell,
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
-  secondSelection: React.MutableRefObject<DatePickerTableSelection>,
   minRange: number,
   maxRange: number,
   blockCells: string[],
@@ -593,13 +599,6 @@ export function onMouseDown(
 
   if (tableCell.status === 'Block') return;
 
-  if (
-    firstSelection.current.rowCurrentIndex !== -1 &&
-    secondSelection.current.rowCurrentIndex !== -1
-  ) {
-    clearBothSelection(firstSelection, secondSelection);
-  }
-
   //handle tooltip, if this is the first selection, do not allow selection action, display tooltip
   if (
     firstSelection.current.rowCurrentIndex === -1 &&
@@ -620,31 +619,6 @@ export function onMouseDown(
     !tableCell.virtual &&
     dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
   ) {
-    //if clicked disabled cell
-    const isCellDisabled = checkIsCellDisabledAfterFirstSelection(
-      tableCell,
-      firstSelection,
-      secondSelection,
-      minRange,
-      maxRange,
-      tableCells,
-      blockCells,
-      checkoutOnlyCells,
-    );
-    if (isCellDisabled) {
-      return;
-    }
-
-    //if click the same cell or click the cell before
-    if (firstSelection.current.rowCurrentIndex !== -1) {
-      const firstSelectionCellDimension =
-        firstSelection.current.rowCurrentIndex * 7 +
-        firstSelection.current.columnCurrentIndex;
-      const tableCellDimension = tableCell.rowIndex * 7 + tableCell.columnIndex;
-      if (tableCellDimension <= firstSelectionCellDimension) {
-        return;
-      }
-    }
     if (!selectionVisible) {
       const currentSelection = {
         rowStartIndex: rowIndex,
@@ -658,14 +632,29 @@ export function onMouseDown(
       firstSelection.current = currentSelection;
       setSelectionVisible(true);
     } else {
-      secondSelection.current = {
-        rowStartIndex: rowIndex,
-        rowEndIndex: rowIndex,
-        rowCurrentIndex: rowIndex,
-        columnStartIndex: columnIndex,
-        columnEndIndex: columnIndex,
-        columnCurrentIndex: columnIndex,
-      };
+      //check if disabled cell click after first selection
+      const { disableIfSameOrBefore, disableIfAfter } =
+        checkIsCellDisabledAfterFirstSelection(
+          tableCell,
+          firstSelection,
+          minRange,
+          maxRange,
+          tableCells,
+          blockCells,
+          checkoutOnlyCells,
+        );
+      if (disableIfSameOrBefore) {
+        setArrivalUnavailableCell({
+          key: `${tableCell.rowIndex}-${tableCell.columnIndex}`,
+          status: 'UnavailableDueToMinimumStay',
+        });
+        return;
+      } else if (disableIfAfter) {
+        return;
+      } else {
+        setArrivalUnavailableCell({ key: '', status: '' });
+      }
+      clearSelection(firstSelection);
       setSelectionVisible(false);
     }
   }
@@ -680,7 +669,6 @@ export function onTouchStart(
   tableCells: DatePickerTableCell[],
   tableCell: DatePickerTableCell,
   firstSelection: React.MutableRefObject<DatePickerTableSelection>,
-  secondSelection: React.MutableRefObject<DatePickerTableSelection>,
   minRange: number,
   maxRange: number,
   blockCells: string[],
@@ -694,13 +682,6 @@ export function onTouchStart(
   if (!isMobile) return;
 
   if (tableCell.status === 'Block') return;
-
-  if (
-    firstSelection.current.rowCurrentIndex !== -1 &&
-    secondSelection.current.rowCurrentIndex !== -1
-  ) {
-    clearBothSelection(firstSelection, secondSelection);
-  }
 
   //handle tooltip, if this is the first selection, do not allow selection action, display tooltip
   if (
@@ -722,30 +703,6 @@ export function onTouchStart(
     !tableCell.virtual &&
     dayjs(tableCell.date).isAfter(dayjs().subtract(1, 'day'))
   ) {
-    //if click disabled cell do nothing
-    const isCellDisabled = checkIsCellDisabledAfterFirstSelection(
-      tableCell,
-      firstSelection,
-      secondSelection,
-      minRange,
-      maxRange,
-      tableCells,
-      blockCells,
-      checkoutOnlyCells,
-    );
-    if (isCellDisabled) {
-      return;
-    }
-    //if click the same cell or click the cell before
-    if (firstSelection.current.rowCurrentIndex !== -1) {
-      const firstSelectionCellDimension =
-        firstSelection.current.rowCurrentIndex * 7 +
-        firstSelection.current.columnCurrentIndex;
-      const tableCellDimension = tableCell.rowIndex * 7 + tableCell.columnIndex;
-      if (tableCellDimension <= firstSelectionCellDimension) {
-        return;
-      }
-    }
     if (!selectionVisible) {
       const currentSelection = {
         rowStartIndex: rowIndex,
@@ -759,6 +716,29 @@ export function onTouchStart(
       firstSelection.current = currentSelection;
       setSelectionVisible(true);
     } else {
+      //check if disabled cell click after first selection
+      const { disableIfSameOrBefore, disableIfAfter } =
+        checkIsCellDisabledAfterFirstSelection(
+          tableCell,
+          firstSelection,
+          minRange,
+          maxRange,
+          tableCells,
+          blockCells,
+          checkoutOnlyCells,
+        );
+      if (disableIfSameOrBefore) {
+        setArrivalUnavailableCell({
+          key: `${tableCell.rowIndex}-${tableCell.columnIndex}`,
+          status: 'UnavailableDueToMinimumStay',
+        });
+        return;
+      } else if (disableIfAfter) {
+        return;
+      } else {
+        setArrivalUnavailableCell({ key: '', status: '' });
+      }
+
       //if mobile, second click is select the end cell, same logic as the onmouseover
       onMouseOver(
         rowIndex,
@@ -773,15 +753,9 @@ export function onTouchStart(
         maxRange,
         blockCells,
         checkoutOnlyCells,
+        setArrivalUnavailableCell,
       );
-      secondSelection.current = {
-        rowStartIndex: rowIndex,
-        rowEndIndex: rowIndex,
-        rowCurrentIndex: rowIndex,
-        columnStartIndex: columnIndex,
-        columnEndIndex: columnIndex,
-        columnCurrentIndex: columnIndex,
-      };
+      clearSelection(firstSelection);
       setSelectionVisible(false);
     }
   }
@@ -800,6 +774,9 @@ export function onMouseOver(
   maxRange: number,
   blockCells: string[],
   checkoutOnlyCells: string[],
+  setArrivalUnavailableCell: React.Dispatch<
+    React.SetStateAction<{ key: string; status: string }>
+  >,
 ) {
   //check if first clicked
   if (selectionVisible) {
@@ -817,20 +794,27 @@ export function onMouseOver(
         dayjs(firstSelectionTableCell.date).subtract(1, 'day'),
       )
     ) {
-      //check if the mouse overed cell is disabled
       if (tableCell.status === 'Block') return;
-      const isCellDisabled = checkIsCellDisabledAfterFirstSelection(
-        tableCell,
-        firstSelection,
-        null,
-        minRange,
-        maxRange,
-        tableCells,
-        blockCells,
-        checkoutOnlyCells,
-      );
-      if (isCellDisabled) {
+      const { disableIfSameOrBefore, disableIfAfter } =
+        checkIsCellDisabledAfterFirstSelection(
+          tableCell,
+          firstSelection,
+          minRange,
+          maxRange,
+          tableCells,
+          blockCells,
+          checkoutOnlyCells,
+        );
+      if (disableIfSameOrBefore) {
+        setArrivalUnavailableCell({
+          key: `${tableCell.rowIndex}-${tableCell.columnIndex}`,
+          status: 'UnavailableDueToMinimumStay',
+        });
         return;
+      } else if (disableIfAfter) {
+        return;
+      } else {
+        setArrivalUnavailableCell({ key: '', status: '' });
       }
 
       const currentRow = selection.rowCurrentIndex;
@@ -989,22 +973,25 @@ export function getBlockCheckoutOnlyMinimumNightCells(
     const blockedDate = dayjs(blockedDates[i]);
     const checkedDate = [];
     let canMeetMinDate = true;
-    for (let j = 1; j <= minRange; j++) {
+    for (let j = 1; j <= minRange + 1; j++) {
       const previousDateString = blockedDate
         .subtract(j, 'day')
         .format('YYYY-MM-DD');
-      checkedDate.push(previousDateString);
       if (blockedDates.includes(previousDateString)) {
         canMeetMinDate = false;
         break;
       }
+      checkedDate.push(previousDateString);
     }
     if (canMeetMinDate) {
       checkedDate.forEach((date, index) => {
         if (index === 0) {
           checkoutOnlyCells.push(date);
         } else {
-          unavailableDueToMinimumStayCells.push(date);
+          //checked date checking minRange + 1, so last one can be selected as startDate
+          if (index !== checkedDate.length - 1) {
+            unavailableDueToMinimumStayCells.push(date);
+          }
         }
       });
     } else {

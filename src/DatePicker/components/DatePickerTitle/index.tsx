@@ -1,7 +1,7 @@
 // @ts-ignore
 import { AntdDatePickerProp } from 'anystay-ui/DatePicker/components/DatePickerTitle/interface';
 import React, { type FC } from 'react';
-import AntdDatePicker from '../AntdDatePicker/index';
+// import AntdDatePicker from '../AntdDatePicker/index';
 import './style.less';
 
 const CalendarMonthTitle: FC<AntdDatePickerProp> = (props) => {
@@ -19,14 +19,14 @@ const CalendarMonthTitle: FC<AntdDatePickerProp> = (props) => {
           <span className={`date-picker-title-date-text`}>Sa</span>
         </div>
       </div>
-      <AntdDatePicker
+      {/* <AntdDatePicker
         selectedDate={props.monthlyTitleSelectedDate}
         setSelectedDate={props.setMonthlyTitleSelectedDate}
         calendarTitleProp={props}
         todayScrollTop={props.todayScrollTop}
         monthDate={props.monthDate}
         cellHeightMonthly={props.cellHeightMonthly}
-      />
+      /> */}
     </div>
   );
 };

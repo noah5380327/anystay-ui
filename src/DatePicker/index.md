@@ -35,8 +35,6 @@ export default () => (
       '2024-11-23',
       '2024-11-28',
     ]}
-    checkoutOnlyCells={['2024-11-17']}
-    unavailableDueToMinimumStayCells={['2024-11-16']}
     onSelect={(prop: DatePickerSelectProp) => {
       console.log(prop);
     }}
