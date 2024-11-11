@@ -1,6 +1,6 @@
 {
   "name": "anystay-ui",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "anystay ui framework",
   "license": "MIT",
   "module": "dist/index.js",
