@@ -1032,15 +1032,8 @@ export function setSelectionByValue(
   if (value.length === 2) {
     const startCell = getTableCellByDate(tableCells, value[0]);
     const endCell = getTableCellByDate(tableCells, value[1]);
-    const startCellDimension = {
-      rowStartIndex: startCell.rowIndex,
-      rowEndIndex: startCell.rowIndex,
-      rowCurrentIndex: startCell.rowIndex,
-      columnStartIndex: startCell.columnIndex,
-      columnEndIndex: startCell.columnIndex,
-      columnCurrentIndex: startCell.columnIndex,
-    };
-    firstSelection.current = startCellDimension;
+
+    clearSelection(firstSelection);
     setSelection({
       rowStartIndex: startCell.rowIndex,
       rowEndIndex: endCell.rowIndex,
