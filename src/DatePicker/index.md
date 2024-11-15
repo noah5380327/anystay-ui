@@ -25,7 +25,7 @@ import { DatePickerSelectProp, DatePicker } from 'anystay-ui';
 
 export default () => (
   <DatePicker
-    value={['2024-12-01', '2024-12-05']}
+    value={[]}
     subtractMonthNumber={10}
     totalMonthNumber={20}
     blockCells={[
