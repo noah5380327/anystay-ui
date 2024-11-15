@@ -9,7 +9,6 @@ import {
   getColumnBackgroundSelectedStyle,
   getColumnStatusStyle,
   getColumnVirtualStyle,
-  getCurrentColumnBorderSelectedStyle,
   getTableCell,
   getTableCellVirtualCondition,
   getToolTipPosition,
@@ -184,7 +183,6 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                     columnIndex,
                     selection,
                   )}
-                  ${getCurrentColumnBorderSelectedStyle(tableCell)}
                   ${getColumnStatusStyle(
                     tableCells,
                     tableCell,

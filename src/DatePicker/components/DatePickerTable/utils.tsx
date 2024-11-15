@@ -260,6 +260,13 @@ export function getColumnBackgroundSelectedStyle(
   const { rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex } =
     selection;
 
+  if (
+    (rowStartIndex === rowIndex && columnStartIndex === columnIndex) ||
+    (rowEndIndex === rowIndex && columnEndIndex === columnIndex)
+  ) {
+    return 'date-picker-table-row-column-selected-start-end-container';
+  }
+
   if (rowStartIndex !== rowEndIndex) {
     if (
       rowEndIndex !== -1 &&
@@ -290,15 +297,6 @@ export function getColumnBackgroundSelectedStyle(
     }
   }
 
-  return '';
-}
-
-export function getCurrentColumnBorderSelectedStyle(
-  tableCell: DatePickerTableCell,
-) {
-  if (tableCell.date === dayjs().format('YYYY-MM-DD')) {
-    return `date-picker-table-row-column-current-selected-border-container`;
-  }
   return '';
 }
 
