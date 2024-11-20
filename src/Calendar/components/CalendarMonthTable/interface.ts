@@ -61,7 +61,7 @@ export interface CalendarMonthTableCell {
   endDate?: string;
   status?: CalendarCellStatusProp;
   extra?: any;
-  occupied?: CalendarMonthTableCellOccupied;
+  occupied?: CalendarMonthTableCellOccupied[];
 }
 
 export interface CalendarMonthTableCellOccupied {

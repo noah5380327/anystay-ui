@@ -3,6 +3,7 @@ import {
   CalendarMonthFillRowCell,
   CalendarMonthOccupiedRowCell,
   CalendarMonthTableCell,
+  CalendarMonthTableCellOccupied,
   CalendarMonthTableOccupiedCell,
   CalendarMonthTableProp,
   CalendarMonthTableSelection,
@@ -15,6 +16,7 @@ import {
   CalendarMonthlySelectProp,
   CalendarOccupiedRowProp,
   CalendarRowProp,
+  CalendarSelectRowCellOccupiedProp,
 } from 'anystay-ui/Calendar/interface';
 import dayjs, { Dayjs } from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
@@ -59,10 +61,10 @@ export function generateRealCell(
   let startDate = date;
   let endDate = date;
   let extra;
-  let occupied;
+  let occupied: CalendarMonthTableCellOccupied[] = [];
   const fillRowCell = getFillRowCell(fillRowCells, rowId, date);
   const blockRowCell = getBlockRowCell(blockRowCells, rowId, date);
-  const occupiedRowCell = getOccupiedRowCell(occupiedRowCells, rowId, date);
+  const occupiedDateCells = getOccupiedRowCell(occupiedRowCells, rowId, date);
   if (fillRowCell) {
     value = fillRowCell.value;
     status = CalendarCellStatusProp.Normal;
@@ -77,17 +79,20 @@ export function generateRealCell(
     endDate = blockRowCell.endDate;
     extra = blockRowCell.extra;
   }
-  if (occupiedRowCell) {
-    occupied = {
-      startDate: occupiedRowCell.startDate,
-      endDate: occupiedRowCell.endDate,
-      link: occupiedRowCell.link,
-      name: occupiedRowCell.name,
-      text: occupiedRowCell.text,
-      avatar: occupiedRowCell.avatar,
-      extra: occupiedRowCell.extra,
-      color: occupiedRowCell.color,
-    };
+
+  if (occupiedDateCells.length > 0) {
+    occupiedDateCells.forEach((i) => {
+      occupied.push({
+        startDate: i.startDate,
+        endDate: i.endDate,
+        link: i.link,
+        name: i.name,
+        text: i.text,
+        avatar: i.avatar,
+        extra: i.extra,
+        color: i.color,
+      });
+    });
   }
 
   tableCells.push({
@@ -224,11 +229,12 @@ export function getOccupiedRowCell(
   occupiedRowCells: CalendarMonthOccupiedRowCell[],
   rowId: string,
   date: string,
-): CalendarMonthOccupiedRowCell {
+): CalendarMonthOccupiedRowCell[] {
   const matches = occupiedRowCells.filter(
     (i) => i.rowId === rowId && i.date === date,
   );
-  return matches?.[matches?.length - 1];
+
+  return matches;
 }
 
 export function generateTableCells(
@@ -799,17 +805,21 @@ export function onMouseUp(
         for (let j = 0; j < cells.length; j++) {
           const cell = cells[j];
           if (!cell.virtual) {
+            let occupied: CalendarSelectRowCellOccupiedProp[] = [];
+            cell.occupied?.forEach((i) => {
+              occupied.push({
+                link: i.link,
+                name: i.name,
+                text: i.text,
+                avatar: i.avatar,
+                extra: i.extra,
+              });
+            });
             selectProp.cells.push({
               status: cell.status || CalendarCellStatusProp.Normal,
               value: cell.value,
               extra: cell.extra || '',
-              occupied: {
-                link: cell.occupied?.link || '',
-                name: cell.occupied?.name || '',
-                text: cell.occupied?.text || '',
-                avatar: cell.occupied?.avatar || '',
-                extra: cell.occupied?.extra || '',
-              },
+              occupied: occupied,
             });
           }
         }
@@ -872,7 +882,30 @@ export function onSectionRenderJumpToToday(
   }
 }
 
-export function getTableCellStartOccupiedCondition(
+export function getTableCellOccupiedStartCondition(
+  tableCells: CalendarMonthTableCell[],
+  rowIndex: number,
+  columnIndex: number,
+) {
+  const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
+  const tableCellDate = dayjs(tableCell.date);
+  if (tableCell.occupied && tableCell.occupied.length > 0) {
+    const occupiedStartDate = dayjs(tableCell.occupied[0].startDate);
+    const occupiedEndDate = dayjs(tableCell.occupied[0].endDate);
+    dayjs.extend(isBetween);
+    const isBetweenRange =
+      (tableCellDate.isSame(occupiedStartDate, 'day') ||
+        tableCellDate.isAfter(occupiedStartDate, 'day')) &&
+      (tableCellDate.isSame(occupiedEndDate, 'day') ||
+        tableCellDate.isBefore(occupiedEndDate, 'day'));
+    if (isBetweenRange) {
+      return true;
+    }
+    return false;
+  }
+  return false;
+}
+export function getTableCellOccupiedEndCondition(
   tableCells: CalendarMonthTableCell[],
   rowIndex: number,
   columnIndex: number,
@@ -880,9 +913,9 @@ export function getTableCellStartOccupiedCondition(
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   const tableCellDate = dayjs(tableCell.date);
 
-  if (tableCell.occupied) {
-    const occupiedStartDate = dayjs(tableCell.occupied?.startDate);
-    const occupiedEndDate = dayjs(tableCell.occupied?.endDate);
+  if (tableCell.occupied && tableCell.occupied.length > 1) {
+    const occupiedStartDate = dayjs(tableCell.occupied[1].startDate);
+    const occupiedEndDate = dayjs(tableCell.occupied[1].endDate);
     dayjs.extend(isBetween);
     const isBetweenRange =
       (tableCellDate.isSame(occupiedStartDate, 'day') ||
@@ -913,12 +946,18 @@ export function getTableCellOccupied(
   rowIndex: number,
   columnIndex: number,
   columnWidth: number,
+  position: string,
 ): CalendarMonthTableOccupiedCell {
   const hourColumnWidth = columnWidth / 24;
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   const tableCellDate = dayjs(tableCell.date);
-  const occupiedStartDate = tableCell.occupied?.startDate;
-  const occupiedEndDate = tableCell.occupied?.endDate;
+  let occupiedStartDate = tableCell.occupied?.[0]?.startDate;
+  let occupiedEndDate = tableCell.occupied?.[0]?.endDate;
+  if (position === 'end') {
+    occupiedStartDate = tableCell.occupied?.[1]?.startDate;
+    occupiedEndDate = tableCell.occupied?.[1]?.endDate;
+  }
+
   dayjs.extend(isBetween);
   const isStart = tableCellDate.isSame(occupiedStartDate, 'day');
   const isEnd = tableCellDate.isSame(occupiedEndDate, 'day');
@@ -992,12 +1031,14 @@ export function getOccupiedBorderStyling(
   rowIndex: number,
   columnIndex: number,
   columnWidth: number,
+  position: string,
 ) {
   const res = getTableCellOccupied(
     tableCells,
     rowIndex,
     columnIndex,
     columnWidth,
+    position,
   );
   if (res.borderRadiusCornerRightNoNeed) {
     return {
@@ -1024,9 +1065,14 @@ export function onOccupiedClick(
   rowIndex: number,
   columnIndex: number,
   props: CalendarMonthTableProp,
+  position: string,
 ) {
   const occupied = getTableCell(tableCells, rowIndex, columnIndex).occupied;
   if (props.onOccupiedClick && occupied) {
-    props.onOccupiedClick(occupied.link);
+    if (position === 'start') {
+      props.onOccupiedClick(occupied[0].link);
+    } else {
+      props.onOccupiedClick(occupied[1].link);
+    }
   }
 }
