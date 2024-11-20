@@ -43,7 +43,7 @@ export interface CalendarSelectRowCellProp {
   status: CalendarCellStatusProp;
   value: string;
   extra?: any;
-  occupied?: CalendarSelectRowCellOccupiedProp;
+  occupied?: CalendarSelectRowCellOccupiedProp[];
 }
 
 export interface CalendarSelectRowCellOccupiedProp {

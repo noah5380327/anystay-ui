@@ -15,7 +15,8 @@ import {
   getOccupiedBorderStyling,
   getTableCell,
   getTableCellOccupied,
-  getTableCellStartOccupiedCondition,
+  getTableCellOccupiedEndCondition,
+  getTableCellOccupiedStartCondition,
   getTableCellVirtualCondition,
   onMouseDown,
   onMouseOver,
@@ -227,7 +228,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                           </p>
                         </div>
                       </div>
-                      {getTableCellStartOccupiedCondition(
+                      {getTableCellOccupiedStartCondition(
                         tableCells,
                         rowIndex,
                         columnIndex,
@@ -240,29 +241,33 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                               rowIndex,
                               columnIndex,
                               cellWidth,
+                              'start',
                             ).width,
                             minWidth: getTableCellOccupied(
                               tableCells,
                               rowIndex,
                               columnIndex,
                               cellWidth,
+                              'start',
                             ).width,
                             left: getTableCellOccupied(
                               tableCells,
                               rowIndex,
                               columnIndex,
                               cellWidth,
+                              'start',
                             ).left,
                             background: getTableCell(
                               tableCells,
                               rowIndex,
                               columnIndex,
-                            ).occupied?.color,
+                            ).occupied?.[0]?.color,
                             ...getOccupiedBorderStyling(
                               tableCells,
                               rowIndex,
                               columnIndex,
                               cellWidth,
+                              'start',
                             ),
                           }}
                           onClick={() =>
@@ -271,6 +276,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                               rowIndex,
                               columnIndex,
                               props,
+                              'start',
                             )
                           }
                           onMouseDown={(e) => {
@@ -289,12 +295,13 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                                   rowIndex,
                                   columnIndex,
                                   cellWidth,
+                                  'start',
                                 ).translateX
                               }px)`,
                             }}
                           >
                             {getTableCell(tableCells, rowIndex, columnIndex)
-                              .occupied?.avatar && (
+                              .occupied?.[0]?.avatar && (
                               <div
                                 className={`calendar-month-table-row-column-content-occupied-image-container`}
                               >
@@ -304,7 +311,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                                       tableCells,
                                       rowIndex,
                                       columnIndex,
-                                    ).occupied?.avatar
+                                    ).occupied?.[0]?.avatar
                                   }
                                   alt={`avatar`}
                                 />
@@ -321,7 +328,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                                     tableCells,
                                     rowIndex,
                                     columnIndex,
-                                  ).occupied?.name
+                                  ).occupied?.[0]?.name
                                 }
                               </span>
                               <span
@@ -332,7 +339,125 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
                                     tableCells,
                                     rowIndex,
                                     columnIndex,
-                                  ).occupied?.text
+                                  ).occupied?.[0]?.text
+                                }
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {getTableCellOccupiedEndCondition(
+                        tableCells,
+                        rowIndex,
+                        columnIndex,
+                      ) && (
+                        <div
+                          className={`calendar-month-table-row-column-content-occupied-wrapper`}
+                          style={{
+                            width: getTableCellOccupied(
+                              tableCells,
+                              rowIndex,
+                              columnIndex,
+                              cellWidth,
+                              'end',
+                            ).width,
+                            minWidth: getTableCellOccupied(
+                              tableCells,
+                              rowIndex,
+                              columnIndex,
+                              cellWidth,
+                              'end',
+                            ).width,
+                            left: getTableCellOccupied(
+                              tableCells,
+                              rowIndex,
+                              columnIndex,
+                              cellWidth,
+                              'end',
+                            ).left,
+                            background: getTableCell(
+                              tableCells,
+                              rowIndex,
+                              columnIndex,
+                            ).occupied?.[1]?.color,
+                            ...getOccupiedBorderStyling(
+                              tableCells,
+                              rowIndex,
+                              columnIndex,
+                              cellWidth,
+                              'end',
+                            ),
+                          }}
+                          onClick={() =>
+                            onOccupiedClick(
+                              tableCells,
+                              rowIndex,
+                              columnIndex,
+                              props,
+                              'end',
+                            )
+                          }
+                          onMouseDown={(e) => {
+                            e.stopPropagation();
+                          }}
+                          onMouseOver={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <div
+                            className="calendar-month-table-row-column-content-occupied-content-container"
+                            style={{
+                              transform: `translateX(${
+                                getTableCellOccupied(
+                                  tableCells,
+                                  rowIndex,
+                                  columnIndex,
+                                  cellWidth,
+                                  'end',
+                                ).translateX
+                              }px)`,
+                            }}
+                          >
+                            {getTableCell(tableCells, rowIndex, columnIndex)
+                              .occupied?.[1]?.avatar && (
+                              <div
+                                className={`calendar-month-table-row-column-content-occupied-image-container`}
+                              >
+                                <img
+                                  src={
+                                    getTableCell(
+                                      tableCells,
+                                      rowIndex,
+                                      columnIndex,
+                                    ).occupied?.[1]?.avatar
+                                  }
+                                  alt={`avatar`}
+                                />
+                              </div>
+                            )}
+                            <div
+                              className={`calendar-month-table-row-column-content-occupied-text-container`}
+                            >
+                              <span
+                                className={`calendar-month-table-row-column-content-occupied-text-name`}
+                              >
+                                {
+                                  getTableCell(
+                                    tableCells,
+                                    rowIndex,
+                                    columnIndex,
+                                  ).occupied?.[1]?.name
+                                }
+                              </span>
+                              <span
+                                className={`calendar-month-table-row-column-content-occupied-text`}
+                              >
+                                {
+                                  getTableCell(
+                                    tableCells,
+                                    rowIndex,
+                                    columnIndex,
+                                  ).occupied?.[1]?.text
                                 }
                               </span>
                             </div>
