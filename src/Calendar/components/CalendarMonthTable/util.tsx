@@ -889,9 +889,8 @@ export function getTableCellOccupiedStartCondition(
 ) {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   const tableCellDate = dayjs(tableCell.date);
-  if (tableCell.occupied && tableCell.occupied.length === 1) {
+  if (tableCell.occupied && tableCell.occupied.length > 0) {
     const occupiedStartDate = dayjs(tableCell.occupied[0].startDate);
-
     const occupiedEndDate = dayjs(tableCell.occupied[0].endDate);
     dayjs.extend(isBetween);
     const isBetweenRange =
@@ -913,7 +912,8 @@ export function getTableCellOccupiedEndCondition(
 ) {
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
   const tableCellDate = dayjs(tableCell.date);
-  if (tableCell.occupied && tableCell.occupied.length === 2) {
+
+  if (tableCell.occupied && tableCell.occupied.length > 1) {
     const occupiedStartDate = dayjs(tableCell.occupied[1].startDate);
     const occupiedEndDate = dayjs(tableCell.occupied[1].endDate);
     dayjs.extend(isBetween);

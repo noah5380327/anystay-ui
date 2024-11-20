@@ -31,7 +31,7 @@ export interface CalendarSelectProp {
 export interface CalendarMonthlySelectProp {
   startDate: string;
   endDate: string;
-  cells: CalendarSelectRowCellProp[];
+  cells: CalendarMonthlySelectRowCellProp[];
 }
 
 export interface CalenderSelectRowProp {
@@ -40,6 +40,12 @@ export interface CalenderSelectRowProp {
 }
 
 export interface CalendarSelectRowCellProp {
+  status: CalendarCellStatusProp;
+  value: string;
+  extra?: any;
+  occupied?: CalendarSelectRowCellOccupiedProp;
+}
+export interface CalendarMonthlySelectRowCellProp {
   status: CalendarCellStatusProp;
   value: string;
   extra?: any;
