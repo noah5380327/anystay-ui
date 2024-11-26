@@ -49,7 +49,7 @@ const CalendarDayTitle: FC<CalendarDayTitleProp> = (props) => {
                 ${getBorderStyle(props, titleCells[columnIndex])}`}
                 style={style}
               >
-                &nbsp;{getDateName(titleCells[columnIndex])}
+                {getDateName(titleCells[columnIndex])}
               </span>
             )}
           />
