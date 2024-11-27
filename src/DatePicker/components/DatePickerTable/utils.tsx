@@ -260,11 +260,11 @@ export function getColumnBackgroundSelectedStyle(
   const { rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex } =
     selection;
 
-  if (
-    (rowStartIndex === rowIndex && columnStartIndex === columnIndex) ||
-    (rowEndIndex === rowIndex && columnEndIndex === columnIndex)
-  ) {
-    return 'date-picker-table-row-column-selected-start-end-container';
+  if (rowStartIndex === rowIndex && columnStartIndex === columnIndex) {
+    return 'date-picker-table-row-column-selected-start-container';
+  }
+  if (rowEndIndex === rowIndex && columnEndIndex === columnIndex) {
+    return 'date-picker-table-row-column-selected-end-container';
   }
 
   if (rowStartIndex !== rowEndIndex) {
@@ -657,7 +657,7 @@ export function onMouseDown(
     }
   }
 }
-export function onTouchStart(
+export function onTouchEnd(
   rowIndex: number,
   columnIndex: number,
   selectionVisible: boolean,

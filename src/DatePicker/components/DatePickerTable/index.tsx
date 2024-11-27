@@ -17,7 +17,7 @@ import {
   onMouseUp,
   onScrollDate,
   onSectionRenderJumpToToday,
-  onTouchStart,
+  onTouchEnd,
   setSelectionByValue,
 } from 'anystay-ui/DatePicker/components/DatePickerTable/utils';
 import React, {
@@ -55,6 +55,8 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
       columnEndIndex: -1,
       columnCurrentIndex: -1,
     });
+    const startY = useRef(0);
+    const isScrolling = useRef(false);
 
     const blockCells = props.blockCells || [];
 
@@ -228,8 +230,20 @@ const DatePickerTable = forwardRef<HTMLInputElement, DatePickerTableProp>(
                           setArrivalUnavailableCell,
                         )
                       }
-                      onTouchStart={() => {
-                        onTouchStart(
+                      onTouchStart={(event) => {
+                        const touch = event.touches[0];
+                        startY.current = touch.clientY;
+                        isScrolling.current = false;
+                      }}
+                      onTouchMove={(event) => {
+                        const touch = event.touches[0];
+                        if (Math.abs(touch.clientY - startY.current) > 10) {
+                          isScrolling.current = true;
+                        }
+                      }}
+                      onTouchEnd={() => {
+                        if (isScrolling.current) return;
+                        onTouchEnd(
                           rowIndex,
                           columnIndex,
                           selectionVisible,
