@@ -657,7 +657,7 @@ export function onMouseDown(
     }
   }
 }
-export function onTouchStart(
+export function onTouchEnd(
   rowIndex: number,
   columnIndex: number,
   selectionVisible: boolean,
