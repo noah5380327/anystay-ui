@@ -530,9 +530,10 @@ export function getTableCellOccupiedCondition(
   const tableCell = getTableCell(tableCells, rowIndex, columnIndex);
 
   if (tableCell.occupied) {
-    const startDate = moment(tableCell.occupied.startDate);
-    const date = moment(tableCell.date);
-    return startDate.isSame(date, 'day');
+    return true;
+    // const startDate = moment(tableCell.occupied.startDate);
+    // const date = moment(tableCell.date);
+    // return startDate.isSame(date, 'day');
   }
 
   return false;

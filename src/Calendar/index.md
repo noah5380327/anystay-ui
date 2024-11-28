@@ -28,7 +28,7 @@ import { Calendar, CalendarSelectProp, CalendarType } from 'anystay-ui';
 
 export default () => (
   <Calendar
-    type={CalendarType.Month}
+    type={CalendarType.Day}
     subtractDayNumber={48}
     subtractMonthNumber={10}
     totalDayNumber={100}
@@ -69,38 +69,11 @@ export default () => (
         rowId: 1,
         columns: [
           {
-            startDate: '2024-11-22 16:00:00',
-            endDate: '2024-11-23 15:00:00',
+            startDate: '2024-12-03 16:00:00',
+            endDate: '2025-01-01 15:00:00',
             name: 'John',
             text: 'Confirmed',
             link: 'https://www.aaa.com',
-            avatar: 'http://localhost:4000/favicon.ico',
-            color: '#FFA01D',
-          },
-          {
-            startDate: '2024-11-23 16:00:00',
-            endDate: '2024-11-24 15:00:00',
-            name: 'John',
-            text: 'Confirmed',
-            link: 'https://www.bbb.com',
-            avatar: 'http://localhost:4000/favicon.ico',
-            color: '#FFA01D',
-          },
-          {
-            startDate: '2024-11-24 16:00:00',
-            endDate: '2024-11-25 15:00:00',
-            name: 'John',
-            text: 'Confirmed',
-            link: 'https://www.ccc.com',
-            avatar: 'http://localhost:4000/favicon.ico',
-            color: '#FFA01D',
-          },
-          {
-            startDate: '2024-11-27 16:00:00',
-            endDate: '2024-11-30 15:00:00',
-            name: 'John',
-            text: 'Confirmed',
-            link: 'https://www.ddd.com',
             avatar: 'http://localhost:4000/favicon.ico',
             color: '#FFA01D',
           },
