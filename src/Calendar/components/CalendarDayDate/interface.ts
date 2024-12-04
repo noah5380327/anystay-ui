@@ -16,6 +16,7 @@ export interface CalendarDayDateProp {
   scrollTop: number;
   scrollWidth: number;
   setCustomScrollLeft: Dispatch<SetStateAction<number>>;
+  subtractDayNumber: number;
 }
 
 export interface CalendarDayDateCell {

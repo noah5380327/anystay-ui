@@ -21,7 +21,7 @@ const CalendarDayDate: FC<CalendarDayDateProp> = (props) => {
     <div className={`calendar-day-date-container`}>
       <div
         className={`calendar-day-date-operation-container`}
-        onClick={() => onScrollPrev(props)}
+        onClick={() => onScrollPrev(props, props.clientWidth)}
       >
         <img alt={`left`} src={CalendarLeftPng} />
       </div>
@@ -41,6 +41,14 @@ const CalendarDayDate: FC<CalendarDayDateProp> = (props) => {
             scrollLeft={props.scrollLeft}
             scrollTop={props.scrollTop}
             scrollWidth={props.scrollWidth}
+            onSectionRendered={() => {
+              //initial clientWidth is 0 due to stupic scrollsync, need to set the scrollLeft in order for clientWidth to be updated
+              if (props.clientWidth === 0) {
+                props.setCustomScrollLeft(
+                  (props.subtractDayNumber - 2) * props.columnWidth + 1,
+                );
+              }
+            }}
             cellRenderer={({ columnIndex, key, style }) => (
               <div
                 key={key}
@@ -66,7 +74,7 @@ const CalendarDayDate: FC<CalendarDayDateProp> = (props) => {
       </AutoSizer>
       <div
         className={`calendar-day-date-operation-container calendar-day-date-operation-right-container`}
-        onClick={() => onScrollNext(props)}
+        onClick={() => onScrollNext(props, props.clientWidth)}
       >
         <img alt={`right`} src={CalendarLeftPng} />
       </div>
