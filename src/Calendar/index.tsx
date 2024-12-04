@@ -109,94 +109,97 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
             scrollHeight,
             scrollTop,
             scrollWidth,
-          }) => (
-            <div ref={ref} className={`calendar-container`}>
-              <CalendarDayTitle
-                monthDate={monthDate}
-                columnWidth={columnWidth}
-                titleRowHeight={titleRowHeight}
-                clientHeight={clientHeight}
-                clientWidth={clientWidth}
-                onScroll={(sp) => {
-                  onCustomDayScroll(
-                    sp,
-                    customScrollLeft,
-                    setCustomScrollLeft,
-                    onScroll,
-                    setShowReturnToToday,
-                    subtractDayNumber,
-                    columnWidth,
-                  );
-                }}
-                scrollHeight={scrollHeight}
-                scrollLeft={customScrollLeft}
-                scrollTop={scrollTop}
-                scrollWidth={scrollWidth}
-                setCustomScrollLeft={setCustomScrollLeft}
-                showReturnToToday={showReturnToToday}
-                setShowReturnToToday={setShowReturnToToday}
-                type={type}
-              />
-              <CalendarDayDate
-                monthDate={monthDate}
-                totalDayNumber={totalDayNumber}
-                stepDayNumber={stepDayNumber}
-                columnWidth={columnWidth}
-                dateRowHeight={dateRowHeight}
-                clientHeight={clientHeight}
-                clientWidth={clientWidth}
-                onScroll={(sp) => {
-                  onCustomDayScroll(
-                    sp,
-                    customScrollLeft,
-                    setCustomScrollLeft,
-                    onScroll,
-                    setShowReturnToToday,
-                    subtractDayNumber,
-                    columnWidth,
-                  );
-                }}
-                scrollHeight={scrollHeight}
-                scrollLeft={customScrollLeft}
-                scrollTop={scrollTop}
-                scrollWidth={scrollWidth}
-                setCustomScrollLeft={setCustomScrollLeft}
-              />
-              <CalendarDayTable
-                ref={tableRef}
-                monthDate={monthDate}
-                rows={props.rows}
-                columnWidth={columnWidth}
-                totalDayNumber={totalDayNumber}
-                subtractDayNumber={subtractDayNumber}
-                fillRows={props.fillRows}
-                blockRows={props.blockRows}
-                occupiedRows={props.occupiedRows}
-                onSelect={props.onSelect}
-                onOccupiedClick={props.onOccupiedClick}
-                clientHeight={clientHeight}
-                clientWidth={clientWidth}
-                onScroll={(sp) => {
-                  onCustomDayScroll(
-                    sp,
-                    customScrollLeft,
-                    setCustomScrollLeft,
-                    onScroll,
-                    setShowReturnToToday,
-                    subtractDayNumber,
-                    columnWidth,
-                  );
-                }}
-                scrollHeight={scrollHeight}
-                scrollLeft={customScrollLeft}
-                scrollTop={scrollTop}
-                scrollWidth={scrollWidth}
-                setCustomScrollLeft={setCustomScrollLeft}
-                showReturnToToday={showReturnToToday}
-                setShowReturnToToday={setShowReturnToToday}
-              />
-            </div>
-          )}
+          }) => {
+            return (
+              <div ref={ref} className={`calendar-container`}>
+                <CalendarDayTitle
+                  monthDate={monthDate}
+                  columnWidth={columnWidth}
+                  titleRowHeight={titleRowHeight}
+                  clientHeight={clientHeight}
+                  clientWidth={clientWidth}
+                  onScroll={(sp) => {
+                    onCustomDayScroll(
+                      sp,
+                      customScrollLeft,
+                      setCustomScrollLeft,
+                      onScroll,
+                      setShowReturnToToday,
+                      subtractDayNumber,
+                      columnWidth,
+                    );
+                  }}
+                  scrollHeight={scrollHeight}
+                  scrollLeft={customScrollLeft}
+                  scrollTop={scrollTop}
+                  scrollWidth={scrollWidth}
+                  setCustomScrollLeft={setCustomScrollLeft}
+                  showReturnToToday={showReturnToToday}
+                  setShowReturnToToday={setShowReturnToToday}
+                  type={type}
+                />
+                <CalendarDayDate
+                  monthDate={monthDate}
+                  totalDayNumber={totalDayNumber}
+                  stepDayNumber={stepDayNumber}
+                  columnWidth={columnWidth}
+                  dateRowHeight={dateRowHeight}
+                  clientHeight={clientHeight}
+                  clientWidth={clientWidth}
+                  subtractDayNumber={subtractDayNumber}
+                  onScroll={(sp) => {
+                    onCustomDayScroll(
+                      sp,
+                      customScrollLeft,
+                      setCustomScrollLeft,
+                      onScroll,
+                      setShowReturnToToday,
+                      subtractDayNumber,
+                      columnWidth,
+                    );
+                  }}
+                  scrollHeight={scrollHeight}
+                  scrollLeft={customScrollLeft}
+                  scrollTop={scrollTop}
+                  scrollWidth={scrollWidth}
+                  setCustomScrollLeft={setCustomScrollLeft}
+                />
+                <CalendarDayTable
+                  ref={tableRef}
+                  monthDate={monthDate}
+                  rows={props.rows}
+                  columnWidth={columnWidth}
+                  totalDayNumber={totalDayNumber}
+                  subtractDayNumber={subtractDayNumber}
+                  fillRows={props.fillRows}
+                  blockRows={props.blockRows}
+                  occupiedRows={props.occupiedRows}
+                  onSelect={props.onSelect}
+                  onOccupiedClick={props.onOccupiedClick}
+                  clientHeight={clientHeight}
+                  clientWidth={clientWidth}
+                  onScroll={(sp) => {
+                    onCustomDayScroll(
+                      sp,
+                      customScrollLeft,
+                      setCustomScrollLeft,
+                      onScroll,
+                      setShowReturnToToday,
+                      subtractDayNumber,
+                      columnWidth,
+                    );
+                  }}
+                  scrollHeight={scrollHeight}
+                  scrollLeft={customScrollLeft}
+                  scrollTop={scrollTop}
+                  scrollWidth={scrollWidth}
+                  setCustomScrollLeft={setCustomScrollLeft}
+                  showReturnToToday={showReturnToToday}
+                  setShowReturnToToday={setShowReturnToToday}
+                />
+              </div>
+            );
+          }}
         </ScrollSync>
       )}
 
