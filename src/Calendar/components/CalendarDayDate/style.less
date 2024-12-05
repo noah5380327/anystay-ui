@@ -2,15 +2,27 @@
 
 .calendar-day-date-container {
   display: flex;
-  padding: 0 23px 0 5px;
+  padding: 0 15px;
   .calendar-day-date-operation-container {
     display: flex;
     justify-content: center;
     align-items: center;
     user-select: none;
-    img {
-      width: 9px;
-      height: 16px;
+    .calendar-day-date-operation-container-img-wrapper {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: @as-background-color-3;
+      z-index: 10;
+      box-shadow: @as-shadow-1;
+      img {
+        width: 9px;
+        height: 16px;
+      }
     }
   }
   .calendar-day-date-operation-container::before {
@@ -20,16 +32,22 @@
     position: absolute;
     top: 0;
     left: -10px;
-    cursor: pointer;
+  }
+  .calendar-day-date-operation-left-container {
+    position: absolute;
+    left: 15px;
+    top: 0;
+    height: 100%;
+    width: 30px;
   }
   .calendar-day-date-operation-right-container {
     position: absolute;
-    right: 0;
+    right: 15px;
     top: 0;
     height: 100%;
+    width: 30px;
     img {
       transform: scaleX(-1);
-      cursor: pointer;
     }
   }
   .calendar-day-date-operation-right-container::before {
@@ -39,7 +57,6 @@
     position: absolute;
     top: 0;
     right: 0;
-    cursor: pointer;
   }
   .calendar-day-date-value-item-container {
     display: flex;

@@ -21,6 +21,7 @@ import {
 } from 'anystay-ui/Calendar/components/CalendarDayTable/util';
 import React, {
   forwardRef,
+  memo,
   useEffect,
   useImperativeHandle,
   useState,
@@ -248,4 +249,4 @@ const CalendarDayTable = forwardRef<HTMLInputElement, CalendarDayTableProp>(
   },
 );
 
-export default CalendarDayTable;
+export default memo(CalendarDayTable);

@@ -476,7 +476,7 @@ const CalendarMonthTable = forwardRef<HTMLInputElement, CalendarMonthTableProp>(
             <Button
               type="primary"
               onClick={() => {
-                props.setCustomScrollTop(props.todayScrollTop.current);
+                props.smoothScrollTo(props.todayScrollTop.current);
               }}
               className={`calendar-month-table-return-today-btn`}
             >

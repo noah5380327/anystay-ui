@@ -1,5 +1,4 @@
 import { CalendarMonthDate } from 'anystay-ui/Calendar/interface';
-import { Dispatch, SetStateAction } from 'react';
 import { OnScrollParams } from 'react-virtualized';
 
 export interface CalendarDayDateProp {
@@ -15,7 +14,8 @@ export interface CalendarDayDateProp {
   scrollLeft: number;
   scrollTop: number;
   scrollWidth: number;
-  setCustomScrollLeft: Dispatch<SetStateAction<number>>;
+  smoothScrollTo: (targetScrollLeft: number) => void;
+  setCustomScrollLeft: React.Dispatch<React.SetStateAction<number>>;
   subtractDayNumber: number;
 }
 

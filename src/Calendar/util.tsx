@@ -80,9 +80,12 @@ export function onCustomDayScroll(
     ...sp,
     scrollLeft: sp.scrollLeft,
   });
+  const target = (subtractDayNumber - 2) * columnWidth + 1;
 
-  if (customScrollLeft !== (subtractDayNumber - 2) * columnWidth) {
+  if (customScrollLeft > target + 150 || customScrollLeft < target - 50) {
     setShowReturnToToday(true);
+  } else {
+    setShowReturnToToday(false);
   }
 }
 

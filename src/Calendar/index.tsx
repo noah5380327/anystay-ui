@@ -16,6 +16,7 @@ import {
   DEFAULT_TOTAL_MONTH_NUMBER,
   DEFAULT_TYPE,
 } from 'anystay-ui/Calendar/constant';
+import { useSmoothScroll } from 'anystay-ui/Calendar/customHook/useSmoothScroll';
 import {
   CalendarMonthDate,
   CalendarProp,
@@ -57,14 +58,17 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
   const [monthDate, setMonthDate] = useState<CalendarMonthDate>({});
   const [monthDateForMonthly, setMonthDateForMonthly] =
     useState<CalendarMonthDate>({});
-  const [customScrollLeft, setCustomScrollLeft] = useState<number>(
-    (subtractDayNumber - 2) * columnWidth,
-  );
+  const [customScrollLeft, setCustomScrollLeft] = useState<number>(0);
   const [customScrollTop, setCustomScrollTop] = useState<number>(0);
   const todayScrollTop = useRef(0);
   const [monthTitle, setMonthTitle] = useState<string>('');
   const [showReturnToToday, setShowReturnToToday] = useState<boolean>(false);
   const tableRef = useRef<HTMLInputElement>(null);
+
+  const { smoothScrollTo } = useSmoothScroll(
+    type === CalendarType.Day ? customScrollLeft : customScrollTop,
+    type === CalendarType.Day ? setCustomScrollLeft : setCustomScrollTop,
+  );
 
   const [monthlyTitleSelectedDate, setMonthlyTitleSelectedDate] =
     useState<dayjs.Dayjs>(dayjs());
@@ -133,8 +137,8 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                   scrollLeft={customScrollLeft}
                   scrollTop={scrollTop}
                   scrollWidth={scrollWidth}
-                  setCustomScrollLeft={setCustomScrollLeft}
                   showReturnToToday={showReturnToToday}
+                  setCustomScrollLeft={setCustomScrollLeft}
                   setShowReturnToToday={setShowReturnToToday}
                   type={type}
                 />
@@ -163,6 +167,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                   scrollTop={scrollTop}
                   scrollWidth={scrollWidth}
                   setCustomScrollLeft={setCustomScrollLeft}
+                  smoothScrollTo={smoothScrollTo}
                 />
                 <CalendarDayTable
                   ref={tableRef}
@@ -196,6 +201,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                   setCustomScrollLeft={setCustomScrollLeft}
                   showReturnToToday={showReturnToToday}
                   setShowReturnToToday={setShowReturnToToday}
+                  smoothScrollTo={smoothScrollTo}
                 />
               </div>
             );
@@ -257,6 +263,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProp>((props, ref) => {
                   scrollWidth={scrollWidth}
                   setShowReturnToToday={setShowReturnToToday}
                   showReturnToToday={showReturnToToday}
+                  smoothScrollTo={smoothScrollTo}
                 />
               </div>
             )}

@@ -31,6 +31,7 @@ export interface CalendarDayTableProp {
   setCustomScrollLeft: Dispatch<SetStateAction<number>>;
   showReturnToToday: boolean;
   setShowReturnToToday: Dispatch<SetStateAction<boolean>>;
+  smoothScrollTo: (targetScrollLeft: number) => void;
 }
 
 export interface CalendarDayTableSelection {

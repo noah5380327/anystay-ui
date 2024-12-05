@@ -69,7 +69,7 @@ export function onScrollPrev(props: CalendarDayDateProp, clientWidth: number) {
   if (currentScrollLeft < minScrollLeft) {
     currentScrollLeft = minScrollLeft;
   }
-  props.setCustomScrollLeft(currentScrollLeft);
+  props.smoothScrollTo(currentScrollLeft);
 }
 
 export function onScrollNext(props: CalendarDayDateProp, clientWidth: number) {
@@ -80,5 +80,5 @@ export function onScrollNext(props: CalendarDayDateProp, clientWidth: number) {
   if (currentScrollLeft > maxScrollLeft) {
     currentScrollLeft = maxScrollLeft;
   }
-  props.setCustomScrollLeft(currentScrollLeft);
+  props.smoothScrollTo(currentScrollLeft);
 }
