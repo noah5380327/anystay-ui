@@ -518,7 +518,7 @@ export function getTableColumnCells(
 }
 
 export function returnToToday(props: CalendarDayTableProp) {
-  props.setCustomScrollLeft((props.subtractDayNumber - 2) * props.columnWidth);
+  props.smoothScrollTo((props.subtractDayNumber - 2) * props.columnWidth + 1);
   props.setShowReturnToToday(false);
 }
 

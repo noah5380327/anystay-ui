@@ -1,5 +1,4 @@
 // @ts-ignore
-import CalendarLeftPng from 'anystay-ui/Calendar/assets/left.png';
 import { CalendarDayDateProp } from 'anystay-ui/Calendar/components/CalendarDayDate/interface';
 import {
   generateDateCells,
@@ -10,7 +9,7 @@ import {
   onScrollNext,
   onScrollPrev,
 } from 'anystay-ui/Calendar/components/CalendarDayDate/util';
-import React, { type FC } from 'react';
+import React, { memo, type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
 import './style.less';
 
@@ -20,10 +19,19 @@ const CalendarDayDate: FC<CalendarDayDateProp> = (props) => {
   return (
     <div className={`calendar-day-date-container`}>
       <div
-        className={`calendar-day-date-operation-container`}
-        onClick={() => onScrollPrev(props, props.clientWidth)}
+        className={`calendar-day-date-operation-container calendar-day-date-operation-left-container`}
       >
-        <img alt={`left`} src={CalendarLeftPng} />
+        <div
+          className={`calendar-day-date-operation-container-img-wrapper`}
+          onClick={() => onScrollPrev(props, props.clientWidth)}
+        >
+          <img
+            alt={`left`}
+            src={
+              'https://d292awxalydr86.cloudfront.net/Universal+icons/Arrow.svg'
+            }
+          />
+        </div>
       </div>
       <AutoSizer disableHeight>
         {({ width }) => (
@@ -74,12 +82,21 @@ const CalendarDayDate: FC<CalendarDayDateProp> = (props) => {
       </AutoSizer>
       <div
         className={`calendar-day-date-operation-container calendar-day-date-operation-right-container`}
-        onClick={() => onScrollNext(props, props.clientWidth)}
       >
-        <img alt={`right`} src={CalendarLeftPng} />
+        <div
+          className={`calendar-day-date-operation-container-img-wrapper`}
+          onClick={() => onScrollNext(props, props.clientWidth)}
+        >
+          <img
+            alt={`right`}
+            src={
+              'https://d292awxalydr86.cloudfront.net/Universal+icons/Arrow.svg'
+            }
+          />
+        </div>
       </div>
     </div>
   );
 };
 
-export default CalendarDayDate;
+export default memo(CalendarDayDate);

@@ -28,10 +28,10 @@ import { Calendar, CalendarSelectProp, CalendarType } from 'anystay-ui';
 
 export default () => (
   <Calendar
-    type={CalendarType.Day}
+    type={CalendarType.Month}
     subtractDayNumber={48}
     subtractMonthNumber={10}
-    totalDayNumber={500}
+    totalDayNumber={1000}
     totalMonthNumber={20}
     cellHeightMonthly={80}
     rows={[{ rowId: 1, value: 200 }]}

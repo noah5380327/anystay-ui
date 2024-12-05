@@ -38,6 +38,7 @@ export interface CalendarMonthTableProp {
   >;
   onOccupiedClick?: (prop: string) => void;
   cellHeightMonthly?: number;
+  smoothScrollTo: (value: number) => void;
 }
 
 export interface CalendarMonthTableSelection {

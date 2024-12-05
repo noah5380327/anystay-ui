@@ -7,7 +7,7 @@ import {
   getTitleDate,
 } from 'anystay-ui/Calendar/components/CalendarDayTitle/util';
 import dayjs from 'dayjs';
-import React, { useState, type FC } from 'react';
+import React, { memo, useState, type FC } from 'react';
 import { AutoSizer, Grid } from 'react-virtualized';
 import CalendarDatePicker from '../CalendarDatePicker';
 import './style.less';
@@ -67,4 +67,4 @@ const CalendarDayTitle: FC<CalendarDayTitleProp> = (props) => {
   );
 };
 
-export default CalendarDayTitle;
+export default memo(CalendarDayTitle);
